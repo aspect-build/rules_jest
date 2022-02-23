@@ -2,3 +2,23 @@
 
 Public API re-exports
 
+<a id="#jest_test"></a>
+
+## jest_test
+
+<pre>
+jest_test(<a href="#jest_test-name">name</a>, <a href="#jest_test-srcs">srcs</a>, <a href="#jest_test-kwargs">kwargs</a>)
+</pre>
+
+
+
+**PARAMETERS**
+
+
+| Name  | Description | Default Value |
+| :------------- | :------------- | :------------- |
+| <a id="jest_test-name"></a>name |  <p align="center"> - </p>   |  none |
+| <a id="jest_test-srcs"></a>srcs |  <p align="center"> - </p>   |  none |
+| <a id="jest_test-kwargs"></a>kwargs |  <p align="center"> - </p>   |  none |
+
+

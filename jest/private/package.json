@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "description": "fetches required for a jest toolchain",
+  "dependencies": {
+    "jest-cli": "latest"
+  }
+}
