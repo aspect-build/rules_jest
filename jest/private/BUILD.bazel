@@ -1,5 +1,17 @@
-load("@aspect_rules_js//js:nodejs_binary.bzl", "nodejs_binary")
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
+
+# Allow user instantiations of our rule to depend on this file
+exports_files(
+    ["run_jest.js"],
+    visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "cli_repositories",
+    srcs = ["cli_repositories.bzl"],
+    visibility = ["//jest:__subpackages__"],
+    deps = ["@aspect_rules_js//js:npm_import"],
+)
 
 bzl_library(
     name = "toolchains_repo",
@@ -13,7 +25,8 @@ bzl_library(
     visibility = ["//jest:__subpackages__"],
 )
 
-nodejs_binary(
-    name = "jest",
-    entry_point = "@jest_cli//jest-cli:jest-cli",
+bzl_library(
+    name = "jest_test",
+    srcs = ["jest_test.bzl"],
+    visibility = ["//jest:__subpackages__"],
 )

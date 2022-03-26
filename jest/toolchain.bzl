@@ -34,7 +34,7 @@ def _jest_toolchain_impl(ctx):
     # Make the $(tool_BIN) variable available in places like genrules.
     # See https://docs.bazel.build/versions/main/be/make-variables.html#custom_variables
     template_variables = platform_common.TemplateVariableInfo({
-        "jest_BIN": target_tool_path,
+        "JEST_BIN": target_tool_path,
     })
     default = DefaultInfo(
         files = depset(tool_files),

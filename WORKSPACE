@@ -22,7 +22,7 @@ load("//jest:repositories.bzl", "jest_register_toolchains")
 
 jest_register_toolchains(
     name = "jest",
-    jest_version = "1.14.2",
+    jest_version = "27.5.1",
 )
 
 # For running our own unit tests
