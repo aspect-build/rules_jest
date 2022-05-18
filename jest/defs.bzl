@@ -1,25 +1,30 @@
 "Public API re-exports"
+
 load("//jest/private:jest_test.bzl", "lib")
-load("@aspect_rules_js//js:nodejs_binary.bzl", nodejs_binary_lib = "lib")
+load("@aspect_rules_js//js:defs.bzl", "js_binary_lib")
+load("@aspect_rules_js//js/private:pnpm_utils.bzl", "pnpm_utils")
 
 _jest_test = rule(
     doc = """FIXME: add documentation""",
     attrs = lib.attrs,
     implementation = lib.implementation,
     test = True,
-    toolchains = nodejs_binary_lib.toolchains,
+    toolchains = js_binary_lib.toolchains,
 )
 
-def jest_test(**kwargs):
+def jest_test(jest_repository = "jest", **kwargs):
+    jest_js_package = "@{}//:{}{}".format(
+        jest_repository,
+        pnpm_utils.js_package_target_namespace,
+        pnpm_utils.bazel_name("jest-cli")
+    )
+    jest_entry_point = "@{}//:jest_entrypoint".format(jest_repository)
     _jest_test(
-        is_windows = select({
-            "@bazel_tools//src/conditions:host_windows": True,
-            "//conditions:default": False,
-        }),
         enable_runfiles = select({
             "@aspect_rules_js//js/private:enable_runfiles": True,
             "//conditions:default": False,
         }),
-        data = kwargs.pop("data", []) + ["@jest_cli//jest-cli"],
+        entry_point = jest_entry_point,
+        data = kwargs.pop("data", []) + [jest_js_package],
         **kwargs
     )
