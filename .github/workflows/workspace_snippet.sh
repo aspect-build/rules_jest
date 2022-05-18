@@ -18,14 +18,7 @@ http_archive(
     strip_prefix = "${PREFIX}",
     url = "https://github.com/aspect-build/rules_jest/archive/refs/tags/${TAG}.tar.gz",
 )
-
-# Fetches the rules_jest dependencies.
-# If you want to have a different version of some dependency,
-# you should fetch it *before* calling this.
-# Alternatively, you can skip calling this function, so long as you've
-# already fetched all the dependencies.
-load("@aspect_rules_jest//jest:repositories.bzl", "rules_jest_dependencies")
-rules_jest_dependencies()
-
-\`\`\`
 EOF
+
+awk 'f;/--SNIP--/{f=1}' e2e/workspace/WORKSPACE
+echo "\`\`\`"

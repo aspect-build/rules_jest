@@ -15,32 +15,28 @@ def rules_jest_dependencies():
         http_archive,
         name = "bazel_skylib",
         sha256 = "c6966ec828da198c5d9adbaa94c05e3a1c7f21bd012a0b29ba8ddbccb2c93b0d",
-        urls = [
-            "https://github.com/bazelbuild/bazel-skylib/releases/download/1.1.1/bazel-skylib-1.1.1.tar.gz",
-            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/releases/download/1.1.1/bazel-skylib-1.1.1.tar.gz",
-        ],
+        urls = ["https://github.com/bazelbuild/bazel-skylib/releases/download/1.1.1/bazel-skylib-1.1.1.tar.gz"],
     )
 
     maybe(
         http_archive,
         name = "rules_nodejs",
-        sha256 = "03b542b22a95c4b6591630f3f6b176294033e190e08e044bdb23883693702b6b",
-        urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/5.1.0/rules_nodejs-core-5.1.0.tar.gz"],
+        sha256 = "26766278d815a6e2c43d2f6c9c72fde3fec8729e84138ffa4dabee47edc7702a",
+        urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/5.4.2/rules_nodejs-core-5.4.2.tar.gz"],
     )
 
     maybe(
         http_archive,
         name = "aspect_bazel_lib",
-        sha256 = "ca5ae17c88cf7235e720ac97b2f5b0509a02eacfc43f6f6dd4c831dacbe197c6",
-        strip_prefix = "bazel-lib-0.4.3",
-        url = "https://github.com/aspect-build/bazel-lib/archive/refs/tags/v0.4.3.tar.gz",
+        sha256 = "a8b47eeaf3c1bd41c4f4b633ef4c959daf83fdee343379495098b50571d4b3b8",
+        strip_prefix = "bazel-lib-0.11.1",
+        url = "https://github.com/aspect-build/bazel-lib/archive/refs/tags/v0.11.1.tar.gz",
     )
 
     maybe(
         http_archive,
         name = "aspect_rules_js",
-        # Using HEAD to pick up https://github.com/aspect-build/rules_js/pull/22
-        sha256 = "33d5164c2555e629ff594beaae10dc714876c85a1e0907671cadaa63e22c8486",
-        strip_prefix = "rules_js-cbbbd46572f7210d5cf8d13794e3acca5bec3da1",
-        url = "https://github.com/aspect-build/rules_js/archive/cbbbd46572f7210d5cf8d13794e3acca5bec3da1.tar.gz",
+        sha256 = "df5da45cd2c4a974200ef4bb640922132dfbee993f0c026e8937ec070c899d55",
+        strip_prefix = "rules_js-0.7.1",
+        url = "https://github.com/aspect-build/rules_js/archive/refs/tags/v0.7.1.tar.gz",
     )

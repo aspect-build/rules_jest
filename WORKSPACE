@@ -11,18 +11,18 @@ load("//jest:dependencies.bzl", "rules_jest_dependencies")
 # Fetch dependencies which users need as well
 rules_jest_dependencies()
 
-load("@rules_nodejs//nodejs:repositories.bzl", "nodejs_register_toolchains")
+load("@rules_nodejs//nodejs:repositories.bzl", "DEFAULT_NODE_VERSION", "nodejs_register_toolchains")
 
 nodejs_register_toolchains(
-    name = "node16",
-    node_version = "16.9.0",
+    name = "nodejs",
+    node_version = DEFAULT_NODE_VERSION,
 )
 
-load("//jest:repositories.bzl", "jest_register_toolchains")
+load("//jest:repositories.bzl", "jest_repositories")
 
-jest_register_toolchains(
+jest_repositories(
     name = "jest",
-    jest_version = "27.5.1",
+    jest_version = "v28.1.0",
 )
 
 # For running our own unit tests
