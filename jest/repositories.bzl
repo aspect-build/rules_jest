@@ -24,7 +24,7 @@ link_js_packages()
 
 directory_path(
     name = "jest_entrypoint",
-    directory = ":jsp__jest-cli__dir",
+    directory = ":direct__jest-cli__dir",
     path = "bin/jest.js",
     visibility = ["//visibility:public"],
 )
