@@ -1,10 +1,7 @@
 "Public API re-exports"
 
 load("//jest/private:jest_test.bzl", "lib")
-load("@aspect_rules_js//js:defs.bzl", "js_binary_lib")
-
-# buildifier: disable=bzl-visibility
-load("@aspect_rules_js//js/private:pnpm_utils.bzl", "pnpm_utils")
+load("@aspect_rules_js//js:defs.bzl", "constants", "utils", "js_binary_lib")
 
 _jest_test = rule(
     doc = """FIXME: add documentation""",
@@ -17,8 +14,8 @@ _jest_test = rule(
 def jest_test(jest_repository = "jest", **kwargs):
     jest_js_package = "@{}//:{}{}".format(
         jest_repository,
-        pnpm_utils.direct_link_target_namespace,
-        pnpm_utils.bazel_name("jest-cli"),
+        constants.direct_link_prefix,
+        utils.bazel_name("jest-cli"),
     )
     jest_entry_point = "@{}//:jest_entrypoint".format(jest_repository)
     _jest_test(

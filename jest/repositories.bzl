@@ -3,7 +3,7 @@
 These are needed for local dev, and users must install them as well.
 See https://docs.bazel.build/versions/main/skylark/deploying.html#dependencies
 """
-
+load("@aspect_rules_js//js:defs.bzl", "constants", "utils")
 load("//jest/private:versions.bzl", "TOOL_VERSIONS")
 
 LATEST_VERSION = TOOL_VERSIONS.keys()[-1]
@@ -24,11 +24,16 @@ link_js_packages()
 
 directory_path(
     name = "jest_entrypoint",
-    directory = ":direct__jest-cli__dir",
+    directory = ":{direct_link_prefix}{bazel_name}{dir_suffix}",
     path = "bin/jest.js",
     visibility = ["//visibility:public"],
 )
-""".format(version = repository_ctx.attr.jest_version))
+""".format(
+        bazel_name = utils.bazel_name("jest-cli"),
+        dir_suffix = constants.dir_suffix,
+        direct_link_prefix = constants.direct_link_prefix,
+        version = repository_ctx.attr.jest_version,
+    ))
 
     repository_ctx.file("jest/BUILD.bazel", "")
     repository_ctx.file("jest/defs.bzl", """\
