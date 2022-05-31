@@ -4,8 +4,8 @@ jest_test(
     name = "test",
     config = "jest.config.js",
     data = [
-        "index.test.js",
         "index.js",
+        "index.test.js",
     ],
-    verbose = True,
+    log_level = "debug",
 )
