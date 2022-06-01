@@ -16,9 +16,9 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "aspect_rules_js",
-    sha256 = "06dd11130f05df3e8b9aa8cc1b93577e88f540cd4ece8f00035109cc17dcf5ff",
-    strip_prefix = "rules_js-0.8.0",
-    url = "https://github.com/aspect-build/rules_js/archive/refs/tags/v0.8.0.tar.gz",
+    sha256 = "f01010e1f6bd49a8da6f7350c60992b7eb2eb62058cfe7aa6abd9e416bc2158b",
+    strip_prefix = "rules_js-0.9.1",
+    url = "https://github.com/aspect-build/rules_js/archive/refs/tags/v0.9.1.tar.gz",
 )
 
 load("@aspect_rules_js//js:repositories.bzl", "rules_js_dependencies")
@@ -35,6 +35,10 @@ nodejs_register_toolchains(
 load("@aspect_rules_js//js:npm_import.bzl", "translate_pnpm_lock")
 
 translate_pnpm_lock(name = "npm", pnpm_lock = "//:pnpm-lock.yaml")
+
+load("@npm//:repositories.bzl", "npm_repositories")
+
+npm_repositories()
 EOF
 bazel fetch @npm//:all
 cp $(bazel info output_base)/external/npm/{defs,repositories}.bzl "$out"
