@@ -1,7 +1,7 @@
 "Public API re-exports"
 
 load("//jest/private:jest_test.bzl", "lib")
-load("@aspect_rules_js//js:defs.bzl", "constants", "utils", "js_binary_lib")
+load("@aspect_rules_js//js:defs.bzl", "js_binary_lib")
 
 _jest_test = rule(
     doc = """FIXME: add documentation""",
@@ -12,11 +12,7 @@ _jest_test = rule(
 )
 
 def jest_test(jest_repository = "jest", **kwargs):
-    jest_js_package = "@{}//:{}{}".format(
-        jest_repository,
-        constants.direct_link_prefix,
-        utils.bazel_name("jest-cli"),
-    )
+    jest_js_package = "@{}//:node_modules/jest-cli".format(jest_repository)
     jest_entry_point = "@{}//:jest_entrypoint".format(jest_repository)
     _jest_test(
         enable_runfiles = select({
