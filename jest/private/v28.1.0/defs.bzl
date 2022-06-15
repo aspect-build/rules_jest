@@ -51,7 +51,7 @@ load("@npm__at_jest_reporters__28.1.1__links//:defs.bzl", link_45_store = "npm_l
 load("@npm__at_jest_schemas__28.0.2__links//:defs.bzl", link_46_store = "npm_link_imported_package_store")
 load("@npm__at_jest_source-map__28.0.2__links//:defs.bzl", link_47_store = "npm_link_imported_package_store")
 load("@npm__at_jest_test-result__28.1.1__links//:defs.bzl", link_48_store = "npm_link_imported_package_store")
-load("@npm__at_jest_test-sequencer__28.1.1__links//:defs.bzl", link_49_store = "npm_link_imported_package_store")
+load("@npm__at_jest_test-sequencer__28.1.1__links//:defs.bzl", link_49_direct = "npm_link_imported_package_direct", link_49_store = "npm_link_imported_package_store")
 load("@npm__at_jest_transform__28.1.1__links//:defs.bzl", link_50_store = "npm_link_imported_package_store")
 load("@npm__at_jest_types__28.1.1__links//:defs.bzl", link_51_store = "npm_link_imported_package_store")
 load("@npm__at_jridgewell_gen-mapping__0.1.1__links//:defs.bzl", link_52_store = "npm_link_imported_package_store")
@@ -71,7 +71,7 @@ load("@npm__at_types_graceful-fs__4.1.5__links//:defs.bzl", link_65_store = "npm
 load("@npm__at_types_istanbul-lib-coverage__2.0.4__links//:defs.bzl", link_66_store = "npm_link_imported_package_store")
 load("@npm__at_types_istanbul-lib-report__3.0.0__links//:defs.bzl", link_67_store = "npm_link_imported_package_store")
 load("@npm__at_types_istanbul-reports__3.0.1__links//:defs.bzl", link_68_store = "npm_link_imported_package_store")
-load("@npm__at_types_node__17.0.43__links//:defs.bzl", link_69_store = "npm_link_imported_package_store")
+load("@npm__at_types_node__18.0.0__links//:defs.bzl", link_69_store = "npm_link_imported_package_store")
 load("@npm__at_types_prettier__2.6.3__links//:defs.bzl", link_70_store = "npm_link_imported_package_store")
 load("@npm__at_types_stack-utils__2.0.1__links//:defs.bzl", link_71_store = "npm_link_imported_package_store")
 load("@npm__at_types_yargs-parser__21.0.0__links//:defs.bzl", link_72_store = "npm_link_imported_package_store")
@@ -97,7 +97,7 @@ load("@npm__buffer-from__1.1.2__links//:defs.bzl", link_91_store = "npm_link_imp
 load("@npm__callsites__3.1.0__links//:defs.bzl", link_92_store = "npm_link_imported_package_store")
 load("@npm__camelcase__5.3.1__links//:defs.bzl", link_93_store = "npm_link_imported_package_store")
 load("@npm__camelcase__6.3.0__links//:defs.bzl", link_94_store = "npm_link_imported_package_store")
-load("@npm__caniuse-lite__1.0.30001353__links//:defs.bzl", link_95_store = "npm_link_imported_package_store")
+load("@npm__caniuse-lite__1.0.30001357__links//:defs.bzl", link_95_store = "npm_link_imported_package_store")
 load("@npm__chalk__2.4.2__links//:defs.bzl", link_96_store = "npm_link_imported_package_store")
 load("@npm__chalk__4.1.2__links//:defs.bzl", link_97_store = "npm_link_imported_package_store")
 load("@npm__char-regex__1.0.2__links//:defs.bzl", link_98_store = "npm_link_imported_package_store")
@@ -118,7 +118,7 @@ load("@npm__dedent__0.7.0__links//:defs.bzl", link_112_store = "npm_link_importe
 load("@npm__deepmerge__4.2.2__links//:defs.bzl", link_113_store = "npm_link_imported_package_store")
 load("@npm__detect-newline__3.1.0__links//:defs.bzl", link_114_store = "npm_link_imported_package_store")
 load("@npm__diff-sequences__28.1.1__links//:defs.bzl", link_115_store = "npm_link_imported_package_store")
-load("@npm__electron-to-chromium__1.4.155__links//:defs.bzl", link_116_store = "npm_link_imported_package_store")
+load("@npm__electron-to-chromium__1.4.161__links//:defs.bzl", link_116_store = "npm_link_imported_package_store")
 load("@npm__emittery__0.10.2__links//:defs.bzl", link_117_store = "npm_link_imported_package_store")
 load("@npm__emoji-regex__8.0.0__links//:defs.bzl", link_118_store = "npm_link_imported_package_store")
 load("@npm__error-ex__1.3.2__links//:defs.bzl", link_119_store = "npm_link_imported_package_store")
@@ -168,7 +168,7 @@ load("@npm__jest-changed-files__28.0.2__links//:defs.bzl", link_162_store = "npm
 load("@npm__jest-circus__28.1.1__links//:defs.bzl", link_163_store = "npm_link_imported_package_store")
 load("@npm__jest-cli__28.1.0__links//:defs.bzl", link_164_direct = "npm_link_imported_package_direct", link_164_store = "npm_link_imported_package_store")
 load("@npm__jest-config__28.1.1__links//:defs.bzl", link_165_store = "npm_link_imported_package_store")
-load("@npm__jest-config__28.1.1__at_types_node_17.0.43__links//:defs.bzl", link_166_store = "npm_link_imported_package_store")
+load("@npm__jest-config__28.1.1__at_types_node_18.0.0__links//:defs.bzl", link_166_store = "npm_link_imported_package_store")
 load("@npm__jest-diff__28.1.1__links//:defs.bzl", link_167_store = "npm_link_imported_package_store")
 load("@npm__jest-docblock__28.1.1__links//:defs.bzl", link_168_store = "npm_link_imported_package_store")
 load("@npm__jest-each__28.1.1__links//:defs.bzl", link_169_store = "npm_link_imported_package_store")
@@ -233,7 +233,7 @@ load("@npm__require-directory__2.1.1__links//:defs.bzl", link_227_store = "npm_l
 load("@npm__resolve-cwd__3.0.0__links//:defs.bzl", link_228_store = "npm_link_imported_package_store")
 load("@npm__resolve-from__5.0.0__links//:defs.bzl", link_229_store = "npm_link_imported_package_store")
 load("@npm__resolve.exports__1.1.0__links//:defs.bzl", link_230_store = "npm_link_imported_package_store")
-load("@npm__resolve__1.22.0__links//:defs.bzl", link_231_store = "npm_link_imported_package_store")
+load("@npm__resolve__1.22.1__links//:defs.bzl", link_231_store = "npm_link_imported_package_store")
 load("@npm__rimraf__3.0.2__links//:defs.bzl", link_232_store = "npm_link_imported_package_store")
 load("@npm__safe-buffer__5.1.2__links//:defs.bzl", link_233_store = "npm_link_imported_package_store")
 load("@npm__semver__6.3.0__links//:defs.bzl", link_234_store = "npm_link_imported_package_store")
@@ -592,6 +592,8 @@ def npm_link_all_packages(name = "node_modules", imported_links = []):
         link_273_store(name = "{}/yargs".format(name))
     if is_direct:
         if native.package_name() == "":
+            direct_targets.append(link_49_direct(name = "{}/@jest/test-sequencer".format(name)))
+            scoped_direct_targets["@jest"] = scoped_direct_targets["@jest"] + [direct_targets[-1]] if "@jest" in scoped_direct_targets else [direct_targets[-1]]
             direct_targets.append(link_164_direct(name = "{}/jest-cli".format(name)))
 
     for scope, scoped_targets in scoped_direct_targets.items():

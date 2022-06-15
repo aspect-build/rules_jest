@@ -36,7 +36,7 @@ def rules_jest_dependencies():
     maybe(
         http_archive,
         name = "aspect_rules_js",
-        sha256 = "1fe40fd2819745ad19b5bec8f97a82087145fc6f145d3c84b0147899bf3490ca",
-        strip_prefix = "rules_js-0.13.0",
-        url = "https://github.com/aspect-build/rules_js/archive/refs/tags/v0.13.0.tar.gz",
+        sha256 = "529a7100fd757d1fe6d39901688b0ae4cfe033b7d432e9c4cfc022f33e3ec7fc",
+        strip_prefix = "rules_js-1.0.0-beta.2",
+        url = "https://github.com/aspect-build/rules_js/archive/refs/tags/v1.0.0-beta.2.tar.gz",
     )

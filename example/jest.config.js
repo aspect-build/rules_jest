@@ -1,5 +1,5 @@
 module.exports = {
-  testEnvironment: 'node',
-  reporters: ['default'],
-  testMatch: ['**/*.test.js']
+  testEnvironment: "node",
+  reporters: ["default"],
+  testMatch: ["**/*.test.js"],
 };

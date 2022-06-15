@@ -16,9 +16,9 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "aspect_rules_js",
-    sha256 = "1fe40fd2819745ad19b5bec8f97a82087145fc6f145d3c84b0147899bf3490ca",
-    strip_prefix = "rules_js-0.13.0",
-    url = "https://github.com/aspect-build/rules_js/archive/refs/tags/v0.13.0.tar.gz",
+    sha256 = "529a7100fd757d1fe6d39901688b0ae4cfe033b7d432e9c4cfc022f33e3ec7fc",
+    strip_prefix = "rules_js-1.0.0-beta.2",
+    url = "https://github.com/aspect-build/rules_js/archive/refs/tags/v1.0.0-beta.2.tar.gz",
 )
 
 load("@aspect_rules_js//js:repositories.bzl", "rules_js_dependencies")
@@ -34,7 +34,15 @@ nodejs_register_toolchains(
 
 load("@aspect_rules_js//npm:npm_import.bzl", "npm_translate_lock")
 
-npm_translate_lock(name = "npm", pnpm_lock = "//:pnpm-lock.yaml")
+npm_translate_lock(
+    name = "npm",
+    pnpm_lock = "//:pnpm-lock.yaml",
+    public_hoist_packages = {
+        # Hoist @jest/test-sequencer out of the transitive closure of jest-cli to node_modules/@jest/test-sequencer
+        # so it can be required from sharing.js
+        "@jest/test-sequencer": [""],
+    },
+)
 
 load("@npm//:repositories.bzl", "npm_repositories")
 
