@@ -39,7 +39,7 @@ npm_translate_lock(
     pnpm_lock = "//:pnpm-lock.yaml",
     public_hoist_packages = {
         # Hoist @jest/test-sequencer out of the transitive closure of jest-cli to node_modules/@jest/test-sequencer
-        # so it can be required from sharing.js
+        # so it can be required from sequencer.js
         "@jest/test-sequencer": [""],
     },
 )
