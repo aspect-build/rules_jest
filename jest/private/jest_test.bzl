@@ -13,7 +13,14 @@ _attrs = dicts.add(js_binary_lib.attrs, {
         allow_single_file = [".js"],
         mandatory = True,
     ),
+    "sequencer": attr.label(
+        allow_single_file = True,
+        mandatory = True,
+    ),
 })
+
+def _relative_short_path(to, frm):
+    return "/".join([".."] * len(frm.dirname.split("/")) + [to.short_path])
 
 def _impl(ctx):
     fixed_args = [
@@ -36,7 +43,10 @@ def _impl(ctx):
         # find and execute tests.
         "--config",
         ctx.file.config.short_path,
+        "--testSequencer",
+        _relative_short_path(ctx.file.sequencer, ctx.file.config),
     ]
+
     launcher = js_binary_lib.create_launcher(
         ctx,
         log_prefix_rule_set = "aspect_rules_jest",
@@ -44,7 +54,7 @@ def _impl(ctx):
         fixed_args = fixed_args,
     )
     runfiles = launcher.runfiles.merge(ctx.runfiles(
-        files = copy_files_to_bin_actions(ctx, [ctx.file.config] + ctx.files.data),
+        files = copy_files_to_bin_actions(ctx, [ctx.file.config] + ctx.files.data) + [ctx.file.sequencer],
     ))
     return [
         DefaultInfo(

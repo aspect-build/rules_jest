@@ -12,14 +12,16 @@ _jest_test = rule(
 )
 
 def jest_test(jest_repository = "jest", **kwargs):
-    jest_js_package = "@{}//:node_modules/jest-cli".format(jest_repository)
-    jest_entry_point = "@{}//:jest_entrypoint".format(jest_repository)
     _jest_test(
         enable_runfiles = select({
             "@aspect_rules_js//js/private:enable_runfiles": True,
             "//conditions:default": False,
         }),
-        entry_point = jest_entry_point,
-        data = kwargs.pop("data", []) + [jest_js_package],
+        entry_point = "@{}//:jest_entrypoint".format(jest_repository),
+        sequencer = "@{}//:sequencer".format(jest_repository),
+        data = kwargs.pop("data", []) + [
+            "@{}//:node_modules/jest-cli".format(jest_repository),
+            "@{}//:node_modules/@jest/test-sequencer".format(jest_repository),
+        ],
         **kwargs
     )

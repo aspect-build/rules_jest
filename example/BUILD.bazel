@@ -6,6 +6,8 @@ jest_test(
     data = [
         "index.js",
         "index.test.js",
+        "index_2.test.js",
     ],
     log_level = "debug",
+    shard_count = 2,
 )
