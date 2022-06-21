@@ -2,6 +2,7 @@
 
 load("@aspect_rules_js//js:defs.bzl", "js_binary_lib")
 load("@aspect_bazel_lib//lib:copy_to_bin.bzl", "copy_files_to_bin_actions")
+load("@aspect_bazel_lib//lib:paths.bzl", "relative_file")
 load("@bazel_skylib//lib:dicts.bzl", "dicts")
 
 _attrs = dicts.add(js_binary_lib.attrs, {
@@ -18,9 +19,6 @@ _attrs = dicts.add(js_binary_lib.attrs, {
         mandatory = True,
     ),
 })
-
-def _relative_short_path(to, frm):
-    return "/".join([".."] * len(frm.dirname.split("/")) + [to.short_path])
 
 def _impl(ctx):
     fixed_args = [
@@ -44,7 +42,7 @@ def _impl(ctx):
         "--config",
         ctx.file.config.short_path,
         "--testSequencer",
-        _relative_short_path(ctx.file.sequencer, ctx.file.config),
+        relative_file(ctx.file.sequencer.short_path, ctx.file.config.short_path),
     ]
 
     launcher = js_binary_lib.create_launcher(
