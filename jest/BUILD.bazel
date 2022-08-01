@@ -27,7 +27,7 @@ bzl_library(
     visibility = ["//visibility:public"],
     deps = [
         "//jest/private:jest_test",
-        "@aspect_rules_js//js:defs",
+        "@aspect_rules_js//js:libs",
     ],
 )
 

@@ -1,7 +1,7 @@
 "Public API re-exports"
 
 load("//jest/private:jest_test.bzl", "lib")
-load("@aspect_rules_js//js:defs.bzl", "js_binary_lib")
+load("@aspect_rules_js//js:libs.bzl", "js_binary_lib")
 
 _jest_test = rule(
     doc = """FIXME: add documentation""",
