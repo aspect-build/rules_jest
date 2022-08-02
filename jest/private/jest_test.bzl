@@ -1,7 +1,6 @@
 "Implementation details for jest_test rule"
 
-load("@aspect_rules_js//js:defs.bzl", "js_binary_lib")
-load("@aspect_bazel_lib//lib:copy_to_bin.bzl", "copy_files_to_bin_actions")
+load("@aspect_rules_js//js:libs.bzl", "js_binary_lib", "js_lib_helpers")
 load("@aspect_bazel_lib//lib:paths.bzl", "relative_file")
 load("@bazel_skylib//lib:dicts.bzl", "dicts")
 
@@ -51,9 +50,24 @@ def _impl(ctx):
         log_prefix_rule = "jest_test",
         fixed_args = fixed_args,
     )
-    runfiles = launcher.runfiles.merge(ctx.runfiles(
-        files = copy_files_to_bin_actions(ctx, [ctx.file.config] + ctx.files.data) + [ctx.file.sequencer],
-    ))
+
+    files = js_lib_helpers.gather_files_from_js_providers(
+        targets = ctx.attr.data,
+        include_transitive_sources = ctx.attr.include_transitive_sources,
+        include_declarations = ctx.attr.include_declarations,
+        include_npm_linked_packages = ctx.attr.include_npm_linked_packages,
+    )
+    files.extend(ctx.files.data)
+    files.append(ctx.file.sequencer)
+    files.append(ctx.file.config)
+
+    runfiles = ctx.runfiles(
+        files = files,
+    ).merge(launcher.runfiles).merge_all([
+        target[DefaultInfo].default_runfiles
+        for target in ctx.attr.data
+    ])
+
     return [
         DefaultInfo(
             executable = launcher.executable,
