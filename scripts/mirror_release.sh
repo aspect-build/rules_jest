@@ -35,7 +35,7 @@ nodejs_register_toolchains(
 load("@aspect_rules_js//npm:npm_import.bzl", "npm_translate_lock")
 
 npm_translate_lock(
-    name = "npm",
+    name = "npm_aspect_rules_jest",
     pnpm_lock = "//:pnpm-lock.yaml",
     public_hoist_packages = {
         # Hoist @jest/test-sequencer out of the transitive closure of jest-cli to node_modules/@jest/test-sequencer
@@ -44,10 +44,10 @@ npm_translate_lock(
     },
 )
 
-load("@npm//:repositories.bzl", "npm_repositories")
+load("@npm_aspect_rules_jest//:repositories.bzl", "npm_repositories")
 
 npm_repositories()
 EOF
-bazel fetch @npm//:all
-cp $(bazel info output_base)/external/npm/{defs,repositories}.bzl "$out"
+bazel fetch @npm_aspect_rules_jest//:all
+cp $(bazel info output_base)/external/npm_aspect_rules_jest/{defs,repositories}.bzl "$out"
 echo "Mirrored jest version $version to $out. Now add it to jest/private/versions.bzl"
