@@ -2,7 +2,7 @@
 
 Public API re-exports
 
-<a id="#jest_test"></a>
+<a id="jest_test"></a>
 
 ## jest_test
 
