@@ -22,10 +22,10 @@ def rules_jest_internal_deps():
     maybe(
         http_archive,
         name = "bazel_gazelle",
-        sha256 = "501deb3d5695ab658e82f6f6f549ba681ea3ca2a5fb7911154b5aa45596183fa",
+        sha256 = "efbbba6ac1a4fd342d5122cbdfdb82aeb2cf2862e35022c752eaddffada7c3f3",
         urls = [
-            "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.26.0/bazel-gazelle-v0.26.0.tar.gz",
-            "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.26.0/bazel-gazelle-v0.26.0.tar.gz",
+            "https://mirror.bazel.build/github.com/bazelbuild/bazel-gazelle/releases/download/v0.27.0/bazel-gazelle-v0.27.0.tar.gz",
+            "https://github.com/bazelbuild/bazel-gazelle/releases/download/v0.27.0/bazel-gazelle-v0.27.0.tar.gz",
         ],
     )
 
@@ -35,11 +35,11 @@ def rules_jest_internal_deps():
     maybe(
         http_archive,
         name = "bazel_skylib",
-        sha256 = "07b4117379dde7ab382345c3b0f5edfc6b7cff6c93756eac63da121e0bbcc5de",
-        strip_prefix = "bazel-skylib-1.1.1",
+        sha256 = "3b620033ca48fcd6f5ef2ac85e0f6ec5639605fa2f627968490e52fc91a9932f",
+        strip_prefix = "bazel-skylib-1.3.0",
         urls = [
-            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/archive/1.1.1.tar.gz",
-            "https://github.com/bazelbuild/bazel-skylib/archive/refs/tags/1.1.1.tar.gz",
+            "https://mirror.bazel.build/github.com/bazelbuild/bazel-skylib/archive/1.3.0.tar.gz",
+            "https://github.com/bazelbuild/bazel-skylib/archive/refs/tags/1.3.0.tar.gz",
         ],
     )
 
