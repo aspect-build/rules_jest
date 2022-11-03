@@ -24,10 +24,11 @@ nodejs_register_toolchains(
 
 load("//jest:repositories.bzl", "jest_repositories")
 
-jest_repositories(
-    name = "jest",
-    jest_version = "v28.1.0",
-)
+jest_repositories(name = "jest")
+
+load("@jest//:npm_repositories.bzl", jest_npm_repositories = "npm_repositories")
+
+jest_npm_repositories()
 
 # For running our own unit tests
 load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
@@ -42,6 +43,6 @@ load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_depe
 
 go_rules_dependencies()
 
-go_register_toolchains(version = "1.19.1")
+go_register_toolchains(version = "1.19.3")
 
 gazelle_dependencies()
