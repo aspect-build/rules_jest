@@ -22,6 +22,8 @@ def jest_test(jest_repository = "jest", **kwargs):
         data = kwargs.pop("data", []) + [
             "@{}//:node_modules/jest-cli".format(jest_repository),
             "@{}//:node_modules/@jest/test-sequencer".format(jest_repository),
+            "@{}//:node_modules/jest-junit".format(jest_repository),
         ],
+        jest_repository = jest_repository,
         **kwargs
     )

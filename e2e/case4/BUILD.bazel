@@ -1,0 +1,7 @@
+load("@jest//:defs.bzl", "jest_test")
+
+jest_test(
+    name = "case4",
+    config = "jest.config.js",
+    data = ["index.test.js"],
+)

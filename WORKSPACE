@@ -46,3 +46,9 @@ go_rules_dependencies()
 go_register_toolchains(version = "1.19.3")
 
 gazelle_dependencies()
+
+# Test case 4 (see //jest/tests)
+local_repository(
+    name = "case4",
+    path = "e2e/case4",
+)

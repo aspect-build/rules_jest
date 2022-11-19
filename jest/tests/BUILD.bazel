@@ -1,0 +1,41 @@
+load("//jest:defs.bzl", "jest_test")
+
+exports_files([
+    "case3.jest.config.js",
+    "case3.test.js",
+])
+
+# Case 1: jest_test sets JEST_JUNIT_OUTPUT_FILE env var to bazel xml output path
+# even when auto_configure_reporters is disabled
+jest_test(
+    name = "case1",
+    auto_configure_reporters = False,
+    config = "case1.jest.config.js",
+    data = [
+        "case1.test.js",
+    ],
+)
+
+# Case 2: jest config file in a subdirectory
+jest_test(
+    name = "case2",
+    config = "case2/case2.jest.config.js",
+    data = [
+        "case2/case2.test.js",
+    ],
+)
+
+# Case 3: Test in root package (see //:case4)
+
+# Case 4: Run test in external repository
+# See e2e/case4.sh
+
+# Case 5: Disable auto_configure_reporters and configure default reporter
+jest_test(
+    name = "case5",
+    auto_configure_reporters = False,
+    config = "case5.jest.config.js",
+    data = [
+        "case5.test.js",
+    ],
+)
