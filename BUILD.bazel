@@ -1,5 +1,7 @@
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
+load("@aspect_bazel_lib//lib:copy_file.bzl", "copy_file")
+load("//jest:defs.bzl", "jest_test")
 
 gazelle_binary(
     name = "gazelle_bin",
@@ -18,5 +20,27 @@ bzl_library(
     deps = [
         "@bazel_tools//tools/build_defs/repo:http.bzl",
         "@bazel_tools//tools/build_defs/repo:utils.bzl",
+    ],
+)
+
+# Test case 3: jest config file in root package
+# Copy files from tests package to keep the root package clean.
+copy_file(
+    name = "case3_test_js",
+    src = "//jest/tests:case3.test.js",
+    out = "case3.test.js",
+)
+
+copy_file(
+    name = "case3_jest_config_js",
+    src = "//jest/tests:case3.jest.config.js",
+    out = "case3.jest.config.js",
+)
+
+jest_test(
+    name = "case3",
+    config = "case3.jest.config.js",
+    data = [
+        "case3.test.js",
     ],
 )
