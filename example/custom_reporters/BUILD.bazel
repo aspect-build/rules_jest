@@ -1,0 +1,27 @@
+load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
+
+# Case 1: auto_configure_reporters is True (the default) but dup reporters are not added
+jest_test(
+    name = "case1_test",
+    auto_configure_reporters = True,
+    config = "jest.config.js",
+    data = [
+        "index.js",
+        "index.test.js",
+        "//example:node_modules/jest-junit",
+    ],
+    log_level = "debug",
+)
+
+# Case 2: auto_configure_reporters is False
+jest_test(
+    name = "case2_test",
+    auto_configure_reporters = False,
+    config = "jest.config.js",
+    data = [
+        "index.js",
+        "index.test.js",
+        "//example:node_modules/jest-junit",
+    ],
+    log_level = "debug",
+)

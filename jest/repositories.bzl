@@ -31,8 +31,11 @@ If you need custom versions, please file an issue.""".format(jest_version, TOOL_
         pnpm_lock = "@aspect_rules_jest//jest/private:{version}/pnpm-lock.yaml".format(version = jest_version),
         public_hoist_packages = {
             # Hoist @jest/test-sequencer out of the transitive closure of jest-cli to node_modules/@jest/test-sequencer
-            # so it can be required from sequencer.js
+            # so it can be required from bazel_sequencer.js
             "@jest/test-sequencer": [""],
+            # Hoist jest-snapshot out of the transitive closure of jest-cli to node_modules/jest-snapshot
+            # so it can be required from bazel_snapshot_resolver.js
+            "jest-snapshot": [""],
         },
         # We'll be linking in the @foo repository and not the repository where the pnpm-lock file is located
         link_workspace = name,
@@ -53,9 +56,21 @@ If you need custom versions, please file an issue.""".format(jest_version, TOOL_
     visibility = ["//visibility:public"],
 )""",
                 """copy_file(
-    name = "sequencer",
-    src = "@aspect_rules_jest//jest/private:sequencer.js",
-    out = "sequencer.js",
+    name = "bazel_sequencer",
+    src = "@aspect_rules_jest//jest/private:bazel_sequencer.js",
+    out = "bazel_sequencer.js",
+    visibility = ["//visibility:public"],
+)""",
+                """copy_file(
+    name = "bazel_snapshot_reporter",
+    src = "@aspect_rules_jest//jest/private:bazel_snapshot_reporter.js",
+    out = "bazel_snapshot_reporter.js",
+    visibility = ["//visibility:public"],
+)""",
+                """copy_file(
+    name = "bazel_snapshot_resolver",
+    src = "@aspect_rules_jest//jest/private:bazel_snapshot_resolver.js",
+    out = "bazel_snapshot_resolver.js",
     visibility = ["//visibility:public"],
 )""",
             ],
