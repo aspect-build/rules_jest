@@ -44,6 +44,7 @@ jobs:
         bazelversion: ${{ fromJSON(needs.matrix-prep-bazelversion.outputs.bazelversions) }}
         folder:
           - "."
+          - "e2e/update_snapshots"
           - "e2e/workspace"
 
     # Steps represent a sequence of tasks that will be executed as part of the job
@@ -62,7 +63,28 @@ jobs:
 
       - name: Configure Bazel version
         working-directory: ${{ matrix.folder }}
-        run: echo "USE_BAZEL_VERSION=${{ matrix.bazelversion }}" >> $GITHUB_ENV
+        # Overwrite the .bazelversion instead of using USE_BAZEL_VERSION so that Bazelisk
+        # still bootstraps Aspect CLI from configuration in .bazeliskrc. Aspect CLI will
+        # then use .bazelversion to determine which Bazel version to use
+        run: echo "${{ matrix.bazelversion }}" > .bazelversion
+
+      - name: Check for test.sh
+        # Checks for the existence of test.sh in the folder. Downstream steps can use
+        # steps.has_test_sh.outputs.files_exists as a conditional.
+        id: has_test_sh
+        uses: andstor/file-existence-action@v1
+        with:
+          files: "${{ matrix.folder }}/test.sh"
+
+      - name: ./test.sh
+        # Run if there is a test.sh file in the folder.
+        if: steps.has_test_sh.outputs.files_exists == 'true'
+        working-directory: ${{ matrix.folder }}
+        shell: bash
+        run: ./test.sh
+        env:
+          # Bazelisk will download bazel to here
+          XDG_CACHE_HOME: ~/.cache/bazel-repo
 
       - name: bazel test //...
         env:

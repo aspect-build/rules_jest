@@ -1,0 +1,18 @@
+load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
+
+jest_test(
+    name = "test",
+    config = "jest.config.js",
+    data = [
+        ".babelrc.js",
+        "link.js",
+        "link.test.js",
+        "//example:node_modules/@babel/core",
+        "//example:node_modules/@babel/preset-env",
+        "//example:node_modules/@babel/preset-react",
+        "//example:node_modules/babel-jest",
+        "//example:node_modules/react",
+        "//example:node_modules/react-test-renderer",
+    ],
+    snapshots = glob(["__snapshots__/*.snap"]),
+)

@@ -1,15 +1,22 @@
 <!-- Generated with Stardoc: http://skydoc.bazel.build -->
 
-Public API re-exports
+# Public API for Jest rules
+
 
 <a id="jest_test"></a>
 
 ## jest_test
 
 <pre>
-jest_test(<a href="#jest_test-jest_repository">jest_repository</a>, <a href="#jest_test-kwargs">kwargs</a>)
+jest_test(<a href="#jest_test-name">name</a>, <a href="#jest_test-config">config</a>, <a href="#jest_test-data">data</a>, <a href="#jest_test-snapshots">snapshots</a>, <a href="#jest_test-run_in_band">run_in_band</a>, <a href="#jest_test-colors">colors</a>, <a href="#jest_test-auto_configure_reporters">auto_configure_reporters</a>,
+          <a href="#jest_test-auto_configure_test_sequencer">auto_configure_test_sequencer</a>, <a href="#jest_test-snapshot_ext">snapshot_ext</a>, <a href="#jest_test-jest_repository">jest_repository</a>, <a href="#jest_test-kwargs">kwargs</a>)
 </pre>
 
+jest_test rule
+
+Supports Bazel sharding. See https://docs.bazel.build/versions/main/test-encyclopedia.html#test-sharding.
+
+Supports updating snapshots with `bazel run {name}_update_snapshots` if `snapshots` are specified.
 
 
 **PARAMETERS**
@@ -17,7 +24,16 @@ jest_test(<a href="#jest_test-jest_repository">jest_repository</a>, <a href="#je
 
 | Name  | Description | Default Value |
 | :------------- | :------------- | :------------- |
-| <a id="jest_test-jest_repository"></a>jest_repository |  <p align="center"> - </p>   |  <code>"jest"</code> |
-| <a id="jest_test-kwargs"></a>kwargs |  <p align="center"> - </p>   |  none |
+| <a id="jest_test-name"></a>name |  A unique name for this target.   |  none |
+| <a id="jest_test-config"></a>config |  "Optional Jest config file. See https://jestjs.io/docs/configuration.<br><br>Supported config file types are ".js", ".cjs", ".mjs", ".json" which come from https://jestjs.io/docs/configuration minus TypeScript since we this rule extends from the configuration. TypeScript jest configs should be transpiled before being passed to jest_test with [rules_ts](https://github.com/aspect-build/rules_ts).   |  <code>None</code> |
+| <a id="jest_test-data"></a>data |  Runtime dependencies of the Jest test.<br><br>This should include all test files, configuration files & files under test.   |  <code>[]</code> |
+| <a id="jest_test-snapshots"></a>snapshots |  A list of snapshot files expected to be generated and checked by this jest_test target. Must be source files.<br><br>If snapshots are specified, a <code>{name}_update_snapshots</code> binary target is generated that will update the snapshots when <code>bazel run</code>. This is the equivalent to running <code>jest -u</code> or <code>jest --updateSnapshot</code> outside of Bazel.   |  <code>[]</code> |
+| <a id="jest_test-run_in_band"></a>run_in_band |  When True, the <code>--runInBand</code> argument is passed to the Jest CLI so that all tests are run serially in the current process, rather than creating a worker pool of child processes that run tests. See https://jestjs.io/docs/cli#--runinband for more info.<br><br>This is the desired default behavior under Bazel since Bazel expect each test process to use up one CPU core. To parallelize a single jest_test across many cores, use <code>shard_count</code> instead which is supported by <code>jest_test</code>. See https://docs.bazel.build/versions/main/test-encyclopedia.html#test-sharding.   |  <code>True</code> |
+| <a id="jest_test-colors"></a>colors |  When True, the <code>--colors</code> argument is passed to the Jest CLI. See https://jestjs.io/docs/cli#--colors.   |  <code>True</code> |
+| <a id="jest_test-auto_configure_reporters"></a>auto_configure_reporters |  Let jest_test configure reporters for Bazel test and xml test logs.<br><br>The <code>default</code> reporter is used for the standard test log and <code>jest-junit</code> is used for the xml log. These reporters are appended to the list of reporters from the user Jest <code>config</code> only if they are not already set.<br><br>The <code>JEST_JUNIT_OUTPUT_FILE</code> environment variable is always set to where Bazel expects a test runner to write its xml test log so that if <code>jest-junit</code> is configured in the user Jest <code>config</code> it will output the junit xml file where Bazel expects by default.   |  <code>True</code> |
+| <a id="jest_test-auto_configure_test_sequencer"></a>auto_configure_test_sequencer |  Let jest_test configure a custom test sequencer for Bazel test that support Bazel sharding.<br><br>Any custom testSequencer value in a user Jest <code>config</code> will be overridden.<br><br>See https://jestjs.io/docs/configuration#testsequencer-string for more information on Jest testSequencer config option.   |  <code>True</code> |
+| <a id="jest_test-snapshot_ext"></a>snapshot_ext |  The expected extensions for snapshot files. Defaults to <code>.snap</code>, the Jest default.   |  <code>".snap"</code> |
+| <a id="jest_test-jest_repository"></a>jest_repository |  Name of the repository created with jest_repositories().   |  <code>"jest"</code> |
+| <a id="jest_test-kwargs"></a>kwargs |  All other args from <code>js_test</code>. See https://github.com/aspect-build/rules_js/blob/main/docs/js_binary.md#js_test   |  none |
 
 

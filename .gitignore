@@ -1,3 +1,4 @@
 bazel-*
 .bazelrc.user
-jest/private/node_modules/
+node_modules
+example/node_modules

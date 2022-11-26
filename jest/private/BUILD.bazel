@@ -1,7 +1,10 @@
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 
 exports_files([
-    "sequencer.js",
+    "jest_config_template.mjs",
+    "bazel_sequencer.js",
+    "bazel_snapshot_reporter.js",
+    "bazel_snapshot_resolver.js",
 ])
 
 bzl_library(

@@ -1,0 +1,32 @@
+load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
+
+# Case 1: auto_configure_test_sequencer is True (the default) so custom test sequencer will be overridden
+jest_test(
+    name = "case1_test",
+    auto_configure_test_sequencer = True,
+    config = "jest.config.js",
+    data = [
+        "index.js",
+        "index.test.js",
+        "index_2.test.js",
+        "sequencer.js",
+    ],
+    log_level = "debug",
+    shard_count = 2,
+)
+
+# Case 1: auto_configure_test_sequencer is False so custom test sequencer will be used
+jest_test(
+    name = "case2_test",
+    auto_configure_test_sequencer = False,
+    config = "jest.config.js",
+    data = [
+        "index.js",
+        "index.test.js",
+        "index_2.test.js",
+        "sequencer.js",
+        "//example:node_modules/@jest/test-sequencer",
+    ],
+    log_level = "debug",
+    shard_count = 2,
+)
