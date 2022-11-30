@@ -1,5 +1,5 @@
-const indexfile = require("./index.js");
+const index = require(".");
 
 test("it should work", () => {
-  expect(indexfile).toBe("test");
+  expect(index).toBe("test");
 });
