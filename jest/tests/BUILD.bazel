@@ -39,3 +39,22 @@ jest_test(
         "case5.test.js",
     ],
 )
+
+# Case 6: Coverage reporting (see e2e test)
+jest_test(
+    name = "case6",
+    config = "case6.jest.config.js",
+    data = [
+        "case6.index.js",
+        "case6.test.js",
+    ],
+)
+
+# Case 7: Coverage reporting, no supplied jest config file (see e2e test)
+jest_test(
+    name = "case7",
+    data = [
+        "case7.index.js",
+        "case7.test.js",
+    ],
+)

@@ -12,3 +12,9 @@ bzl_library(
     srcs = ["jest_test.bzl"],
     visibility = ["//jest:__subpackages__"],
 )
+
+sh_binary(
+    name = "noop",
+    srcs = ["noop.sh"],
+    visibility = ["//visibility:public"],
+)

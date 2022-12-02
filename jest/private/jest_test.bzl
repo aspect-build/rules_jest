@@ -45,9 +45,18 @@ _attrs = dicts.add(js_binary_lib.attrs, {
         allow_single_file = True,
         default = Label("//jest/private:jest_config_template.mjs"),
     ),
+    # Earlier versions of Bazel expect this attribute to be present.
+    # https://github.com/bazelbuild/bazel/issues/13978
+    # We use a no-op because jest itself generates the coverage.
+    "_lcov_merger": attr.label(
+        executable = True,
+        default = Label("//jest/private:noop"),
+        cfg = "exec",
+    ),
 })
 
 def _impl(ctx):
+    providers = []
     generated_config = ctx.actions.declare_file("%s__jest.config.mjs" % ctx.label.name)
     user_config = copy_file_to_bin_action(ctx, ctx.file.config) if ctx.attr.config else None
 
@@ -60,6 +69,8 @@ def _impl(ctx):
             "{{BAZEL_SEQUENCER_SHORT_PATH}}": ctx.file.bazel_sequencer.short_path,
             "{{BAZEL_SNAPSHOT_REPORTER_SHORT_PATH}}": ctx.file.bazel_snapshot_reporter.short_path,
             "{{BAZEL_SNAPSHOT_RESOLVER_SHORT_PATH}}": ctx.file.bazel_snapshot_resolver.short_path,
+            "{{COVERAGE_ENABLED}}": "1" if ctx.coverage_instrumented() else "",
+            "{{GENERATED_CONFIG_SHORT_PATH}}": generated_config.short_path,
             "{{JUNIT_REPORTER_SHORT_PATH}}": "../{jest_repository}/node_modules/jest-junit/index.js".format(jest_repository = ctx.attr.jest_repository),
             "{{USER_CONFIG_SHORT_PATH}}": user_config.short_path if user_config else "",
             "{{USER_CONFIG_PATH}}": user_config.path if user_config else "",
@@ -129,12 +140,36 @@ def _impl(ctx):
         for target in ctx.attr.data
     ])
 
-    return [
+    if ctx.configuration.coverage_enabled:
+        providers.append(
+            coverage_common.instrumented_files_info(
+                ctx,
+                source_attributes = ["data"],
+                extensions = [
+                    "cjs",
+                    "cjx",
+                    "cts",
+                    "ctx",
+                    "js",
+                    "jsx",
+                    "mjs",
+                    "mjx",
+                    "mts",
+                    "mtx",
+                    "ts",
+                    "tsx",
+                ],
+            ),
+        )
+
+    providers.append(
         DefaultInfo(
             executable = launcher.executable,
             runfiles = runfiles,
         ),
-    ]
+    )
+
+    return providers
 
 lib = struct(
     attrs = _attrs,
