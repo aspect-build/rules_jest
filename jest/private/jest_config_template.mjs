@@ -1,14 +1,16 @@
 // jest.config.js template for jest_test rule
-import { existsSync } from "fs";
+import { existsSync, readFileSync } from "fs";
 import * as path from "path";
 
 // isTest indicates if this is a test target or if this is a binary target generating reference output snapshots for the snapshot updater target
 const isTest = !!process.env.TEST_TARGET;
 const updateSnapshots = process.env.JEST_TEST__UPDATE_SNAPSHOTS;
+const coverageEnabled = !!"{{COVERAGE_ENABLED}}";
 const autoConfReporters = !!"{{AUTO_CONF_REPORTERS}}";
 const autoConfTestSequencer = !!"{{AUTO_CONF_TEST_SEQUENCER}}";
 const userConfigShortPath = "{{USER_CONFIG_SHORT_PATH}}";
 const userConfigPath = "{{USER_CONFIG_PATH}}";
+const generatedConfigShortPath = "{{GENERATED_CONFIG_SHORT_PATH}}";
 const junitReportPath = _resolveRunfilesPath("{{JUNIT_REPORTER_SHORT_PATH}}");
 const bazelSequencerPath = _resolveRunfilesPath(
   "{{BAZEL_SEQUENCER_SHORT_PATH}}"
@@ -136,6 +138,28 @@ if (updateSnapshots) {
     process.env.JEST_TEST__USER_SNAPSHOT_RESOLVER = snapshotResolverPath;
   }
   config.snapshotResolver = bazelSnapshotResolverPath;
+}
+
+if (coverageEnabled) {
+  config.collectCoverage = true;
+  config.coverageDirectory = path.dirname(process.env.COVERAGE_OUTPUT_FILE);
+  config.coverageReporters = [
+    "text",
+    ["lcovonly", { file: path.basename(process.env.COVERAGE_OUTPUT_FILE) }],
+  ];
+
+  // Glob pattern paths for which files to cover must be relative to this
+  // jest config file in runfiles.
+  const jestConfigDir = path.dirname(
+    _resolveRunfilesPath(generatedConfigShortPath)
+  );
+
+  // Only generate coverage for files declared in the COVERAGE_MANIFEST
+  config.collectCoverageFrom = readFileSync(process.env.COVERAGE_MANIFEST)
+    .toString("utf8")
+    .split("\n")
+    .filter((f) => f != "")
+    .map((f) => path.relative(jestConfigDir, f));
 }
 
 if (process.env.JS_BINARY__LOG_DEBUG) {
