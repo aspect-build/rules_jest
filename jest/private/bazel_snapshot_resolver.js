@@ -3,8 +3,14 @@ const { EXTENSION } = require("jest-snapshot");
 
 const DOT_EXTENSION = `.${EXTENSION}`;
 
-// Must match GENERATED_SNAPSHOT_SUFFIX in //jest:defs.bzl
-const GENERATED_SNAPSHOT_SUFFIX = "-generated";
+// Must match REFERENCE_SNAPSHOT_SUFFIX in //jest:defs.bzl
+const REFERENCE_SNAPSHOT_SUFFIX = "-out";
+
+// Must match REFERENCE_SNAPSHOT_DIRECTORY in //jest:defs.bzl
+const REFERENCE_SNAPSHOT_DIRECTORY = "out";
+
+const INTERNAL_ERROR_MSG =
+  "rules_jest internal error, please file an issue: https://github.com/aspect-build/rules_jest/issues";
 
 // Default snapshot resolver based on
 // https://github.com/facebook/jest/blob/6e5b1d60a1214e792b5229993b5475445e9c1a6e/packages/jest-snapshot/src/SnapshotResolver.ts#L59.
@@ -37,24 +43,52 @@ let snapshotResolver = process.env.JEST_TEST__USER_SNAPSHOT_RESOLVER
   : defaultSnapshotResolver;
 
 if (process.env.JEST_TEST__UPDATE_SNAPSHOTS) {
-  // If we're updating snapshots then append a GENERATED_SNAPSHOT_SUFFIX to the snapshot path so the
-  // generated snapshot path is different from the source snapshot path allowing us to use
-  // write_source_files to for the update target.
-  origSnapshotResolver = snapshotResolver;
-  snapshotResolver = {
-    resolveSnapshotPath: (testPath) =>
-      origSnapshotResolver.resolveSnapshotPath(testPath) +
-      GENERATED_SNAPSHOT_SUFFIX,
-    resolveTestPath: (snapshotPath) =>
-      origSnapshotResolver.resolveTestPath(
-        snapshotPath.substr(
-          0,
-          snapshotPath.length - GENERATED_SNAPSHOT_SUFFIX.length
-        )
-      ),
-    testPathForConsistencyCheck:
-      origSnapshotResolver.testPathForConsistencyCheck,
-  };
+  // This run of Jest is meant for generating reference snapshots for the snapshots update Bazel target
+  if (process.env.JEST_TEST__UPDATE_SNAPSHOTS == "directory") {
+    // If we're updating snapshots with Bazel then switch the directory that snapshots are written
+    // to to REFERENCE_SNAPSHOT_DIRECTORY so the generated snapshot path is different from the
+    // source snapshot path allowing us to use write_source_files to for the update target.
+    const origSnapshotResolver = snapshotResolver;
+    snapshotResolver = {
+      ...origSnapshotResolver,
+
+      resolveSnapshotPath: (testPath) => {
+        const orig = origSnapshotResolver.resolveSnapshotPath(testPath);
+        return path.join(
+          path.dirname(orig),
+          REFERENCE_SNAPSHOT_DIRECTORY,
+          path.basename(orig)
+        );
+      },
+
+      resolveTestPath: (snapshotPath) => {
+        const orig = origSnapshotResolver.resolveTestPath(snapshotPath);
+        return path.join(path.dirname(path.dirname(orig)), path.basename(orig));
+      },
+    };
+  } else if (process.env.JEST_TEST__UPDATE_SNAPSHOTS == "files") {
+    // If we're updating snapshots with Bazel then append a REFERENCE_SNAPSHOT_SUFFIX to the
+    // snapshot path so the generated snapshot path is different from the source snapshot path
+    // allowing us to use write_source_files to for the update target.
+    const origSnapshotResolver = snapshotResolver;
+    snapshotResolver = {
+      ...origSnapshotResolver,
+
+      resolveSnapshotPath: (testPath) =>
+        origSnapshotResolver.resolveSnapshotPath(testPath) +
+        REFERENCE_SNAPSHOT_SUFFIX,
+
+      resolveTestPath: (snapshotPath) =>
+        origSnapshotResolver.resolveTestPath(
+          snapshotPath.substr(
+            0,
+            snapshotPath.length - REFERENCE_SNAPSHOT_SUFFIX.length
+          )
+        ),
+    };
+  } else {
+    throw new Error(INTERNAL_ERROR_MSG);
+  }
 }
 
 module.exports = snapshotResolver;

@@ -9,7 +9,6 @@ const Sequencer = require("@jest/test-sequencer").default;
 // see https://docs.bazel.build/versions/main/test-encyclopedia.html#test-sharding
 const shardCount = Number(process.env.TEST_TOTAL_SHARDS);
 const shardIndex = Number(process.env.TEST_SHARD_INDEX);
-const shardStatusFile = process.env.TEST_SHARD_STATUS_FILE;
 
 class BazelSequencer extends Sequencer {
   sort(tests) {

@@ -1,4 +1,4 @@
-"""Shows how to write a custom Jest snapshot resolver which customizes the snapshot directory.
+"""Shows how to setup jest_test to update snapshots.
 """
 
 load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
@@ -12,7 +12,6 @@ jest_test(
         "greetings.test.js",
         "link.js",
         "link.test.js",
-        "snapshot_resolver.js",
         "//example:node_modules/@babel/core",
         "//example:node_modules/@babel/preset-env",
         "//example:node_modules/@babel/preset-react",
@@ -21,6 +20,6 @@ jest_test(
         "//example:node_modules/react-test-renderer",
     ],
     # To update snapshots run,
-    #    bazel run //example/custom_snapshot_resolver:test_updates_snapshots
-    snapshots = "__my_snapshots__",
+    #    bazel run //example/snapshots:test_updates_snapshots
+    snapshots = True,
 )

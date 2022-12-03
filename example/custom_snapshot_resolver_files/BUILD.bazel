@@ -1,4 +1,6 @@
-"""Shows how to write a custom Jest snapshot resolver which customizes the snapshot directory.
+"""Shows how to write a custom Jest snapshot resolver which writes snapshots of individual files.
+
+Requires that the snapshot files already exist.
 """
 
 load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
@@ -21,6 +23,6 @@ jest_test(
         "//example:node_modules/react-test-renderer",
     ],
     # To update snapshots run,
-    #    bazel run //example/custom_snapshot_resolver:test_updates_snapshots
-    snapshots = "__my_snapshots__",
+    #    bazel run //example/custom_snapshot_resolver_files:test_updates_snapshots
+    snapshots = glob(["*.snap"]),
 )

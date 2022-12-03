@@ -1,4 +1,5 @@
 // jest.config.js template for jest_test rule
+import { existsSync } from "fs";
 import * as path from "path";
 
 // isTest indicates if this is a test target or if this is a binary target generating reference output snapshots for the snapshot updater target
@@ -7,12 +8,15 @@ const updateSnapshots = process.env.JEST_TEST__UPDATE_SNAPSHOTS;
 const autoConfReporters = !!"{{AUTO_CONF_REPORTERS}}";
 const autoConfTestSequencer = !!"{{AUTO_CONF_TEST_SEQUENCER}}";
 const userConfigShortPath = "{{USER_CONFIG_SHORT_PATH}}";
-const junitReportPath = _runfilesPath("{{JUNIT_REPORTER_SHORT_PATH}}");
-const bazelSequencerPath = _runfilesPath("{{BAZEL_SEQUENCER_SHORT_PATH}}");
-const bazelSnapshotReporterPath = _runfilesPath(
+const userConfigPath = "{{USER_CONFIG_PATH}}";
+const junitReportPath = _resolveRunfilesPath("{{JUNIT_REPORTER_SHORT_PATH}}");
+const bazelSequencerPath = _resolveRunfilesPath(
+  "{{BAZEL_SEQUENCER_SHORT_PATH}}"
+);
+const bazelSnapshotReporterPath = _resolveRunfilesPath(
   "{{BAZEL_SNAPSHOT_REPORTER_SHORT_PATH}}"
 );
-const bazelSnapshotResolverPath = _runfilesPath(
+const bazelSnapshotResolverPath = _resolveRunfilesPath(
   "{{BAZEL_SNAPSHOT_RESOLVER_SHORT_PATH}}"
 );
 
@@ -32,12 +36,16 @@ if (
   );
 }
 
-function _runfilesPath(shortPath) {
+function _resolveRunfilesPath(rootpath) {
   return path.join(
     process.env.RUNFILES,
     process.env.JS_BINARY__WORKSPACE,
-    shortPath
+    rootpath
   );
+}
+
+function _resolveExecrootPath(execpath) {
+  return path.join(process.env.JS_BINARY__EXECROOT, execpath);
 }
 
 function _hasReporter(config, name) {
@@ -66,12 +74,12 @@ let config = {};
 if (userConfigShortPath) {
   if (path.extname(userConfigShortPath).toLowerCase() == ".json") {
     config = (
-      await import(_runfilesPath(userConfigShortPath), {
+      await import(_resolveRunfilesPath(userConfigShortPath), {
         assert: { type: "json" },
       })
     ).default;
   } else {
-    config = (await import(_runfilesPath(userConfigShortPath))).default;
+    config = (await import(_resolveRunfilesPath(userConfigShortPath))).default;
   }
 }
 
@@ -113,11 +121,19 @@ if (isTest && autoConfTestSequencer) {
 // If this is an update snapshot target the configure the Bazel snapshot resolver
 if (updateSnapshots) {
   if (config.snapshotResolver) {
-    process.env.JEST_TEST__USER_SNAPSHOT_RESOLVER = path.isAbsolute(
-      config.snapshotResolver
-    )
+    const snapshotResolverPath = path.isAbsolute(config.snapshotResolver)
       ? config.snapshotResolver
-      : path.resolve(__dirname, config.snapshotResolver);
+      : path.resolve(
+          _resolveExecrootPath(userConfigPath),
+          "..",
+          config.snapshotResolver
+        );
+    if (!existsSync(snapshotResolverPath)) {
+      throw new Error(
+        `configured snapshotResolver '${config.snapshotResolver}' not found at ${snapshotResolverPath}`
+      );
+    }
+    process.env.JEST_TEST__USER_SNAPSHOT_RESOLVER = snapshotResolverPath;
   }
   config.snapshotResolver = bazelSnapshotResolverPath;
 }

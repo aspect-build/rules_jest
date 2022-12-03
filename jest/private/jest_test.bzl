@@ -11,7 +11,8 @@ _attrs = dicts.add(js_binary_lib.attrs, {
     "jest_repository": attr.string(default = "jest"),
     "run_in_band": attr.bool(default = True),
     "colors": attr.bool(default = True),
-    "update_snapshots": attr.bool(
+    "update_snapshots": attr.string(
+        values = ["directory", "files"],
         doc = "Internal use only",
     ),
     "entry_point": attr.label(
@@ -61,6 +62,7 @@ def _impl(ctx):
             "{{BAZEL_SNAPSHOT_RESOLVER_SHORT_PATH}}": ctx.file.bazel_snapshot_resolver.short_path,
             "{{JUNIT_REPORTER_SHORT_PATH}}": "../{jest_repository}/node_modules/jest-junit/index.js".format(jest_repository = ctx.attr.jest_repository),
             "{{USER_CONFIG_SHORT_PATH}}": user_config.short_path if user_config else "",
+            "{{USER_CONFIG_PATH}}": user_config.path if user_config else "",
         },
     )
 
@@ -89,7 +91,7 @@ def _impl(ctx):
 
     fixed_env = {}
     if ctx.attr.update_snapshots:
-        fixed_env["JEST_TEST__UPDATE_SNAPSHOTS"] = "1"
+        fixed_env["JEST_TEST__UPDATE_SNAPSHOTS"] = ctx.attr.update_snapshots
     else:
         # jest-junit lets you declare the output file in the env var JEST_JUNIT_OUTPUT_FILE
         # as an alternative to declaring it in the jest config file.
