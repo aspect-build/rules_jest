@@ -43,3 +43,20 @@ jest_test(
         "index.test.js",
     ],
 )
+
+jest_test(
+    name = "gen_config_test",
+    config = "gen.config.json",
+    data = [
+        "index.js",
+        "index.test.js",
+    ],
+)
+
+genrule(
+    name = "gen_config",
+    outs = ["gen.config.json"],
+    cmd = "cp $(location :jest.config.json) \"$@\"",
+    srcs = ["jest.config.json"],
+    testonly = True,
+)

@@ -23,6 +23,6 @@ jest_test(
         "//example:node_modules/react-test-renderer",
     ],
     # To update snapshots run,
-    #    bazel run //example/custom_snapshot_resolver_files:test_updates_snapshots
+    #    bazel run //example/custom_snapshot_resolver_files:test_update_snapshots
     snapshots = glob(["*.snap"]),
 )
