@@ -2,24 +2,52 @@
 """
 
 load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
+load("@aspect_rules_js//js:defs.bzl", "js_library")
 
 jest_test(
     name = "test",
     config = "jest.config.js",
     data = [
         ".babelrc.js",
-        "greetings.js",
-        "greetings.test.js",
-        "link.js",
-        "link.test.js",
+        ":lib",
+        ":tests",
         "//example:node_modules/@babel/core",
         "//example:node_modules/@babel/preset-env",
         "//example:node_modules/@babel/preset-react",
         "//example:node_modules/babel-jest",
-        "//example:node_modules/react",
-        "//example:node_modules/react-test-renderer",
     ],
     # To update snapshots run,
-    #    bazel run //example/snapshots:test_updates_snapshots
+    #    bazel run //example/snapshots:test_update_snapshots
     snapshots = True,
+)
+
+# The tests and tested are normally in their own targets.
+js_library(
+    name = "tests",
+    srcs = [
+        "greetings.test.js",
+        "link.test.js",
+    ],
+    deps = [
+        "//example:node_modules/react-test-renderer",
+    ],
+    testonly = True,
+)
+
+js_library(
+    name = "lib",
+    srcs = [
+        "greetings.js",
+        "link.js",
+    ],
+    deps = [
+        "//example:node_modules/react",
+    ],
+)
+
+# TEST: Ensure the update_snapshots target builds successfully
+load("@bazel_skylib//rules:build_test.bzl", "build_test")
+build_test(
+    name = "update_snapshots_build",
+    targets = [":test_update_snapshots"],
 )

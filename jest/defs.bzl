@@ -45,6 +45,7 @@ def _jest_from_repository(jest_rule, jest_repository, **kwargs):
             "@{}//:node_modules/jest-snapshot".format(jest_repository),
         ],
         jest_repository = jest_repository,
+        testonly = True,
         **kwargs
     )
 
@@ -236,6 +237,7 @@ def _jest_update_snapshots(
             out_dirs = ["{}/{}".format(update_directory, REFERENCE_SNAPSHOT_DIRECTORY)],
             tool = gen_snapshots_bin,
             silent_on_success = quiet_snapshot_updates,
+            testonly = True,
             # Tagged manual so it is not built unless the {name}_update_snapshot target is run
             tags = tags + ["manual"],
         )
@@ -257,6 +259,7 @@ def _jest_update_snapshots(
             outs = snapshot_outs,
             tool = gen_snapshots_bin,
             silent_on_success = quiet_snapshot_updates,
+            testonly = True,
             # Tagged manual so it is not built unless the {name}_update_snapshot target is run
             tags = tags + ["manual"],
         )
@@ -268,6 +271,7 @@ def _jest_update_snapshots(
         # Jest will already fail if the snapshot is out-of-date so just use write_source_files
         # for the update script
         diff_test = False,
+        testonly = True,
         # Tagged manual so it is not built unless run
         tags = tags + ["manual"],
     )
