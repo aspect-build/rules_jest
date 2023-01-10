@@ -44,6 +44,7 @@ jobs:
         bazelversion: ${{ fromJSON(needs.matrix-prep-bazelversion.outputs.bazelversions) }}
         folder:
           - "."
+          - "e2e/npm_packages"
           - "e2e/workspace"
 
     # Steps represent a sequence of tasks that will be executed as part of the job
