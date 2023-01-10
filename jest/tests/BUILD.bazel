@@ -77,3 +77,16 @@ jest_test(
         "case8.test.js",
     ],
 )
+
+# Case 9: native esm modules using .mjs and --experimental-vm-modules
+jest_test(
+    name = "case9",
+    config = "case9.jest.config.js",
+    data = [
+        "case9.index.mjs",
+        "case9.test.mjs",
+    ],
+    node_options = [
+        "--experimental-vm-modules",
+    ],
+)

@@ -1,0 +1,11 @@
+{
+    "name": "@e2e/lib",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "@aspect-test/a": "5.0.2"
+    },
+    "devDependencies": {
+        "uvu": "0.5.6"
+    }
+}

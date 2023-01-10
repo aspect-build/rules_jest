@@ -1,0 +1,14 @@
+load("@aspect_rules_js//js:defs.bzl", "js_library")
+
+js_library(
+    name = "jest",
+    srcs = [
+        "jest-env.js",
+        "jest-env.mjs",
+    ],
+    deps = [
+        "//:node_modules/@e2e/lib",
+        "//:node_modules/@jest/globals",
+    ],
+    visibility = ["//visibility:public"],
+)

@@ -1,0 +1,58 @@
+load("@aspect_rules_js//npm:defs.bzl", "npm_package")
+load("@aspect_rules_js//js:defs.bzl", "js_library")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@jest//:defs.bzl", "jest_test")
+
+npm_link_all_packages(name = "node_modules")
+
+# Basic js with 1 npm dep and one subdir js_library()
+js_library(
+    name = "wrapper-lib_jslib",
+    srcs = ["index.js"],
+    deps = [
+        ":node_modules/@aspect-test/b",
+        ":node_modules/@e2e/lib",
+        "//packages/wrapper-lib/subdir",
+    ],
+)
+
+# Basic npm package wrapping the js
+npm_package(
+    name = "wrapper-lib",
+    srcs = [
+        "package.json",
+        ":wrapper-lib_jslib",
+    ],
+    visibility = ["//visibility:public"],
+)
+
+# Library of tests
+js_library(
+    name = "wrapper-lib_tests",
+    srcs = glob(["*.spec.js"]),
+    deps = [
+        ":wrapper-lib_jslib",
+    ],
+)
+
+# Jest test runners
+jest_test(
+    name = "test_cjs",
+    config = "//:jest.config.cjs",
+    data = [
+        "babel.config.json",
+        ":wrapper-lib_tests",
+    ],
+)
+
+jest_test(
+    name = "test_esm",
+    config = "//:jest.config.esm",
+    data = [
+        "package.json",  # required for jest to determine this package .js is esm
+        ":wrapper-lib_tests",
+    ],
+    node_options = [
+        "--experimental-vm-modules",
+    ],
+)

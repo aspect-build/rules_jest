@@ -1,0 +1,9 @@
+{
+    "name": "@e2e/wrapper-lib",
+    "private": true,
+    "type": "module",
+    "dependencies": {
+        "@e2e/lib": "workspace:*",
+        "@aspect-test/b": "5.0.2"
+    }
+}
