@@ -1,3 +1,4 @@
+load("@aspect_rules_js//js:defs.bzl", "js_library")
 load("//jest:defs.bzl", "jest_test")
 
 exports_files([
@@ -88,5 +89,24 @@ jest_test(
     ],
     node_options = [
         "--experimental-vm-modules",
+    ],
+)
+
+# Case 10: A js_library() config with dependencies
+jest_test(
+    name = "case10",
+    config = ":case10-config",
+    data = [
+        "case10.test.js",
+    ],
+)
+
+js_library(
+    name = "case10-config",
+    srcs = [
+        "case10.jest.config.js",
+    ],
+    data = [
+        "case10.setup.js",
     ],
 )

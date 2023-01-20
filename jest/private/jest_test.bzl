@@ -136,7 +136,7 @@ def _impl(ctx):
     runfiles = ctx.runfiles(
         files = files,
         transitive_files = js_lib_helpers.gather_files_from_js_providers(
-            targets = ctx.attr.data,
+            targets = ctx.attr.data + [ctx.attr.config] if ctx.attr.config else [],
             include_transitive_sources = ctx.attr.include_transitive_sources,
             include_declarations = ctx.attr.include_declarations,
             include_npm_linked_packages = ctx.attr.include_npm_linked_packages,
@@ -145,6 +145,9 @@ def _impl(ctx):
         target[DefaultInfo].default_runfiles
         for target in ctx.attr.data
     ])
+
+    if ctx.attr.config and ctx.attr.config[DefaultInfo]:
+        runfiles = runfiles.merge(ctx.attr.config[DefaultInfo].default_runfiles)
 
     if ctx.configuration.coverage_enabled:
         providers.append(
