@@ -16,9 +16,19 @@ jest_test(
     ],
 )
 
-# Case 2: jest config file in a subdirectory
+# Case 2a: jest config file in a subdirectory
 jest_test(
-    name = "case2",
+    name = "case2a",
+    config = "case2/case2.jest.config.js",
+    data = [
+        "case2/case2.test.js",
+    ],
+)
+
+# Case 2b: jest config file in a subdirectory with chdir
+jest_test(
+    name = "case2b",
+    chdir = "jest",
     config = "case2/case2.jest.config.js",
     data = [
         "case2/case2.test.js",

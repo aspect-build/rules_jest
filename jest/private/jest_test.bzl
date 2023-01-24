@@ -3,6 +3,7 @@
 load("@aspect_rules_js//js:libs.bzl", "js_binary_lib", "js_lib_helpers")
 load("@aspect_bazel_lib//lib:copy_to_bin.bzl", "copy_file_to_bin_action")
 load("@bazel_skylib//lib:dicts.bzl", "dicts")
+load("@bazel_skylib//lib:paths.bzl", "paths")
 
 _attrs = dicts.add(js_binary_lib.attrs, {
     "config": attr.label(allow_single_file = [".js", ".cjs", ".mjs", ".json"]),
@@ -77,6 +78,11 @@ def _impl(ctx):
         },
     )
 
+    # Unwind the chdir argument to adapt the path arguments
+    unwind_chdir_prefix = ""
+    if ctx.attr.chdir:
+        unwind_chdir_prefix = "/".join([".."] * len(ctx.attr.chdir.split("/"))) + "/"
+
     fixed_args = [
         # https://jestjs.io/docs/cli#--cache. Whether to use the cache. Defaults to true. Disable
         # the cache using --no-cache. Caching is Bazel's job, we don't want non-hermeticity
@@ -89,7 +95,7 @@ def _impl(ctx):
         # https://jestjs.io/docs/cli#--configpath. The path to a Jest config file specifying how to
         # find and execute tests.
         "--config",
-        generated_config.short_path,
+        paths.join(unwind_chdir_prefix, generated_config.short_path),
     ]
     if ctx.attr.log_level == "debug":
         fixed_args.append("--debug")
