@@ -3,6 +3,7 @@
 
 load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
 load("@aspect_rules_js//js:defs.bzl", "js_library")
+load("@bazel_skylib//rules:build_test.bzl", "build_test")
 
 jest_test(
     name = "test",
@@ -24,6 +25,7 @@ jest_test(
 # The tests and tested are normally in their own targets.
 js_library(
     name = "tests",
+    testonly = True,
     srcs = [
         "greetings.test.js",
         "link.test.js",
@@ -31,7 +33,6 @@ js_library(
     deps = [
         "//example:node_modules/react-test-renderer",
     ],
-    testonly = True,
 )
 
 js_library(
@@ -46,7 +47,6 @@ js_library(
 )
 
 # TEST: Ensure the update_snapshots target builds successfully
-load("@bazel_skylib//rules:build_test.bzl", "build_test")
 build_test(
     name = "update_snapshots_build",
     targets = [":test_update_snapshots"],

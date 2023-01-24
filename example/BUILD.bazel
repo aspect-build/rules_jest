@@ -1,3 +1,17 @@
+load("@aspect_bazel_lib//lib:write_source_files.bzl", "write_source_files")
 load("@npm//:defs.bzl", "npm_link_all_packages")
 
 npm_link_all_packages(name = "node_modules")
+
+# Should be able to aggregate snapshot update targets into a single write_source_files convenience target/
+# Added in https://github.com/aspect-build/rules_jest/pull/93.
+write_source_files(
+    name = "update_all_snapshots",
+    testonly = True,
+    additional_update_targets = [
+        "//example/custom_snapshot_resolver:test_update_snapshots",
+        "//example/custom_snapshot_resolver_files:test_update_snapshots",
+        "//example/snapshots:test_update_snapshots",
+        "//example/snapshots_files:test_update_snapshots",
+    ],
+)

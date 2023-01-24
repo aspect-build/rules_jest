@@ -274,4 +274,6 @@ def _jest_update_snapshots(
         testonly = True,
         # Tagged manual so it is not built unless run
         tags = tags + ["manual"],
+        # Always public visibility so that it can be used downstream in an aggregate write_source_files target
+        visibility = ["//visibility:public"],
     )
