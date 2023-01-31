@@ -68,3 +68,12 @@ jest_test(
         "case7.test.js",
     ],
 )
+
+# Case 8: config in root directory
+jest_test(
+    name = "case8",
+    config = "//:case8.config",
+    data = [
+        "case8.test.js",
+    ],
+)
