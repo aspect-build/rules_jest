@@ -11,6 +11,6 @@ mkdir -p "$out"
 
 cd $(mktemp -d)
 npx pnpm install "jest-cli@$version" "jest-junit@$jest_junit_version" --lockfile-only
-
 cp pnpm-lock.yaml "$out"
+cp package.json "$out"
 echo "Mirrored jest version $version to $out. Now add it to jest/private/versions.bzl"
