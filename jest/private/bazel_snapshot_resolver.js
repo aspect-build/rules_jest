@@ -42,9 +42,9 @@ let snapshotResolver = process.env.JEST_TEST__USER_SNAPSHOT_RESOLVER
   ? require(process.env.JEST_TEST__USER_SNAPSHOT_RESOLVER)
   : defaultSnapshotResolver;
 
-if (process.env.JEST_TEST__UPDATE_SNAPSHOTS) {
+if (process.env.JEST_TEST__UPDATE_SNAPSHOTS_MODE) {
   // This run of Jest is meant for generating reference snapshots for the snapshots update Bazel target
-  if (process.env.JEST_TEST__UPDATE_SNAPSHOTS == "directory") {
+  if (process.env.JEST_TEST__UPDATE_SNAPSHOTS_MODE == "directory") {
     // If we're updating snapshots with Bazel then switch the directory that snapshots are written
     // to to REFERENCE_SNAPSHOT_DIRECTORY so the generated snapshot path is different from the
     // source snapshot path allowing us to use write_source_files to for the update target.
@@ -66,7 +66,7 @@ if (process.env.JEST_TEST__UPDATE_SNAPSHOTS) {
         return path.join(path.dirname(path.dirname(orig)), path.basename(orig));
       },
     };
-  } else if (process.env.JEST_TEST__UPDATE_SNAPSHOTS == "files") {
+  } else if (process.env.JEST_TEST__UPDATE_SNAPSHOTS_MODE == "files") {
     // If we're updating snapshots with Bazel then append a REFERENCE_SNAPSHOT_SUFFIX to the
     // snapshot path so the generated snapshot path is different from the source snapshot path
     // allowing us to use write_source_files to for the update target.

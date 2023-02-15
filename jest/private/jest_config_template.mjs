@@ -4,7 +4,7 @@ import * as path from "path";
 
 // isTest indicates if this is a test target or if this is a binary target generating reference output snapshots for the snapshot updater target
 const isTest = !!process.env.TEST_TARGET;
-const updateSnapshots = process.env.JEST_TEST__UPDATE_SNAPSHOTS;
+const updateSnapshots = !!process.env.JEST_TEST__UPDATE_SNAPSHOTS_MODE;
 const coverageEnabled = !!"{{COVERAGE_ENABLED}}";
 const autoConfReporters = !!"{{AUTO_CONF_REPORTERS}}";
 const autoConfTestSequencer = !!"{{AUTO_CONF_TEST_SEQUENCER}}";
@@ -24,7 +24,7 @@ const bazelSnapshotResolverPath = _resolveRunfilesPath(
 
 if (isTest && updateSnapshots) {
   console.error(
-    `ERROR: aspect_rules_jest[jest_test]: update_snapshots should not be set on a test target ${process.env.TEST_TARGET}`
+    `ERROR: aspect_rules_jest[jest_test]: update_snapshots_mode should not be set on a test target ${process.env.TEST_TARGET}`
   );
   process.exit(1);
 }
