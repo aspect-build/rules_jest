@@ -19,7 +19,10 @@ jest_test(
     ],
     # To update snapshots run,
     #    bazel run //example/snapshots:test_update_snapshots
-    snapshots = True,
+    snapshots = [
+        "greetings/__snapshots__",
+        "link/__snapshots__",
+    ],
 )
 
 # The tests and tested are normally in their own targets.
@@ -27,8 +30,8 @@ js_library(
     name = "tests",
     testonly = True,
     srcs = [
-        "greetings.test.js",
-        "link.test.js",
+        "greetings/greetings.test.js",
+        "link/link.test.js",
     ],
     deps = [
         "//example:node_modules/react-test-renderer",
@@ -38,8 +41,8 @@ js_library(
 js_library(
     name = "lib",
     srcs = [
-        "greetings.js",
-        "link.js",
+        "greetings/greetings.js",
+        "link/link.js",
     ],
     deps = [
         "//example:node_modules/react",

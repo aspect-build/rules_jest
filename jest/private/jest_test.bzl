@@ -12,7 +12,7 @@ _attrs = dicts.add(js_binary_lib.attrs, {
     "jest_repository": attr.string(default = "jest"),
     "run_in_band": attr.bool(default = True),
     "colors": attr.bool(default = True),
-    "update_snapshots": attr.string(
+    "update_snapshots_mode": attr.string(
         values = ["directory", "files"],
         doc = "Internal use only",
     ),
@@ -103,12 +103,12 @@ def _impl(ctx):
         fixed_args.append("--colors")
     if ctx.attr.run_in_band:
         fixed_args.append("--runInBand")
-    if ctx.attr.update_snapshots:
+    if ctx.attr.update_snapshots_mode:
         fixed_args.append("--updateSnapshot")
 
     fixed_env = {}
-    if ctx.attr.update_snapshots:
-        fixed_env["JEST_TEST__UPDATE_SNAPSHOTS"] = ctx.attr.update_snapshots
+    if ctx.attr.update_snapshots_mode:
+        fixed_env["JEST_TEST__UPDATE_SNAPSHOTS_MODE"] = ctx.attr.update_snapshots_mode
     else:
         # jest-junit lets you declare the output file in the env var JEST_JUNIT_OUTPUT_FILE
         # as an alternative to declaring it in the jest config file.
