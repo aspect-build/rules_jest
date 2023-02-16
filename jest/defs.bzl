@@ -82,14 +82,13 @@ def jest_test(
 
             This should include all test files, configuration files & files under test.
 
-        snapshots: If True, a `{name}_update_snapshots` binary target is generated that will update the `__snapshots__`
-            directory when `bazel run`. This is the equivalent to running `jest -u` or `jest --updateSnapshot` outside of Bazel.
+        snapshots: If True, a `{name}_update_snapshots` binary target is generated that will update all existing `__snapshots__`
+            directories when `bazel run`. This is the equivalent to running `jest -u` or `jest --updateSnapshot` outside of Bazel,
+            except that new `__snapshots__` will not automatically be created on update. To bootstrap a new `__snapshots__` directory,
+            you can create an empty one and then run the `{name}_update_snapshots` target to populate it.
 
             If the name of the snapshot directory is not the default `__snapshots__` because of a custom snapshot resolver,
-            you can specify a custom directory name by setting `snapshots` to the custom directory name instead of True.
-
-            If there are multiple snapshot directories to update from a single `jest_test` target you can specify a list
-            of directories instead. For example,
+            you can specify customize the snapshot directories with a `glob` or a static list. For example,
 
             ```
             jest_test(
@@ -101,11 +100,17 @@ def jest_test(
                     "link/link.js",
                     "link/link.test.js",
                 ],
-                snapshots = [
-                    "greetings/__snapshots__",
-                    "link/__snapshots__",
-                ],
+                snapshots = glob(["**/__snaps__"], exclude_directories = 0),
             )
+            ```
+
+            or with a static list,
+
+            ```
+                snapshots = [
+                    "greetings/__greetings_snaps__",
+                    "link/__link_snaps__",
+                ]
             ```
 
             Snapshots directories must not contain any files except for snapshots. There must also be no BUILD files in
@@ -157,11 +162,12 @@ def jest_test(
 
     snapshot_data = []
     snapshot_files = []
+
     snapshot_directories = []
     if snapshots == True:
-        snapshot_directories = [to_label("__snapshots__")]  # default jest snapshots directory
-        snapshot_data = native.glob(["__snapshots__/**"])
-    elif type(snapshots) == "string":
+        snapshots = native.glob(["**/__snapshots__"], exclude_directories = 0)
+
+    if type(snapshots) == "string":
         snapshot_directories = [to_label(snapshots)]
         snapshot_data = native.glob(["{}/**".format(snapshots)])
     elif type(snapshots) == "list":
@@ -287,7 +293,7 @@ def _jest_update_snapshots(
                     # Tagged manual so it is not built unless the {name}_update_snapshot target is run
                     tags = tags + ["manual"],
                 )
-                update_snapshots_files[snapshot_directories[0].name] = output_files_target
+                update_snapshots_files[snapshot_directories[i].name] = output_files_target
     else:
         snapshot_outs = []
         for snapshot in snapshot_files:
