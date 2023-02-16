@@ -19,10 +19,7 @@ jest_test(
     ],
     # To update snapshots run,
     #    bazel run //example/snapshots:test_update_snapshots
-    snapshots = [
-        "greetings/__snapshots__",
-        "link/__snapshots__",
-    ],
+    snapshots = True,
 )
 
 # The tests and tested are normally in their own targets.
