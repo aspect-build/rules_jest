@@ -1,8 +1,5 @@
 const index = require(".");
 
-jest.setTimeout(100000);
-
-test("it should work", (done) => {
+test("it should work", () => {
   expect(index).toBe("test");
-  setTimeout(done, 65000);
 });

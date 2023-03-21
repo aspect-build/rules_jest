@@ -9,8 +9,8 @@
 
 <pre>
 jest_test(<a href="#jest_test-name">name</a>, <a href="#jest_test-config">config</a>, <a href="#jest_test-data">data</a>, <a href="#jest_test-snapshots">snapshots</a>, <a href="#jest_test-run_in_band">run_in_band</a>, <a href="#jest_test-colors">colors</a>, <a href="#jest_test-auto_configure_reporters">auto_configure_reporters</a>,
-          <a href="#jest_test-auto_configure_test_sequencer">auto_configure_test_sequencer</a>, <a href="#jest_test-snapshots_ext">snapshots_ext</a>, <a href="#jest_test-quiet_snapshot_updates">quiet_snapshot_updates</a>, <a href="#jest_test-jest_repository">jest_repository</a>,
-          <a href="#jest_test-kwargs">kwargs</a>)
+          <a href="#jest_test-auto_configure_test_sequencer">auto_configure_test_sequencer</a>, <a href="#jest_test-snapshots_ext">snapshots_ext</a>, <a href="#jest_test-quiet_snapshot_updates">quiet_snapshot_updates</a>, <a href="#jest_test-jest_repository">jest_repository</a>, <a href="#jest_test-tags">tags</a>,
+          <a href="#jest_test-timeout">timeout</a>, <a href="#jest_test-size">size</a>, <a href="#jest_test-kwargs">kwargs</a>)
 </pre>
 
 jest_test rule
@@ -36,6 +36,9 @@ Supports updating snapshots with `bazel run {name}_update_snapshots` if `snapsho
 | <a id="jest_test-snapshots_ext"></a>snapshots_ext |  The expected extensions for snapshot files. Defaults to <code>.snap</code>, the Jest default.   |  <code>".snap"</code> |
 | <a id="jest_test-quiet_snapshot_updates"></a>quiet_snapshot_updates |  When True, snapshot update stdout & stderr is hidden when the snapshot update is successful.<br><br>On a snapshot update failure, its stdout & stderr will always be shown.   |  <code>False</code> |
 | <a id="jest_test-jest_repository"></a>jest_repository |  Name of the repository created with jest_repositories().   |  <code>"jest"</code> |
-| <a id="jest_test-kwargs"></a>kwargs |  All other args from <code>js_test</code>. See https://github.com/aspect-build/rules_js/blob/main/docs/js_binary.md#js_test   |  none |
+| <a id="jest_test-tags"></a>tags |  standard Bazel attribute, passed through to generated targets.   |  <code>[]</code> |
+| <a id="jest_test-timeout"></a>timeout |  standard attribute for tests. Defaults to "short" if both timeout and size are unspecified.   |  <code>None</code> |
+| <a id="jest_test-size"></a>size |  standard attribute for tests   |  <code>None</code> |
+| <a id="jest_test-kwargs"></a>kwargs |  Additional named parameters passed to both <code>js_test</code> and <code>js_binary</code>. See https://github.com/aspect-build/rules_js/blob/main/docs/js_binary.md   |  none |
 
 
