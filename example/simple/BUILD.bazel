@@ -46,9 +46,6 @@ jest_test(
 
 jest_test(
     name = "gen_config_test",
-    # The test takes over a minute, so this will time out.
-    # Change to "moderate" and the test will pass.
-    timeout = "short",
     config = "gen.config.json",
     data = [
         "index.js",

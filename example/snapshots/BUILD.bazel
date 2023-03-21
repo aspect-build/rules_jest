@@ -7,6 +7,7 @@ load("@bazel_skylib//rules:build_test.bzl", "build_test")
 
 jest_test(
     name = "test",
+    # explicit timeout setting, regression test for #95
     timeout = "moderate",
     config = "jest.config.js",
     data = [

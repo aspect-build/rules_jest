@@ -2,7 +2,7 @@
 """
 
 load("@aspect_bazel_lib//lib:write_source_files.bzl", _write_source_files = "write_source_files")
-load("@aspect_bazel_lib//lib:utils.bzl", "to_label")
+load("@aspect_bazel_lib//lib:utils.bzl", "default_timeout", "to_label")
 load("@aspect_bazel_lib//lib:output_files.bzl", _output_files = "output_files")
 load("@aspect_rules_js//js:defs.bzl", _js_run_binary = "js_run_binary")
 load("@aspect_rules_js//js:libs.bzl", "js_binary_lib")
@@ -62,6 +62,9 @@ def jest_test(
         snapshots_ext = ".snap",
         quiet_snapshot_updates = False,
         jest_repository = "jest",
+        tags = [],
+        timeout = None,
+        size = None,
         **kwargs):
     """jest_test rule
 
@@ -156,10 +159,15 @@ def jest_test(
 
         jest_repository: Name of the repository created with jest_repositories().
 
-        **kwargs: All other args from `js_test`. See https://github.com/aspect-build/rules_js/blob/main/docs/js_binary.md#js_test
-    """
-    tags = kwargs.pop("tags", [])
+        tags: standard Bazel attribute, passed through to generated targets.
 
+        timeout: standard attribute for tests. Defaults to "short" if both timeout and size are unspecified.
+
+        size: standard attribute for tests
+
+        **kwargs: Additional named parameters passed to both `js_test` and `js_binary`.
+            See https://github.com/aspect-build/rules_js/blob/main/docs/js_binary.md
+    """
     snapshot_data = []
     snapshot_files = []
 
@@ -210,6 +218,8 @@ def jest_test(
         auto_configure_reporters = auto_configure_reporters,
         auto_configure_test_sequencer = auto_configure_test_sequencer,
         tags = tags,
+        size = size,
+        timeout = default_timeout(size, timeout),
         **kwargs
     )
 
