@@ -46,6 +46,9 @@ jest_test(
 
 jest_test(
     name = "gen_config_test",
+    # The test takes over a minute, so this will time out.
+    # Change to "moderate" and the test will pass.
+    timeout = "short",
     config = "gen.config.json",
     data = [
         "index.js",
@@ -55,8 +58,8 @@ jest_test(
 
 genrule(
     name = "gen_config",
+    testonly = True,
+    srcs = ["jest.config.json"],
     outs = ["gen.config.json"],
     cmd = "cp $(location :jest.config.json) \"$@\"",
-    srcs = ["jest.config.json"],
-    testonly = True,
 )
