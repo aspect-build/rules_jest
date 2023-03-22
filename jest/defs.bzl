@@ -223,6 +223,11 @@ def jest_test(
         **kwargs
     )
 
+    # Remove named params that only apply to *_test rules.
+    # See https://bazel.build/reference/be/common-definitions#common-attributes-tests
+    for key in ["flaky", "shard_count", "local", "env", "env_inherit"]:
+        kwargs.pop(key)
+
     update_snapshots_mode = None
     if snapshot_files:
         update_snapshots_mode = "files"
