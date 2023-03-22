@@ -223,11 +223,6 @@ def jest_test(
         **kwargs
     )
 
-    # Remove named params that only apply to *_test rules.
-    # See https://bazel.build/reference/be/common-definitions#common-attributes-tests
-    for key in ["flaky", "shard_count", "local", "env", "env_inherit"]:
-        kwargs.pop(key)
-
     update_snapshots_mode = None
     if snapshot_files:
         update_snapshots_mode = "files"
@@ -236,6 +231,14 @@ def jest_test(
 
     if update_snapshots_mode:
         gen_snapshots_bin = "{}_ref_snapshots_bin".format(name)
+
+        # Filter out named params that only apply to *_test rules.
+        bin_kwargs = {
+            key: val
+            for key, val in kwargs.items()
+            # List from https://bazel.build/reference/be/common-definitions#common-attributes-tests
+            if key not in ["flaky", "shard_count", "local", "env", "env_inherit"]
+        }
 
         # This is the generated reference snapshot generator binary target that is used as the
         # `tool` in the `js_run_binary` target below to output the reference snapshots.
@@ -250,7 +253,7 @@ def jest_test(
             auto_configure_test_sequencer = auto_configure_test_sequencer,
             update_snapshots_mode = update_snapshots_mode,
             tags = tags + ["manual"],  # tagged manual so it is not built unless the {name}_update_snapshot target is run
-            **kwargs
+            **bin_kwargs
         )
 
         _jest_update_snapshots(

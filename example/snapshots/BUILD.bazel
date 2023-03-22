@@ -7,7 +7,7 @@ load("@bazel_skylib//rules:build_test.bzl", "build_test")
 
 jest_test(
     name = "test",
-    # explicit timeout setting, regression test for #95
+    # extra test attributes, regression test for #95
     timeout = "moderate",
     config = "jest.config.js",
     data = [
@@ -19,6 +19,8 @@ jest_test(
         "//example:node_modules/@babel/preset-react",
         "//example:node_modules/babel-jest",
     ],
+    flaky = False,
+    log_level = "info",
     # To update snapshots run,
     #    bazel run //example/snapshots:test_update_snapshots
     snapshots = True,
