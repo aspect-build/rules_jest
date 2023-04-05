@@ -1,3 +1,4 @@
 e2e/
 node_modules
 example/node_modules
+jest/tests/node_modules
