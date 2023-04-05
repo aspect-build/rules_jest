@@ -1,5 +1,8 @@
 load("@aspect_rules_js//js:defs.bzl", "js_library")
+load("@npm//:defs.bzl", "npm_link_all_packages")
 load("//jest:defs.bzl", "jest_test")
+
+npm_link_all_packages(name = "node_modules")
 
 exports_files([
     "case3.jest.config.js",
