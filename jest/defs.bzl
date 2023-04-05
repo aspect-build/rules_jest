@@ -247,6 +247,9 @@ def jest_test(
             jest_repository = jest_repository,
             name = gen_snapshots_bin,
             config = config,
+            # Also pass data to the tool for jest snapshot updates incase there are load bearing
+            # data deps the config requires
+            data = data,
             run_in_band = run_in_band,
             colors = colors,
             auto_configure_reporters = auto_configure_reporters,
