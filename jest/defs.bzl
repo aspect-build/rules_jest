@@ -232,12 +232,15 @@ def jest_test(
     if update_snapshots_mode:
         gen_snapshots_bin = "{}_ref_snapshots_bin".format(name)
 
-        # Filter out named params that only apply to *_test rules.
+        # Filter out named params that are valid for jest_test but not for jest_binary
         bin_kwargs = {
             key: val
             for key, val in kwargs.items()
-            # List from https://bazel.build/reference/be/common-definitions#common-attributes-tests
-            if key not in ["flaky", "shard_count", "local", "env", "env_inherit"]
+            # Subset of list from https://bazel.build/reference/be/common-definitions#common-attributes-tests
+            # - "env" is supported by *_binary rules so not filtered out
+            # - "args" are supported by *_binary rules so not filtered out
+            # - "size", "timeout" are explicit parameters to the macro so not in kwargs
+            if key not in ["env_inherit", "flaky", "shard_count", "local"]
         }
 
         # This is the generated reference snapshot generator binary target that is used as the
