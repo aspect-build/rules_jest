@@ -4,11 +4,12 @@ jest_test(
     name = "test",
     config = "jest.config.js",
     data = [
+        "babel.config.json",
         "index.js",
         "index.test.js",
         "package.json",
-        "babel.config.json",
-        "//example:node_modules/babel-jest",
         "//example:node_modules/@babel/preset-env",
+        "//example:node_modules/babel-jest",
     ],
+    node_modules = "//:node_modules",
 )

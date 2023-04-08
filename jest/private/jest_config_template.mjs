@@ -11,7 +11,6 @@ const autoConfTestSequencer = !!"{{AUTO_CONF_TEST_SEQUENCER}}";
 const userConfigShortPath = "{{USER_CONFIG_SHORT_PATH}}";
 const userConfigPath = "{{USER_CONFIG_PATH}}";
 const generatedConfigShortPath = "{{GENERATED_CONFIG_SHORT_PATH}}";
-const junitReportPath = _resolveRunfilesPath("{{JUNIT_REPORTER_SHORT_PATH}}");
 const bazelSequencerPath = _resolveRunfilesPath(
   "{{BAZEL_SEQUENCER_SHORT_PATH}}"
 );
@@ -100,7 +99,7 @@ if (autoConfReporters) {
   // jest-junit reporter is only auto-configured if this is a test target
   if (isTest) {
     _addReporter(config, "jest-junit", [
-      junitReportPath,
+      "jest-junit",
       { outputFile: process.env.XML_OUTPUT_FILE },
     ]);
   }

@@ -6,7 +6,18 @@
  */
 
 const fs = require("fs");
-const Sequencer = require("@jest/test-sequencer").default;
+const path = require("path");
+
+// to require @jest/test-sequencer we need to hop from jest-cli => jest-config => @jest/test-sequencer in the virtual store
+const jestCliPackage = path.dirname(require.resolve("jest-cli/package.json"));
+const jestConfigPackage = path.dirname(
+  require.resolve(path.join(jestCliPackage, "../jest-config/package.json"))
+);
+const Sequencer = require(path.join(
+  jestConfigPackage,
+  "../@jest/test-sequencer"
+)).default;
+
 // see https://docs.bazel.build/versions/main/test-encyclopedia.html#test-sharding
 const shardCount = Number(process.env.TEST_TOTAL_SHARDS);
 const shardIndex = Number(process.env.TEST_SHARD_INDEX);

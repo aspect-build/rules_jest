@@ -12,21 +12,12 @@ toolchain_type(
 )
 
 bzl_library(
-    name = "repositories",
-    srcs = ["repositories.bzl"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "@bazel_tools//tools/build_defs/repo:http.bzl",
-        "@bazel_tools//tools/build_defs/repo:utils.bzl",
-    ],
-)
-
-bzl_library(
     name = "defs",
     srcs = ["defs.bzl"],
     visibility = ["//visibility:public"],
     deps = [
         "//jest/private:jest_test",
+        "@aspect_bazel_lib//lib:copy_file",
         "@aspect_bazel_lib//lib:output_files",
         "@aspect_bazel_lib//lib:write_source_files",
         "@aspect_rules_js//js:defs",

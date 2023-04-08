@@ -1,6 +1,0 @@
-{
-  "dependencies": {
-    "jest-cli": "29.1.1",
-    "jest-junit": "15.0.0"
-  }
-}

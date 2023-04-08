@@ -6,6 +6,7 @@ jest_test(
         "index.js",
         "index.test.js",
     ],
+    node_modules = "//:node_modules",
 )
 
 jest_test(
@@ -15,6 +16,7 @@ jest_test(
         "index.js",
         "index.test.js",
     ],
+    node_modules = "//:node_modules",
 )
 
 jest_test(
@@ -24,6 +26,7 @@ jest_test(
         "index.js",
         "index.test.js",
     ],
+    node_modules = "//:node_modules",
 )
 
 jest_test(
@@ -33,6 +36,7 @@ jest_test(
         "index.js",
         "index.test.js",
     ],
+    node_modules = "//:node_modules",
 )
 
 jest_test(
@@ -42,6 +46,7 @@ jest_test(
         "index.js",
         "index.test.js",
     ],
+    node_modules = "//:node_modules",
 )
 
 jest_test(
@@ -51,6 +56,7 @@ jest_test(
         "index.js",
         "index.test.js",
     ],
+    node_modules = "//:node_modules",
 )
 
 genrule(

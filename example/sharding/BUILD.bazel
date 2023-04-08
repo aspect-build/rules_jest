@@ -8,5 +8,6 @@ jest_test(
         "index.test.js",
         "index_2.test.js",
     ],
+    node_modules = "//:node_modules",
     shard_count = 2,
 )

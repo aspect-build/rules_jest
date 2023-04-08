@@ -21,6 +21,7 @@ jest_test(
     ],
     flaky = False,
     log_level = "info",
+    node_modules = "//:node_modules",
     # To update snapshots run,
     #    bazel run //example/snapshots:test_update_snapshots
     snapshots = True,
