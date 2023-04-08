@@ -7,6 +7,7 @@ jest_test(
         "index.mjs",
         "index.test.mjs",
     ],
+    node_modules = "//:node_modules",
     node_options = [
         "--experimental-vm-modules",
     ],

@@ -47,6 +47,7 @@ jest_test(
     data = [
         "case3.test.js",
     ],
+    node_modules = "//:node_modules",
 )
 
 copy_to_bin(

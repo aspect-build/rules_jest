@@ -17,6 +17,7 @@ jest_test(
         "//example:node_modules/@babel/preset-react",
         "//example:node_modules/babel-jest",
     ],
+    node_modules = "//:node_modules",
     # To update snapshots run,
     #    bazel run //example/snapshots:test_update_snapshots
     snapshots = True,

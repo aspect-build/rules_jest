@@ -8,6 +8,7 @@ jest_test(
         "index.test.js",
         "package.json",
     ],
+    node_modules = "//:node_modules",
     node_options = [
         "--experimental-vm-modules",
     ],

@@ -11,6 +11,7 @@ jest_test(
         "//example:node_modules/jest-junit",
     ],
     log_level = "debug",
+    node_modules = "//:node_modules",
 )
 
 # Case 2: auto_configure_reporters is False
@@ -24,4 +25,5 @@ jest_test(
         "//example:node_modules/jest-junit",
     ],
     log_level = "debug",
+    node_modules = "//:node_modules",
 )

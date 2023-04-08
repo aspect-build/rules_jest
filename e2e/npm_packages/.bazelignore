@@ -1,1 +1,3 @@
 node_modules
+packages/lib/node_modules
+packages/wrapper-lib/node_modules

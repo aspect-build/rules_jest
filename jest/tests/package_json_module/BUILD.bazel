@@ -15,6 +15,7 @@ jest_test(
         "//jest/tests:node_modules/@babel/preset-react",
         "//jest/tests:node_modules/babel-jest",
     ],
+    node_modules = "//:node_modules",
     snapshots = True,
 )
 

@@ -18,6 +18,7 @@ jest_test(
     data = [
         "case1.test.js",
     ],
+    node_modules = "//:node_modules",
 )
 
 # Case 2a: jest config file in a subdirectory
@@ -27,6 +28,7 @@ jest_test(
     data = [
         "case2/case2.test.js",
     ],
+    node_modules = "//:node_modules",
 )
 
 # Case 2b: jest config file in a subdirectory with chdir
@@ -37,6 +39,7 @@ jest_test(
     data = [
         "case2/case2.test.js",
     ],
+    node_modules = "//:node_modules",
 )
 
 # Case 3: Test in root package (see //:case4)
@@ -52,6 +55,7 @@ jest_test(
     data = [
         "case5.test.js",
     ],
+    node_modules = "//:node_modules",
 )
 
 # Case 6: Coverage reporting (see e2e test)
@@ -62,6 +66,7 @@ jest_test(
         "case6.index.js",
         "case6.test.js",
     ],
+    node_modules = "//:node_modules",
 )
 
 # Case 7: Coverage reporting, no supplied jest config file (see e2e test)
@@ -71,6 +76,7 @@ jest_test(
         "case7.index.js",
         "case7.test.js",
     ],
+    node_modules = "//:node_modules",
 )
 
 # Case 8: config in root directory
@@ -80,6 +86,7 @@ jest_test(
     data = [
         "case8.test.js",
     ],
+    node_modules = "//:node_modules",
 )
 
 # Case 9: native esm modules using .mjs and --experimental-vm-modules
@@ -90,6 +97,7 @@ jest_test(
         "case9.index.mjs",
         "case9.test.mjs",
     ],
+    node_modules = "//:node_modules",
     node_options = [
         "--experimental-vm-modules",
     ],
@@ -102,6 +110,7 @@ jest_test(
     data = [
         "case10.test.js",
     ],
+    node_modules = "//:node_modules",
 )
 
 js_library(

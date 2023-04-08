@@ -1,6 +1,9 @@
 const path = require("node:path");
-const { EXTENSION } = require("jest-snapshot");
 
+// We could use `const { EXTENSION } = require("jest-snapshot");` instead but jest-snapshot
+// is a transitive dep of jest-cli so its simpler just to assume "snap" is the extension as it
+// is not likely to ever change.
+const EXTENSION = "snap";
 const DOT_EXTENSION = `.${EXTENSION}`;
 
 // Must match REFERENCE_SNAPSHOT_SUFFIX in //jest:defs.bzl

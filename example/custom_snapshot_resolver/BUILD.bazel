@@ -20,6 +20,7 @@ jest_test(
         "//example:node_modules/react",
         "//example:node_modules/react-test-renderer",
     ],
+    node_modules = "//:node_modules",
     # To update snapshots run,
     #    bazel run //example/custom_snapshot_resolver:test_update_snapshots
     snapshots = "__my_snapshots__",

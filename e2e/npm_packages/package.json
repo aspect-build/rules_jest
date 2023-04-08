@@ -1,10 +1,12 @@
 {
-    "name": "npm-pkgs",
-    "devDependencies": {
-        "@babel/core": "7.20.2",
-        "@babel/preset-env": "7.20.2",
-        "@jest/globals": "29.3.1",
-        "babel-jest": "29.3.1",
-        "@e2e/lib": "workspace:*"
-    }
+  "private": true,
+  "devDependencies": {
+    "@babel/core": "7.20.2",
+    "@babel/preset-env": "7.20.2",
+    "@e2e/lib": "workspace:*",
+    "@jest/globals": "29.3.1",
+    "babel-jest": "29.3.1",
+    "jest-cli": "29.5.0",
+    "jest-junit": "15.0.0"
+  }
 }

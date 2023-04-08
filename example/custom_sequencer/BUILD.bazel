@@ -12,6 +12,7 @@ jest_test(
         "sequencer.js",
     ],
     log_level = "debug",
+    node_modules = "//:node_modules",
     shard_count = 2,
 )
 
@@ -28,5 +29,6 @@ jest_test(
         "//example:node_modules/@jest/test-sequencer",
     ],
     log_level = "debug",
+    node_modules = "//:node_modules",
     shard_count = 2,
 )

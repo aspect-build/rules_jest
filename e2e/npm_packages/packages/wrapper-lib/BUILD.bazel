@@ -1,7 +1,7 @@
+load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
 load("@aspect_rules_js//npm:defs.bzl", "npm_package")
 load("@aspect_rules_js//js:defs.bzl", "js_library")
 load("@npm//:defs.bzl", "npm_link_all_packages")
-load("@jest//:defs.bzl", "jest_test")
 
 npm_link_all_packages(name = "node_modules")
 
@@ -43,6 +43,7 @@ jest_test(
         "babel.config.json",
         ":wrapper-lib_tests",
     ],
+    node_modules = "//:node_modules",
 )
 
 jest_test(
@@ -52,6 +53,7 @@ jest_test(
         "package.json",  # required for jest to determine this package .js is esm
         ":wrapper-lib_tests",
     ],
+    node_modules = "//:node_modules",
     node_options = [
         "--experimental-vm-modules",
     ],

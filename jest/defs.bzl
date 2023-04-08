@@ -1,6 +1,8 @@
 """# Public API for Jest rules
 """
 
+load("@aspect_bazel_lib//lib:copy_file.bzl", "copy_file")
+load("@aspect_bazel_lib//lib:directory_path.bzl", "directory_path")
 load("@aspect_bazel_lib//lib:write_source_files.bzl", _write_source_files = "write_source_files")
 load("@aspect_bazel_lib//lib:utils.bzl", "default_timeout", "to_label")
 load("@aspect_bazel_lib//lib:output_files.bzl", _output_files = "output_files")
@@ -29,29 +31,27 @@ REFERENCE_SNAPSHOT_DIRECTORY = "out"
 REFERENCE_BUILD_TARGET_SUFFIX = "_ref_snapshots"
 UPDATE_SNAPSHOTS_TARGET_SUFFIX = "_update_snapshots"
 
-def _jest_from_repository(jest_rule, jest_repository, **kwargs):
+def _jest_from_node_modules(jest_rule, name, node_modules, auto_configure_reporters, **kwargs):
+    data = kwargs.pop("data", []) + ["{}/jest-cli".format(node_modules)]
+
+    if auto_configure_reporters:
+        data.append("{}/jest-junit".format(node_modules))
+
     jest_rule(
+        name = name,
         enable_runfiles = select({
             "@aspect_rules_js//js/private:enable_runfiles": True,
             "//conditions:default": False,
         }),
-        entry_point = "@{}//:jest_entrypoint".format(jest_repository),
-        bazel_sequencer = "@{}//:bazel_sequencer".format(jest_repository),
-        bazel_snapshot_reporter = "@{}//:bazel_snapshot_reporter".format(jest_repository),
-        bazel_snapshot_resolver = "@{}//:bazel_snapshot_resolver".format(jest_repository),
-        data = kwargs.pop("data", []) + [
-            "@{}//:node_modules/@jest/test-sequencer".format(jest_repository),
-            "@{}//:node_modules/jest-cli".format(jest_repository),
-            "@{}//:node_modules/jest-junit".format(jest_repository),
-            "@{}//:node_modules/jest-snapshot".format(jest_repository),
-        ],
-        jest_repository = jest_repository,
+        data = data,
         testonly = True,
+        auto_configure_reporters = auto_configure_reporters,
         **kwargs
     )
 
 def jest_test(
         name,
+        node_modules,
         config = None,
         data = [],
         snapshots = False,
@@ -61,7 +61,6 @@ def jest_test(
         auto_configure_test_sequencer = True,
         snapshots_ext = ".snap",
         quiet_snapshot_updates = False,
-        jest_repository = "jest",
         tags = [],
         timeout = None,
         size = None,
@@ -74,6 +73,10 @@ def jest_test(
 
     Args:
         name: A unique name for this target.
+
+        node_modules: Label pointing to the linked node_modules target where jasmine is linked, e.g. `//:node_modules`.
+            `jest-cli` must be linked into the node_modules supplied.
+            `jest-junit` is also required by default when `auto_configure_reporters` is True
 
         config: "Optional Jest config file. See https://jestjs.io/docs/configuration.
 
@@ -96,6 +99,7 @@ def jest_test(
             ```
             jest_test(
                 name = "test",
+                node_modules = "//:node_modules",
                 config = "jest.config.js",
                 data = [
                     "greetings/greetings.js",
@@ -137,6 +141,8 @@ def jest_test(
 
         auto_configure_reporters: Let jest_test configure reporters for Bazel test and xml test logs.
 
+            When enabled, `jest-junit` must be linked to the supplied node_modules tree.
+
             The `default` reporter is used for the standard test log and `jest-junit` is used for the xml log.
             These reporters are appended to the list of reporters from the user Jest `config` only if they are
             not already set.
@@ -156,8 +162,6 @@ def jest_test(
         quiet_snapshot_updates: When True, snapshot update stdout & stderr is hidden when the snapshot update is successful.
 
             On a snapshot update failure, its stdout & stderr will always be shown.
-
-        jest_repository: Name of the repository created with jest_repositories().
 
         tags: standard Bazel attribute, passed through to generated targets.
 
@@ -205,12 +209,44 @@ def jest_test(
             snapshots_ext = snapshots_ext,
             target = to_label(name),
         )
+        fail(msg)
+
+    entry_point = "_{}_jest_entrypoint".format(name)
+    directory_path(
+        name = entry_point,
+        directory = "{}/jest-cli/dir".format(node_modules),
+        path = "bin/jest.js",
+    )
+
+    bazel_sequencer = "_{}_bazel_sequencer".format(name)
+    copy_file(
+        name = bazel_sequencer,
+        src = "@aspect_rules_jest//jest/private:bazel_sequencer.cjs",
+        out = "_{}_bazel_sequencer.cjs".format(name),
+        visibility = ["//visibility:public"],
+    )
+
+    bazel_snapshot_reporter = "_{}_bazel_snapshot_reporter".format(name)
+    copy_file(
+        name = bazel_snapshot_reporter,
+        src = "@aspect_rules_jest//jest/private:bazel_snapshot_reporter.cjs",
+        out = "_{}_bazel_snapshot_reporter.cjs".format(name),
+        visibility = ["//visibility:public"],
+    )
+
+    bazel_snapshot_resolver = "_{}_bazel_snapshot_resolver".format(name)
+    copy_file(
+        name = bazel_snapshot_resolver,
+        src = "@aspect_rules_jest//jest/private:bazel_snapshot_resolver.cjs",
+        out = "_{}_bazel_snapshot_resolver.cjs".format(name),
+        visibility = ["//visibility:public"],
+    )
 
     # This is the primary {name} jest_test test target
-    _jest_from_repository(
+    _jest_from_node_modules(
         jest_rule = _jest_test,
-        jest_repository = jest_repository,
         name = name,
+        node_modules = node_modules,
         config = config,
         data = data + snapshot_data,
         run_in_band = run_in_band,
@@ -220,6 +256,10 @@ def jest_test(
         tags = tags,
         size = size,
         timeout = default_timeout(size, timeout),
+        entry_point = entry_point,
+        bazel_sequencer = bazel_sequencer,
+        bazel_snapshot_reporter = bazel_snapshot_reporter,
+        bazel_snapshot_resolver = bazel_snapshot_resolver,
         **kwargs
     )
 
@@ -245,10 +285,10 @@ def jest_test(
 
         # This is the generated reference snapshot generator binary target that is used as the
         # `tool` in the `js_run_binary` target below to output the reference snapshots.
-        _jest_from_repository(
+        _jest_from_node_modules(
             jest_rule = _jest_binary,
-            jest_repository = jest_repository,
             name = gen_snapshots_bin,
+            node_modules = node_modules,
             config = config,
             # Also pass data to the tool for jest snapshot updates incase there are load bearing
             # data deps the config requires
@@ -258,6 +298,10 @@ def jest_test(
             auto_configure_reporters = auto_configure_reporters,
             auto_configure_test_sequencer = auto_configure_test_sequencer,
             update_snapshots_mode = update_snapshots_mode,
+            entry_point = entry_point,
+            bazel_sequencer = bazel_sequencer,
+            bazel_snapshot_reporter = bazel_snapshot_reporter,
+            bazel_snapshot_resolver = bazel_snapshot_resolver,
             tags = tags + ["manual"],  # tagged manual so it is not built unless the {name}_update_snapshot target is run
             **bin_kwargs
         )

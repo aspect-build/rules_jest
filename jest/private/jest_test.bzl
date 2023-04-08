@@ -9,40 +9,23 @@ _attrs = dicts.add(js_binary_lib.attrs, {
     "config": attr.label(allow_single_file = [".js", ".cjs", ".mjs", ".json"]),
     "auto_configure_reporters": attr.bool(default = True),
     "auto_configure_test_sequencer": attr.bool(default = True),
-    "jest_repository": attr.string(default = "jest"),
     "run_in_band": attr.bool(default = True),
     "colors": attr.bool(default = True),
-    "update_snapshots_mode": attr.string(
-        values = ["directory", "files"],
-        doc = "Internal use only",
-    ),
-    "entry_point": attr.label(
-        doc = "Internal use only",
-        mandatory = True,
-    ),
-    # Set from jest_test macro in //jest:defs.bzl. Bazel sequencer has to be sourced from the
-    # @jest_repository since it depends on :node_modules/@jest/test-sequencer.
+    "update_snapshots_mode": attr.string(values = ["directory", "files"]),
+    "entry_point": attr.label(mandatory = True),
     "bazel_sequencer": attr.label(
-        doc = "Internal use only",
         allow_single_file = True,
         mandatory = True,
     ),
-    # Set from jest_test macro in //jest:defs.bzl for consistency with sequencer & resolver and so that
-    # a copy of the Bazel snapshot reporter doesn't have to be made with ctx.actions.expand_template.
     "bazel_snapshot_reporter": attr.label(
-        doc = "Internal use only",
         allow_single_file = True,
         mandatory = True,
     ),
-    # Set from jest_test macro in //jest:defs.bzl. Bazel snapshot resolver has to be sourced from the
-    # @jest_repository since it depends on :node_modules/jest-snapshot.
     "bazel_snapshot_resolver": attr.label(
-        doc = "Internal use only",
         allow_single_file = True,
         mandatory = True,
     ),
     "_jest_config_template": attr.label(
-        doc = "Internal use only",
         allow_single_file = True,
         default = Label("//jest/private:jest_config_template.mjs"),
     ),
@@ -72,7 +55,6 @@ def _impl(ctx):
             "{{BAZEL_SNAPSHOT_RESOLVER_SHORT_PATH}}": ctx.file.bazel_snapshot_resolver.short_path,
             "{{COVERAGE_ENABLED}}": "1" if ctx.coverage_instrumented() else "",
             "{{GENERATED_CONFIG_SHORT_PATH}}": generated_config.short_path,
-            "{{JUNIT_REPORTER_SHORT_PATH}}": "../{jest_repository}/node_modules/jest-junit/index.js".format(jest_repository = ctx.attr.jest_repository),
             "{{USER_CONFIG_SHORT_PATH}}": user_config.short_path if user_config else "",
             "{{USER_CONFIG_PATH}}": user_config.path if user_config else "",
         },
