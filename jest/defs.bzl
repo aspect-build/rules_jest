@@ -74,7 +74,7 @@ def jest_test(
     Args:
         name: A unique name for this target.
 
-        node_modules: Label pointing to the linked node_modules target where jasmine is linked, e.g. `//:node_modules`.
+        node_modules: Label pointing to the linked node_modules target where jest is linked, e.g. `//:node_modules`.
             `jest-cli` must be linked into the node_modules supplied.
             `jest-junit` is also required by default when `auto_configure_reporters` is True
 
