@@ -10,6 +10,18 @@ jest_test(
 )
 
 jest_test(
+    name = "test_user_data",
+    data = [
+        "index.js",
+        "index.test.js",
+        # should be able to add jest-cli & jest-junit explicitly in data
+        "//:node_modules/jest-cli",
+        "//:node_modules/jest-junit",
+    ],
+    node_modules = "//:node_modules",
+)
+
+jest_test(
     name = "js_config_test",
     config = "jest.config.js",
     data = [

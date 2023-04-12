@@ -32,10 +32,16 @@ REFERENCE_BUILD_TARGET_SUFFIX = "_ref_snapshots"
 UPDATE_SNAPSHOTS_TARGET_SUFFIX = "_update_snapshots"
 
 def _jest_from_node_modules(jest_rule, name, node_modules, auto_configure_reporters, **kwargs):
-    data = kwargs.pop("data", []) + ["{}/jest-cli".format(node_modules)]
+    data = kwargs.pop("data", [])
 
-    if auto_configure_reporters:
-        data.append("{}/jest-junit".format(node_modules))
+    jest_cli_dep = "{}/jest-cli".format(node_modules)
+    jest_unit_dep = "{}/jest-junit".format(node_modules)
+
+    if jest_cli_dep not in data:
+        data.append(jest_cli_dep)
+
+    if auto_configure_reporters and jest_unit_dep not in data:
+        data.append(jest_unit_dep)
 
     jest_rule(
         name = name,
@@ -80,7 +86,10 @@ def jest_test(
 
         node_modules: Label pointing to the linked node_modules target where jest is linked, e.g. `//:node_modules`.
             `jest-cli` must be linked into the node_modules supplied.
-            `jest-junit` is also required by default when `auto_configure_reporters` is True
+            `jest-junit` is also required by default when `auto_configure_reporters` is True.
+
+            NB: Only the required npm packages are included in data from `//:node_modules`. Other npm packages
+            are not included as inputs.
 
         config: "Optional Jest config file. See https://jestjs.io/docs/configuration.
 
