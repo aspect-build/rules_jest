@@ -71,7 +71,6 @@ def jest_test(
         auto_configure_test_sequencer = True,
         snapshots_ext = ".snap",
         quiet_snapshot_updates = False,
-        tags = [],
         timeout = None,
         size = None,
         **kwargs):
@@ -176,8 +175,6 @@ def jest_test(
 
             On a snapshot update failure, its stdout & stderr will always be shown.
 
-        tags: standard Bazel attribute, passed through to generated targets.
-
         timeout: standard attribute for tests. Defaults to "short" if both timeout and size are unspecified.
 
         size: standard attribute for tests
@@ -185,6 +182,8 @@ def jest_test(
         **kwargs: Additional named parameters passed to both `js_test` and `js_binary`.
             See https://github.com/aspect-build/rules_js/blob/main/docs/js_binary.md
     """
+    tags = kwargs.pop("tags", [])
+
     snapshot_data = []
     snapshot_files = []
 
