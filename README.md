@@ -4,8 +4,8 @@ Runs tests with the https://jestjs.io/ test runner under Bazel.
 
 rules_jest is just a part of what Aspect provides:
 
--   _Need help?_ This ruleset has support provided by https://aspect.dev.
--   See our other Bazel rules, especially those built for rules_js, such as rules_ts for TypeScript: https://github.com/aspect-build
+- _Need help?_ This ruleset has support provided by https://aspect.dev.
+- See our other Bazel rules, especially those built for rules_js, such as rules_ts for TypeScript: https://github.com/aspect-build
 
 ## Installation
 
@@ -14,6 +14,8 @@ From the release you wish to use:
 copy the WORKSPACE snippet into your `WORKSPACE` file.
 
 ## Usage
+
+Run all Jest tests in the workspace: `bazel test --test_lang_filters=jest //...`
 
 See the documentation in the [docs](docs/) folder and the example usages in the [example](example/) folder.
 

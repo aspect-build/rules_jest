@@ -7,23 +7,7 @@ load("@aspect_bazel_lib//lib:write_source_files.bzl", _write_source_files = "wri
 load("@aspect_bazel_lib//lib:utils.bzl", "default_timeout", "to_label")
 load("@aspect_bazel_lib//lib:output_files.bzl", _output_files = "output_files")
 load("@aspect_rules_js//js:defs.bzl", _js_run_binary = "js_run_binary")
-load("@aspect_rules_js//js:libs.bzl", "js_binary_lib")
-load("//jest/private:jest_test.bzl", "lib")
-
-_jest_test = rule(
-    attrs = lib.attrs,
-    implementation = lib.implementation,
-    test = True,
-    toolchains = js_binary_lib.toolchains,
-)
-
-# binary rule used for snapshot updates
-_jest_binary = rule(
-    attrs = lib.attrs,
-    implementation = lib.implementation,
-    executable = True,
-    toolchains = js_binary_lib.toolchains,
-)
+load("//jest/private:jest_test.bzl", jest_binary_rule = "jest_binary", jest_test_rule = "jest_test")
 
 REFERENCE_SNAPSHOT_SUFFIX = "-out"
 REFERENCE_SNAPSHOT_DIRECTORY = "out"
@@ -256,7 +240,7 @@ def jest_test(
 
     # This is the primary {name} jest_test test target
     _jest_from_node_modules(
-        jest_rule = _jest_test,
+        jest_rule = jest_test_rule,
         name = name,
         node_modules = node_modules,
         config = config,
@@ -298,7 +282,7 @@ def jest_test(
         # This is the generated reference snapshot generator binary target that is used as the
         # `tool` in the `js_run_binary` target below to output the reference snapshots.
         _jest_from_node_modules(
-            jest_rule = _jest_binary,
+            jest_rule = jest_binary_rule,
             name = gen_snapshots_bin,
             node_modules = node_modules,
             config = config,

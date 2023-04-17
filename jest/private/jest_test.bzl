@@ -166,3 +166,18 @@ lib = struct(
     attrs = _attrs,
     implementation = _impl,
 )
+
+jest_test = rule(
+    attrs = lib.attrs,
+    implementation = lib.implementation,
+    test = True,
+    toolchains = js_binary_lib.toolchains,
+)
+
+# binary rule used for snapshot updates
+jest_binary = rule(
+    attrs = lib.attrs,
+    implementation = lib.implementation,
+    executable = True,
+    toolchains = js_binary_lib.toolchains,
+)
