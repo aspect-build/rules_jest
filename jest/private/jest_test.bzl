@@ -53,7 +53,6 @@ def _impl(ctx):
             "{{BAZEL_SEQUENCER_SHORT_PATH}}": ctx.file.bazel_sequencer.short_path,
             "{{BAZEL_SNAPSHOT_REPORTER_SHORT_PATH}}": ctx.file.bazel_snapshot_reporter.short_path,
             "{{BAZEL_SNAPSHOT_RESOLVER_SHORT_PATH}}": ctx.file.bazel_snapshot_resolver.short_path,
-            "{{COVERAGE_ENABLED}}": "1" if ctx.coverage_instrumented() else "",
             "{{GENERATED_CONFIG_SHORT_PATH}}": generated_config.short_path,
             "{{USER_CONFIG_SHORT_PATH}}": user_config.short_path if user_config else "",
             "{{USER_CONFIG_PATH}}": user_config.path if user_config else "",

@@ -11,7 +11,7 @@ if [ ! -f "$COVERAGE_FILE" ]; then
     exit 1
 fi
 
-if ! grep -q "foobar" "$COVERAGE_FILE"; then
+if ! grep -q "FNDA:1,foobar" "$COVERAGE_FILE"; then
     echo "Coverage file does not contain coverage for foobar function"
     exit 1
 fi

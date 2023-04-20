@@ -5,7 +5,7 @@ import * as path from "path";
 // isTest indicates if this is a test target or if this is a binary target generating reference output snapshots for the snapshot updater target
 const isTest = !!process.env.TEST_TARGET;
 const updateSnapshots = !!process.env.JEST_TEST__UPDATE_SNAPSHOTS_MODE;
-const coverageEnabled = !!"{{COVERAGE_ENABLED}}";
+const coverageEnabled = !!process.env.COVERAGE_DIR;
 const autoConfReporters = !!"{{AUTO_CONF_REPORTERS}}";
 const autoConfTestSequencer = !!"{{AUTO_CONF_TEST_SEQUENCER}}";
 const userConfigShortPath = "{{USER_CONFIG_SHORT_PATH}}";
