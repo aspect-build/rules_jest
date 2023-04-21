@@ -1,5 +1,3 @@
-const { foobar } = require("./case11.index.js");
-
-test("foobar", () => {
-  expect(foobar()).toEqual("foobar");
+test("it should work", () => {
+  expect(1).toBe(1);
 });

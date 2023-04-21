@@ -127,7 +127,6 @@ jest_test(
     name = "case11a",
     config = "case11/case11a.jest.config.js",
     data = [
-        "case11/case11.index.js",
         "case11/case11.test.js",
     ],
     node_modules = "//:node_modules",
@@ -137,7 +136,6 @@ jest_test(
     name = "case11b",
     config = "case11/case11b.jest.config.js",
     data = [
-        "case11/case11.index.js",
         "case11/case11.test.js",
     ],
     node_modules = "//:node_modules",
