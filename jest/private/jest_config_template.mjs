@@ -80,7 +80,14 @@ if (userConfigShortPath) {
       })
     ).default;
   } else {
-    config = (await import(_resolveRunfilesPath(userConfigShortPath))).default;
+    const userConfigModule = (
+      await import(_resolveRunfilesPath(userConfigShortPath))
+    ).default;
+    if (typeof userConfigModule === "function") {
+      config = await userConfigModule();
+    } else {
+      config = userConfigModule;
+    }
   }
 }
 
