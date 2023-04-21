@@ -1,3 +1,4 @@
+load("@bazel_skylib//rules:build_test.bzl", "build_test")
 load("@aspect_rules_js//js:defs.bzl", "js_library")
 load("@npm//:defs.bzl", "npm_link_all_packages")
 load("//jest:defs.bzl", "jest_test")
@@ -103,24 +104,33 @@ jest_test(
     ],
 )
 
-# Case 10: A js_library() config with dependencies
+# Case 10: A js_library() config specifying test-time dependencies
 jest_test(
     name = "case10",
     config = ":case10-config",
     data = [
-        "case10.test.js",
+        "case10/case10.test.js",
     ],
     node_modules = "//:node_modules",
+    snapshots = True,
 )
 
 js_library(
     name = "case10-config",
     srcs = [
-        "case10.jest.config.js",
+        "case10/case10.jest.config.js",
     ],
     data = [
-        "case10.setup.js",
+        "case10/case10.config-init.js",
+        "case10/case10.setup.js",
+        ":node_modules/@aspect-test/c",
     ],
+)
+
+# Ensure the case10 snapshot target exists
+build_test(
+    name = "case10-update_snapshots_build",
+    targets = [":case10_update_snapshots"],
 )
 
 # Case 11a: jest config file producing config as function

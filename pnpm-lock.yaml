@@ -33,6 +33,7 @@ importers:
 
   jest/tests:
     specifiers:
+      '@aspect-test/c': 2.0.2
       '@babel/core': 7.20.2
       '@babel/preset-env': 7.20.2
       '@babel/preset-react': 7.18.6
@@ -44,6 +45,7 @@ importers:
     dependencies:
       react: 18.2.0
     devDependencies:
+      '@aspect-test/c': 2.0.2
       '@babel/core': 7.20.2
       '@babel/preset-env': 7.20.2_@babel+core@7.20.2
       '@babel/preset-react': 7.18.6_@babel+core@7.20.2
@@ -60,6 +62,12 @@ packages:
     dependencies:
       '@jridgewell/gen-mapping': 0.1.1
       '@jridgewell/trace-mapping': 0.3.17
+    dev: true
+
+  /@aspect-test/c/2.0.2:
+    resolution: {integrity: sha512-rMJmd3YBvY7y0jh+2m72TiAhe6dVKjMMNFFVOXFCbM233m7lsG4cq970H1C8rUsc3AcA5E/cEHlxSVffHlHD2Q==}
+    hasBin: true
+    requiresBuild: true
     dev: true
 
   /@babel/code-frame/7.18.6:
