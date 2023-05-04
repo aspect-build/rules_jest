@@ -154,12 +154,11 @@ if (coverageEnabled) {
   let coverageFile = path.basename(process.env.COVERAGE_OUTPUT_FILE);
   let coverageDirectory = path.dirname(process.env.COVERAGE_OUTPUT_FILE);
 
-  if (process.env.SPLIT_COVERAGE_POST_PROCESSING) {
+  if (process.env.SPLIT_COVERAGE_POST_PROCESSING == "1") {
     // in split coverage post processing mode bazel assumes that the COVERAGE_OUTPUT_FILE
     // will be created by lcov_merger which runs as a separate action with everything in
     // COVERAGE_DIR provided as inputs. so we'll just create the final coverage at
     // `COVERAGE_DIR/coverage.dat` which then later moved by merger.sh to final location.
-    console.log(process.env);
     coverageDirectory = process.env.COVERAGE_DIR;
     coverageFile = "coverage.dat"
   }
