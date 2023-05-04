@@ -14,7 +14,7 @@ bzl_library(
 )
 
 sh_binary(
-    name = "noop",
-    srcs = ["noop.sh"],
+    name = "merger",
+    srcs = ["merger.sh"],
     visibility = ["//visibility:public"],
 )

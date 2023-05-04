@@ -5,7 +5,7 @@ import * as path from "path";
 // isTest indicates if this is a test target or if this is a binary target generating reference output snapshots for the snapshot updater target
 const isTest = !!process.env.TEST_TARGET;
 const updateSnapshots = !!process.env.JEST_TEST__UPDATE_SNAPSHOTS_MODE;
-const coverageEnabled = !!"{{COVERAGE_ENABLED}}";
+const coverageEnabled = !!process.env.COVERAGE_DIR;
 const autoConfReporters = !!"{{AUTO_CONF_REPORTERS}}";
 const autoConfTestSequencer = !!"{{AUTO_CONF_TEST_SEQUENCER}}";
 const userConfigShortPath = "{{USER_CONFIG_SHORT_PATH}}";
@@ -146,12 +146,28 @@ if (updateSnapshots) {
   config.snapshotResolver = bazelSnapshotResolverPath;
 }
 
+
+
 if (coverageEnabled) {
   config.collectCoverage = true;
-  config.coverageDirectory = path.dirname(process.env.COVERAGE_OUTPUT_FILE);
+
+  let coverageFile = path.basename(process.env.COVERAGE_OUTPUT_FILE);
+  let coverageDirectory = path.dirname(process.env.COVERAGE_OUTPUT_FILE);
+
+  if (process.env.SPLIT_COVERAGE_POST_PROCESSING) {
+    // in split coverage post processing mode bazel assumes that the COVERAGE_OUTPUT_FILE
+    // will be created by lcov_merger which runs as a separate action with everything in
+    // COVERAGE_DIR provided as inputs. so we'll just create the final coverage at
+    // `COVERAGE_DIR/coverage.dat` which then later moved by merger.sh to final location.
+    console.log(process.env);
+    coverageDirectory = process.env.COVERAGE_DIR;
+    coverageFile = "coverage.dat"
+  }
+
+  config.coverageDirectory = coverageDirectory;
   config.coverageReporters = [
     "text",
-    ["lcovonly", { file: path.basename(process.env.COVERAGE_OUTPUT_FILE) }],
+    ["lcovonly", { file: coverageFile }],
   ];
 
   // Glob pattern paths for which files to cover must be relative to this

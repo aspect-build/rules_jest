@@ -142,3 +142,15 @@ jest_test(
     ],
     node_modules = "//:node_modules",
 )
+
+
+
+# Case 11: Coverage reporting (see e2e test)
+jest_test(
+    name = "case12",
+    data = [
+        "case12.index.js",
+        "case12.test.js",
+    ],
+    node_modules = "//:node_modules",
+)
