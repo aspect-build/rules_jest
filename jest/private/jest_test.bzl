@@ -34,7 +34,7 @@ _attrs = dicts.add(js_binary_lib.attrs, {
     # We use a no-op because jest itself generates the coverage.
     "_lcov_merger": attr.label(
         executable = True,
-        default = Label("//jest/private:noop"),
+        default = Label("//jest/private:merger"),
         cfg = "exec",
     ),
 })
