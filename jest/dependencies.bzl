@@ -18,9 +18,9 @@ def rules_jest_dependencies():
 
     http_archive(
         name = "aspect_rules_js",
-        sha256 = "aea8d12bdc4b40127e57fb3da5b61cbb17e969e7786471a71cbff0808c600bcb",
-        strip_prefix = "rules_js-1.24.1",
-        url = "https://github.com/aspect-build/rules_js/releases/download/v1.24.1/rules_js-v1.24.1.tar.gz",
+        sha256 = "dcd1567d4a93a8634ec0b888b371a60b93c18d980f77dace02eb176531a71fcf",
+        strip_prefix = "rules_js-1.26.0",
+        url = "https://github.com/aspect-build/rules_js/releases/download/v1.26.0/rules_js-v1.26.0.tar.gz",
     )
 
     http_archive(
