@@ -8,5 +8,5 @@ global.TEST_CONFIG_VALUE = typeof require("@aspect-test/c").id === "function";
 
 module.exports = {
   // A runtime setup dep
-  setupFiles: [path.join(process.cwd(), "jest/tests/case10/case10.setup.js")],
+  setupFiles: [path.join(__dirname, "case10.setup.js")],
 };

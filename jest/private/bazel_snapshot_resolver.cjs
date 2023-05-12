@@ -6,14 +6,19 @@ const path = require("node:path");
 const EXTENSION = "snap";
 const DOT_EXTENSION = `.${EXTENSION}`;
 
-// Must match REFERENCE_SNAPSHOT_SUFFIX in //jest:defs.bzl
-const REFERENCE_SNAPSHOT_SUFFIX = "-out";
+if (!process.env.JEST_TEST__UPDATE_SNAPSHOTS) {
+  console.error(
+    `[rules_jest]: internal error - ${__filename} should only be used for snapshot update.`
+  );
+  process.exit(1);
+}
 
-// Must match REFERENCE_SNAPSHOT_DIRECTORY in //jest:defs.bzl
-const REFERENCE_SNAPSHOT_DIRECTORY = "out";
-
-const INTERNAL_ERROR_MSG =
-  "rules_jest internal error, please file an issue: https://github.com/aspect-build/rules_jest/issues";
+if (!process.env.BUILD_WORKSPACE_DIRECTORY) {
+  console.error(
+    `[rules_jest]: snapshot update must be 'bazel run', not 'bazel test'.`
+  );
+  process.exit(1);
+}
 
 // Default snapshot resolver based on
 // https://github.com/facebook/jest/blob/6e5b1d60a1214e792b5229993b5475445e9c1a6e/packages/jest-snapshot/src/SnapshotResolver.ts#L59.
@@ -45,53 +50,45 @@ let snapshotResolver = process.env.JEST_TEST__USER_SNAPSHOT_RESOLVER
   ? require(process.env.JEST_TEST__USER_SNAPSHOT_RESOLVER)
   : defaultSnapshotResolver;
 
-if (process.env.JEST_TEST__UPDATE_SNAPSHOTS_MODE) {
-  // This run of Jest is meant for generating reference snapshots for the snapshots update Bazel target
-  if (process.env.JEST_TEST__UPDATE_SNAPSHOTS_MODE == "directory") {
-    // If we're updating snapshots with Bazel then switch the directory that snapshots are written
-    // to to REFERENCE_SNAPSHOT_DIRECTORY so the generated snapshot path is different from the
-    // source snapshot path allowing us to use write_source_files to for the update target.
-    const origSnapshotResolver = snapshotResolver;
-    snapshotResolver = {
-      ...origSnapshotResolver,
+// The root test directory aligning with the workspace source root directory.
+const ROOT = path.join(process.env.TEST_SRCDIR, process.env.TEST_WORKSPACE);
 
-      resolveSnapshotPath: (testPath) => {
-        const orig = origSnapshotResolver.resolveSnapshotPath(testPath);
-        return path.join(
-          path.dirname(orig),
-          REFERENCE_SNAPSHOT_DIRECTORY,
-          path.basename(orig)
-        );
-      },
+// This run of Jest is meant for generating reference snapshots for the snapshots update Bazel target.
 
-      resolveTestPath: (snapshotPath) => {
-        const orig = origSnapshotResolver.resolveTestPath(snapshotPath);
-        return path.join(path.dirname(path.dirname(orig)), path.basename(orig));
-      },
-    };
-  } else if (process.env.JEST_TEST__UPDATE_SNAPSHOTS_MODE == "files") {
-    // If we're updating snapshots with Bazel then append a REFERENCE_SNAPSHOT_SUFFIX to the
-    // snapshot path so the generated snapshot path is different from the source snapshot path
-    // allowing us to use write_source_files to for the update target.
-    const origSnapshotResolver = snapshotResolver;
-    snapshotResolver = {
-      ...origSnapshotResolver,
+// Switch the directory of snapshots to within the src dir (BUILD_WORKSPACE_DIRECTORY) instead
+// of the snapshots dir in bazel-bin.
+//
+// This means none of the snapshots copied into the bin dir will be used, all will be considered
+// snapshot test failures and be written to BUILD_WORKSPACE_DIRECTORY.
+const origSnapshotResolver = snapshotResolver;
+snapshotResolver = {
+  ...origSnapshotResolver,
 
-      resolveSnapshotPath: (testPath) =>
-        origSnapshotResolver.resolveSnapshotPath(testPath) +
-        REFERENCE_SNAPSHOT_SUFFIX,
+  resolveSnapshotPath: (testPath) => {
+    let orig = origSnapshotResolver.resolveSnapshotPath(testPath);
 
-      resolveTestPath: (snapshotPath) =>
-        origSnapshotResolver.resolveTestPath(
-          snapshotPath.substr(
-            0,
-            snapshotPath.length - REFERENCE_SNAPSHOT_SUFFIX.length
-          )
-        ),
-    };
-  } else {
-    throw new Error(INTERNAL_ERROR_MSG);
-  }
-}
+    if (path.isAbsolute(orig)) {
+      orig = path.join(
+        process.env.BUILD_WORKSPACE_DIRECTORY,
+        path.relative(ROOT, orig)
+      );
+    }
+
+    return orig;
+  },
+
+  resolveTestPath: (snapshotPath) => {
+    let orig = origSnapshotResolver.resolveTestPath(snapshotPath);
+
+    if (path.isAbsolute(orig)) {
+      orig = path.join(
+        ROOT,
+        path.relative(process.env.BUILD_WORKSPACE_DIRECTORY, orig)
+      );
+    }
+
+    return orig;
+  },
+};
 
 module.exports = snapshotResolver;

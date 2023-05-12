@@ -115,6 +115,18 @@ jest_test(
     snapshots = True,
 )
 
+# Case 10a: case10 with the chdir param to try a different cwd
+jest_test(
+    name = "case10a",
+    chdir = package_name(),
+    config = ":case10-config",
+    data = [
+        "case10/case10.test.js",
+    ],
+    node_modules = "//:node_modules",
+    snapshots = True,
+)
+
 js_library(
     name = "case10-config",
     srcs = [
@@ -152,8 +164,6 @@ jest_test(
     ],
     node_modules = "//:node_modules",
 )
-
-
 
 # Case 11: Coverage reporting (see e2e test)
 jest_test(

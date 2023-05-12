@@ -11,7 +11,8 @@ _attrs = dicts.add(js_binary_lib.attrs, {
     "auto_configure_test_sequencer": attr.bool(default = True),
     "run_in_band": attr.bool(default = True),
     "colors": attr.bool(default = True),
-    "update_snapshots_mode": attr.string(values = ["directory", "files"]),
+    "update_snapshots": attr.bool(default = False),
+    "quiet_snapshot_updates": attr.bool(default = False),
     "entry_point": attr.label(mandatory = True),
     "bazel_sequencer": attr.label(
         allow_single_file = True,
@@ -84,12 +85,11 @@ def _impl(ctx):
         fixed_args.append("--colors")
     if ctx.attr.run_in_band:
         fixed_args.append("--runInBand")
-    if ctx.attr.update_snapshots_mode:
-        fixed_args.append("--updateSnapshot")
 
     fixed_env = {}
-    if ctx.attr.update_snapshots_mode:
-        fixed_env["JEST_TEST__UPDATE_SNAPSHOTS_MODE"] = ctx.attr.update_snapshots_mode
+    if ctx.attr.update_snapshots:
+        fixed_args.append("--updateSnapshot")
+        fixed_env["JEST_TEST__UPDATE_SNAPSHOTS"] = "true"
     else:
         # jest-junit lets you declare the output file in the env var JEST_JUNIT_OUTPUT_FILE
         # as an alternative to declaring it in the jest config file.
@@ -97,6 +97,9 @@ def _impl(ctx):
         # Always set this even if auto_configure_reporters is False because it could be
         # useful if the user configures jest-junit themselves.
         fixed_env["JEST_JUNIT_OUTPUT_FILE"] = "$$XML_OUTPUT_FILE"
+
+    if ctx.attr.quiet_snapshot_updates:
+        fixed_env["JS_BINARY__SILENT_ON_SUCCESS"] = "1"
 
     launcher = js_binary_lib.create_launcher(
         ctx,
@@ -170,13 +173,5 @@ jest_test = rule(
     attrs = lib.attrs,
     implementation = lib.implementation,
     test = True,
-    toolchains = js_binary_lib.toolchains,
-)
-
-# binary rule used for snapshot updates
-jest_binary = rule(
-    attrs = lib.attrs,
-    implementation = lib.implementation,
-    executable = True,
     toolchains = js_binary_lib.toolchains,
 )
