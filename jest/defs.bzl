@@ -3,16 +3,9 @@
 
 load("@aspect_bazel_lib//lib:copy_file.bzl", "copy_file")
 load("@aspect_bazel_lib//lib:directory_path.bzl", "directory_path")
-load("@aspect_bazel_lib//lib:write_source_files.bzl", _write_source_files = "write_source_files")
 load("@aspect_bazel_lib//lib:utils.bzl", "default_timeout", "to_label")
-load("@aspect_bazel_lib//lib:output_files.bzl", _output_files = "output_files")
-load("@aspect_rules_js//js:defs.bzl", _js_run_binary = "js_run_binary")
-load("//jest/private:jest_test.bzl", jest_binary_rule = "jest_binary", jest_test_rule = "jest_test")
+load("//jest/private:jest_test.bzl", jest_test_rule = "jest_test")
 
-REFERENCE_SNAPSHOT_SUFFIX = "-out"
-REFERENCE_SNAPSHOT_DIRECTORY = "out"
-
-REFERENCE_BUILD_TARGET_SUFFIX = "_ref_snapshots"
 UPDATE_SNAPSHOTS_TARGET_SUFFIX = "_update_snapshots"
 
 def _jest_from_node_modules(jest_rule, name, node_modules, auto_configure_reporters, **kwargs):
@@ -169,14 +162,11 @@ def jest_test(
     tags = kwargs.pop("tags", [])
 
     snapshot_data = []
-    snapshot_files = []
 
-    snapshot_directories = []
     if snapshots == True:
         snapshots = native.glob(["**/__snapshots__"], exclude_directories = 0)
 
     if type(snapshots) == "string":
-        snapshot_directories = [to_label(snapshots)]
         snapshot_data = native.glob(["{}/**".format(snapshots)])
     elif type(snapshots) == "list":
         for snapshot in snapshots:
@@ -190,21 +180,12 @@ def jest_test(
                 )
                 fail(msg)
             if snapshot_label.name.endswith(snapshots_ext):
-                snapshot_files.append(snapshot_label)
                 snapshot_data.append(snapshot_label)
             else:
-                snapshot_directories.append(snapshot_label)
                 snapshot_data.extend(native.glob(["{}/**".format(snapshot)]))
 
     elif snapshots != False and snapshots != None:
         msg = "snapshots expected to be a boolean, string or list but got {}".format(snapshots)
-        fail(msg)
-
-    if snapshot_files and snapshot_directories:
-        msg = "Expected jest_test '{target}' snapshots to be labels to all snapshot files (ending with '{snapshots_ext}') or all snapshot directories but got a mix of the two".format(
-            snapshots_ext = snapshots_ext,
-            target = to_label(name),
-        )
         fail(msg)
 
     entry_point = "_{}_jest_entrypoint".format(name)
@@ -259,137 +240,24 @@ def jest_test(
         **kwargs
     )
 
-    update_snapshots_mode = None
-    if snapshot_files:
-        update_snapshots_mode = "files"
-    elif snapshot_directories:
-        update_snapshots_mode = "directory"
-
-    if update_snapshots_mode:
-        gen_snapshots_bin = "{}_ref_snapshots_bin".format(name)
-
-        # Filter out named params that are valid for jest_test but not for jest_binary
-        bin_kwargs = {
-            key: val
-            for key, val in kwargs.items()
-            # Subset of list from https://bazel.build/reference/be/common-definitions#common-attributes-tests
-            # - "env" is supported by *_binary rules so not filtered out
-            # - "args" are supported by *_binary rules so not filtered out
-            # - "size", "timeout" are explicit parameters to the macro so not in kwargs
-            if key not in ["env_inherit", "flaky", "shard_count", "local"]
-        }
-
-        # This is the generated reference snapshot generator binary target that is used as the
-        # `tool` in the `js_run_binary` target below to output the reference snapshots.
-        _jest_from_node_modules(
-            jest_rule = jest_binary_rule,
-            name = gen_snapshots_bin,
-            node_modules = node_modules,
-            config = config,
-            # Also pass data to the tool for jest snapshot updates incase there are load bearing
-            # data deps the config requires
-            data = data,
-            run_in_band = run_in_band,
-            colors = colors,
-            auto_configure_reporters = auto_configure_reporters,
-            auto_configure_test_sequencer = auto_configure_test_sequencer,
-            update_snapshots_mode = update_snapshots_mode,
-            entry_point = entry_point,
-            bazel_sequencer = bazel_sequencer,
-            bazel_snapshot_reporter = bazel_snapshot_reporter,
-            bazel_snapshot_resolver = bazel_snapshot_resolver,
-            tags = tags + ["manual"],  # tagged manual so it is not built unless the {name}_update_snapshot target is run
-            **bin_kwargs
-        )
-
-        _jest_update_snapshots(
-            name = name,
-            config = config,
-            data = data,
-            tags = tags + ["manual"],  # tagged manual so it is not built unless run
-            snapshot_directories = snapshot_directories,
-            snapshot_files = snapshot_files,
-            gen_snapshots_bin = gen_snapshots_bin,
-            quiet_snapshot_updates = quiet_snapshot_updates,
-        )
-
-def _jest_update_snapshots(
-        name,
-        config,
-        data,
-        tags,
-        snapshot_directories,
-        snapshot_files,
-        gen_snapshots_bin,
-        quiet_snapshot_updates):
-    update_snapshots_files = {}
-    if snapshot_directories:
-        # This js_run_binary outputs the reference snapshots directory used by the
-        # write_source_files updater target below. Reference snapshots have a
-        # REFERENCE_SNAPSHOT_SUFFIX suffix so the write_source_files is able to specify both the
-        # source file snapshots and the reference snapshots by label.
-        ref_snapshots_target = "{}{}".format(name, REFERENCE_BUILD_TARGET_SUFFIX)
-        _js_run_binary(
-            name = ref_snapshots_target,
-            srcs = data + ([config] if config else []),
-            out_dirs = ["{}/{}".format(d.name, REFERENCE_SNAPSHOT_DIRECTORY) for d in snapshot_directories],
-            tool = gen_snapshots_bin,
-            silent_on_success = quiet_snapshot_updates,
-            testonly = True,
-            # Tagged manual so it is not built unless the {name}_update_snapshot target is run
-            tags = tags + ["manual"],
-        )
-        if len(snapshot_directories) == 1:
-            # The case of a single directory output is simple
-            update_snapshots_files[snapshot_directories[0].name] = ref_snapshots_target
-        else:
-            # The case of many directory outputs is more complicated since output directories
-            # have no pre-declared labels; we must use an output_group target to get at the
-            # individual output directories
-            for i, d in enumerate(snapshot_directories):
-                output_files_target = "{}_outdir_{}".format(name, i)
-                output_path = "/".join([s for s in [d.package, d.name, REFERENCE_SNAPSHOT_DIRECTORY] if s])
-                _output_files(
-                    name = output_files_target,
-                    target = ref_snapshots_target,
-                    paths = [output_path],
-                    testonly = True,
-                    # Tagged manual so it is not built unless the {name}_update_snapshot target is run
-                    tags = tags + ["manual"],
-                )
-                update_snapshots_files[snapshot_directories[i].name] = output_files_target
-    else:
-        snapshot_outs = []
-        for snapshot in snapshot_files:
-            snapshot_out = "{}{}".format(snapshot, REFERENCE_SNAPSHOT_SUFFIX)
-            snapshot_outs.append(snapshot_out)
-            update_snapshots_files[snapshot] = snapshot_out
-
-        # This js_run_binary outputs the reference snapshots files used by the write_source_files
-        # updater target below. Reference snapshots have a REFERENCE_SNAPSHOT_SUFFIX suffix so the
-        # write_source_files is able to specify both the source file snapshots and the reference
-        # snapshots by label.
-        _js_run_binary(
-            name = "{}{}".format(name, REFERENCE_BUILD_TARGET_SUFFIX),
-            srcs = data + ([config] if config else []),
-            outs = snapshot_outs,
-            tool = gen_snapshots_bin,
-            silent_on_success = quiet_snapshot_updates,
-            testonly = True,
-            # Tagged manual so it is not built unless the {name}_update_snapshot target is run
-            tags = tags + ["manual"],
-        )
-
-    # The snapshot update binary target: {name}_update_snapshots
-    _write_source_files(
-        name = "{}{}".format(name, UPDATE_SNAPSHOTS_TARGET_SUFFIX),
-        files = update_snapshots_files,
-        # Jest will already fail if the snapshot is out-of-date so just use write_source_files
-        # for the update script
-        diff_test = False,
-        testonly = True,
-        # Tagged manual so it is not built unless run
-        tags = tags + ["manual"],
-        # Always public visibility so that it can be used downstream in an aggregate write_source_files target
-        visibility = ["//visibility:public"],
+    _jest_from_node_modules(
+        jest_rule = jest_test_rule,
+        name = name + UPDATE_SNAPSHOTS_TARGET_SUFFIX,
+        node_modules = node_modules,
+        config = config,
+        # Also pass data to the tool for jest snapshot updates incase there are load bearing
+        # data deps the config requires
+        data = data,
+        run_in_band = run_in_band,
+        colors = colors,
+        auto_configure_reporters = auto_configure_reporters,
+        auto_configure_test_sequencer = auto_configure_test_sequencer,
+        update_snapshots = True,
+        quiet_snapshot_updates = quiet_snapshot_updates,
+        entry_point = entry_point,
+        bazel_sequencer = bazel_sequencer,
+        bazel_snapshot_reporter = bazel_snapshot_reporter,
+        bazel_snapshot_resolver = bazel_snapshot_resolver,
+        tags = tags + ["manual"],  # tagged manual so it is not built unless the {name}_update_snapshot target is run
+        **kwargs
     )

@@ -36,5 +36,7 @@ update_snapshot_e2e_test example/snapshots_files/__snapshots__/link.test.js.snap
 update_snapshot_e2e_test example/custom_snapshot_resolver/__my_snapshots__/link.test.js.snap //example/custom_snapshot_resolver:test
 update_snapshot_e2e_test example/custom_snapshot_resolver_files/link.test.js.snap //example/custom_snapshot_resolver_files:test
 update_snapshot_e2e_test jest/tests/package_json_module/__snapshots__/link.test.js.snap //jest/tests/package_json_module:test
+update_snapshot_e2e_test jest/tests/case10/__snapshots__/case10.test.js.snap //jest/tests:case10
+update_snapshot_e2e_test jest/tests/case10/__snapshots__/case10.test.js.snap //jest/tests:case10a
 
 echo "All tests passed"
