@@ -65,7 +65,12 @@ def _impl(ctx):
     if ctx.attr.chdir:
         unwind_chdir_prefix = "/".join([".."] * len(ctx.attr.chdir.split("/"))) + "/"
 
-    fixed_args = [
+    fixed_args = []
+
+    # TODO(1.0): we can assume fixed_args exists on attr for the 1.0 release (it comes from rules_js 1.27.0)
+    if hasattr(ctx.attr, "fixed_args"):
+        fixed_args.extend(ctx.attr.fixed_args)
+    fixed_args.extend([
         # https://jestjs.io/docs/cli#--cache. Whether to use the cache. Defaults to true. Disable
         # the cache using --no-cache. Caching is Bazel's job, we don't want non-hermeticity
         "--no-cache",
@@ -78,7 +83,7 @@ def _impl(ctx):
         # find and execute tests.
         "--config",
         paths.join(unwind_chdir_prefix, generated_config.short_path),
-    ]
+    ])
     if ctx.attr.log_level == "debug":
         fixed_args.append("--debug")
     if ctx.attr.colors:

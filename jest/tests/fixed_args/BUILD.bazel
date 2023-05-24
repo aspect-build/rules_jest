@@ -1,0 +1,16 @@
+load("//jest:defs.bzl", "jest_test")
+load("@aspect_bazel_lib//lib:testing.bzl", "assert_contains")
+
+jest_test(
+    name = "test",
+    data = ["fixed_args.test.js"],
+    fixed_args = ["--silent"],
+    node_modules = "//:node_modules",
+)
+
+# assert that the launcher script contains the fixed arg --silent
+assert_contains(
+    name = "fixed_args_test",
+    actual = ":test",
+    expected = "--silent",
+)
