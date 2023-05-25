@@ -78,3 +78,23 @@ genrule(
     outs = ["gen.config.json"],
     cmd = "cp $(location :jest.config.json) \"$@\"",
 )
+
+jest_test(
+    name = "target_config_test",
+    config = ":gen_config",
+    data = [
+        "index.js",
+        "index.test.js",
+    ],
+    node_modules = "//:node_modules",
+)
+
+jest_test(
+    name = "other_target_config_test",
+    config = "//jest/tests/configs:basic",
+    data = [
+        "index.js",
+        "index.test.js",
+    ],
+    node_modules = "//:node_modules",
+)
