@@ -1,1 +1,4 @@
-../../.bazelrc
+build --incompatible_strict_action_env
+build --nolegacy_external_runfiles
+# required for rules_js
+build --enable_runfiles
