@@ -6,9 +6,9 @@ js_library(
         "jest-env.js",
         "jest-env.mjs",
     ],
+    visibility = ["//visibility:public"],
     deps = [
         "//:node_modules/@e2e/lib",
         "//:node_modules/@jest/globals",
     ],
-    visibility = ["//visibility:public"],
 )
