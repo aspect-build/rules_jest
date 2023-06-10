@@ -61,3 +61,12 @@ load("@npm//:repositories.bzl", "npm_repositories")
 
 # Declares npm_import rules from the pnpm-lock.yaml file
 npm_repositories()
+
+# Buildifier
+load("@buildifier_prebuilt//:deps.bzl", "buildifier_prebuilt_deps")
+
+buildifier_prebuilt_deps()
+
+load("@buildifier_prebuilt//:defs.bzl", "buildifier_prebuilt_register_toolchains")
+
+buildifier_prebuilt_register_toolchains()
