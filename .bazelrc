@@ -1,4 +1,30 @@
+# Bazel settings that apply to this repository.
+# Take care to document any settings that you expect users to apply.
+# Settings that apply only to CI are in .github/workflows/ci.bazelrc
+
+# Bazel picks up host-OS-specific config lines from bazelrc files. For example, if the host OS is
+# Linux and you run bazel build, Bazel picks up lines starting with build:linux. Supported OS
+# identifiers are `linux`, `macos`, `windows`, `freebsd`, and `openbsd`. Enabling this flag is
+# equivalent to using `--config=linux` on Linux, `--config=windows` on Windows, etc.
+# Docs: https://bazel.build/reference/command-line-reference#flag--enable_platform_specific_config
+common --enable_platform_specific_config
+
+# Required by rules_js
+build --enable_runfiles
+
 build --incompatible_strict_action_env
 build --nolegacy_external_runfiles
-# required for rules_js
-build --enable_runfiles
+
+# Filter out tests depending on platform
+test:windows --test_tag_filters=-no-windows
+test:linux --test_tag_filters=-windows-only
+test:macos --test_tag_filters=-windows-only
+
+# Load any settings specific to the current user.
+# .bazelrc.user should appear in .gitignore so that settings are not shared with team members
+# This needs to be last statement in this
+# config, as the user configuration should be able to overwrite flags from this file.
+# See https://docs.bazel.build/versions/master/best-practices.html#bazelrc
+# (Note that we use .bazelrc.user so the file appears next to .bazelrc in directory listing,
+# rather than user.bazelrc as suggested in the Bazel docs)
+try-import %workspace%/.bazelrc.user

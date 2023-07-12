@@ -8,4 +8,16 @@ jest_test(
     config = "jest.config.js",
     data = ["index.test.js"],
     node_modules = "//:node_modules",
+    tags = ["no-windows"],
+)
+
+jest_test(
+    name = "windows_test",
+    config = "jest.config.js",
+    data = ["index.test.js"],
+    # jest does not find tests on Windows; it appears the fix in https://github.com/jestjs/jest/pull/9351
+    # for discovering tests when they are symlinks does not work on Windows.
+    args = ["--runTestsByPath", "index.test.js"],
+    node_modules = "//:node_modules",
+    tags = ["windows-only"],
 )
