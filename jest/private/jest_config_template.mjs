@@ -66,13 +66,13 @@ let config = {};
 if (userConfigShortPath) {
   if (path.extname(userConfigShortPath).toLowerCase() == ".json") {
     config = (
-      await import(_resolveRunfilesPath(userConfigShortPath), {
+      await import("file://" + _resolveRunfilesPath(userConfigShortPath), {
         assert: { type: "json" },
       })
     ).default;
   } else {
     const userConfigModule = (
-      await import(_resolveRunfilesPath(userConfigShortPath))
+      await import("file://" + _resolveRunfilesPath(userConfigShortPath))
     ).default;
     if (typeof userConfigModule === "function") {
       config = await userConfigModule();
