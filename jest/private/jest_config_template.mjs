@@ -65,14 +65,18 @@ function _addReporter(config, name, reporter = undefined) {
 let config = {};
 if (userConfigShortPath) {
   if (path.extname(userConfigShortPath).toLowerCase() == ".json") {
+    // On Windows, import does not like paths that start with the drive letter such as
+    // `c:\...` so we prepend the with `file://` so node is happy.
     config = (
-      await import(_resolveRunfilesPath(userConfigShortPath), {
+      await import("file://" + _resolveRunfilesPath(userConfigShortPath), {
         assert: { type: "json" },
       })
     ).default;
   } else {
+    // On Windows, import does not like paths that start with the drive letter such as
+    // `c:\...` so we prepend the with `file://` so node is happy.
     const userConfigModule = (
-      await import(_resolveRunfilesPath(userConfigShortPath))
+      await import("file://" + _resolveRunfilesPath(userConfigShortPath))
     ).default;
     if (typeof userConfigModule === "function") {
       config = await userConfigModule();
