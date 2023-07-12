@@ -21,7 +21,14 @@ jobs:
     uses: bazel-contrib/.github/.github/workflows/bazel.yaml@v2
     with:
       folders: '[".", "e2e/npm_packages", "e2e/smoke"]'
-
+      exclude: |
+        [
+          {"bazelversion": "5.4.0", "bzlmodEnabled": true},
+          {"bazelversion": "5.4.0", "os": "macos-latest"},
+          {"bazelversion": "5.4.0", "os": "windows-latest"},
+          {"folder": ".", "os": "windows-latest"},
+          {"folder": "e2e/npm_packages", "os": "windows-latest"},
+        ]
   test-e2e:
     runs-on: ubuntu-latest
     steps:
