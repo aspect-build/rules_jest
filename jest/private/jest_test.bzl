@@ -82,7 +82,7 @@ def _impl(ctx):
         # https://jestjs.io/docs/cli#--configpath. The path to a Jest config file specifying how to
         # find and execute tests.
         "--config",
-        paths.join(unwind_chdir_prefix, generated_config.short_path),
+        "\"" + paths.join(unwind_chdir_prefix, generated_config.short_path) + "\"",
     ])
     if ctx.attr.log_level == "debug":
         fixed_args.append("--debug")
