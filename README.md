@@ -2,6 +2,8 @@
 
 Runs tests with the https://jestjs.io/ test runner under Bazel.
 
+Many companies are successfully testing with rules_jest. If you're getting value from the project, please let us know! Just comment on our [Adoption Discussion](https://github.com/aspect-build/rules_js/discussions/1000).
+
 rules_jest is just a part of what Aspect provides:
 
 - _Need help?_ This ruleset has support provided by https://aspect.dev.
