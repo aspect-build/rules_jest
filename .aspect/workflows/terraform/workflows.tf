@@ -96,7 +96,7 @@ module "aspect_workflows" {
       max_runners            = 1
       min_runners            = 0
       policies               = { warming_manage : module.aspect_workflows.warming_management_policies["default"].arn }
-      queue                  = "default"
+      queue                  = "warming"
       resource_type          = "default"
     }
   }
