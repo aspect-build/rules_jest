@@ -1,6 +1,5 @@
 # See https://docs.aspect.build/v/workflows/config
 ---
-queue: default
 workspaces:
   .:
     bazel:

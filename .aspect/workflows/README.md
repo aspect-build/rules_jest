@@ -38,7 +38,7 @@ steps:
     commands:
       - "rosetta steps | buildkite-agent pipeline upload"
     agents:
-      queue: default
+      queue: aspect-default
 ```
 
 ### Scheduled warming pipeline configuration
@@ -58,9 +58,10 @@ steps:
       - 'rosetta run warming'
       - 'warming_archive'
     agents:
-      queue: warming
+      queue: aspect-warming
 ```
 
-A scheduled is configured for this pipeline with the cron interval `0 08-22/4 * * * America/Toronto`
-so that it runs periodically to create up-to-date warming archives that caches repository rules so
-that the "default" build & test runners don't have to re-fetch them on their first build.
+The warming pipeline is not configured to trigger on commits or PRs. Instead, a scheduled is
+configured for this pipeline with the cron interval `0 1 * * * America/Vancouver` so that it
+runs periodically to create up-to-date warming archives that caches repository rules so that the
+"default" build & test runners don't have to re-fetch them on their first build.

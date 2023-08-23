@@ -30,7 +30,7 @@ module "aspect_workflows" {
   }
 
   # Aspect Workflows terraform module
-  source = "https://s3.us-east-2.amazonaws.com/static.aspect.build/aspect/5.7.0-rc6/workflows/terraform-aws-aspect-workflows.zip"
+  source = "https://s3.us-east-2.amazonaws.com/static.aspect.build/aspect/5.7.0-rc9/workflows/terraform-aws-aspect-workflows.zip"
 
   # Non-terraform Aspect Workflows release artifacts are pulled from the region specific
   # aspect-artifacts bucket during apply. Aspect will grant your AWS account access to this bucket
@@ -85,7 +85,7 @@ module "aspect_workflows" {
       agent_idle_timeout_min = 5
       max_runners            = 5
       min_runners            = 0
-      queue                  = "default"
+      queue                  = "aspect-default"
       resource_type          = "default"
       warming                = true
     }
@@ -96,7 +96,7 @@ module "aspect_workflows" {
       max_runners            = 1
       min_runners            = 0
       policies               = { warming_manage : module.aspect_workflows.warming_management_policies["default"].arn }
-      queue                  = "warming"
+      queue                  = "aspect-warming"
       resource_type          = "default"
     }
   }
