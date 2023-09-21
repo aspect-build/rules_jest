@@ -54,7 +54,8 @@ module "aspect_workflows" {
 
   # Opt-in to k8s high availabilty (HA) remote cache; this will be default in future releases
   experiments = {
-    k8s_remote = true
+    k8s_remote        = true
+    k8s_observability = true
   }
 
   # Kubernetes remote cache properties
