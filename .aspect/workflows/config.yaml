@@ -1,10 +1,10 @@
 # See https://docs.aspect.build/v/workflows/config
 ---
-workspaces:
-  .:
-    bazel:
-      flags:
-        - --enable_bzlmod
+bazel:
+  flags:
+    - --enable_bzlmod
+    - --remote_download_minimal
+    - --nobuild_runfile_links
 tasks:
   buildifier:
   test:
