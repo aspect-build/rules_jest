@@ -5,6 +5,12 @@ bazel:
     - --enable_bzlmod
     - --remote_download_minimal
     - --nobuild_runfile_links
+    - --experimental_fetch_all_coverage_outputs
+    - --test_summary=short
+    # https://github.com/bazelbuild/bazel/blob/e3e4d61b2c2b241d0426ea20143b8a07d6fadfcd/tools/test/collect_cc_coverage.sh#L30
+    - --test_env=COVERAGE_GCOV_PATH=/usr/bin/gcov
 tasks:
   buildifier:
   test:
+    coverage: true
+    upload_test_logs: executed
