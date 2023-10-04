@@ -3,6 +3,16 @@
 bazel:
   rcfiles:
     - .aspect/workflows/.bazelrc
+  flags:
+    - --bes_results_url=https://app.buildbuddy.io/invocation/
+    - --bes_backend=grpcs://remote.buildbuddy.io
+    # - --bes_backend=grpc://34.30.98.243:1985
+    # - --bes_results_url=http://34.30.98.243/invocation/
+    - --remote_cache=grpc://internal-aa01e0af753614393881dc1510e821d3-1071690011.us-west-2.elb.amazonaws.com:8980
+    # - --remote_cache=grpcs://remote.buildbuddy.io
+    # - --remote_header=x-buildbuddy-api-key=lsAijCKQsb4TCP8D1UvK
+    - --nocache_test_results
+    - --announce_rc
 tasks:
   buildifier:
   gazelle:
