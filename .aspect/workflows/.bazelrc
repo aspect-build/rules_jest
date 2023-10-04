@@ -1,0 +1,11 @@
+# bazel flags to set for Aspect Workflows CI
+common --enable_bzlmod
+
+# build without the bytes
+common --remote_download_minimal
+common --nobuild_runfile_links
+
+# coverage
+common --experimental_fetch_all_coverage_outputs
+# https://github.com/bazelbuild/bazel/blob/e3e4d61b2c2b241d0426ea20143b8a07d6fadfcd/tools/test/collect_cc_coverage.sh#L30
+common --test_env=COVERAGE_GCOV_PATH=/usr/bin/gcov
