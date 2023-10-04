@@ -18,10 +18,8 @@ bzl_library(
     deps = [
         "//jest/private:jest_test",
         "@aspect_bazel_lib//lib:copy_file",
-        "@aspect_bazel_lib//lib:output_files",
-        "@aspect_bazel_lib//lib:write_source_files",
-        "@aspect_rules_js//js:defs",
-        "@aspect_rules_js//js:libs",
+        "@aspect_bazel_lib//lib:directory_path",
+        "@aspect_bazel_lib//lib:utils",
     ],
 )
 
@@ -29,10 +27,7 @@ bzl_library(
     name = "dependencies",
     srcs = ["dependencies.bzl"],
     visibility = ["//visibility:public"],
-    deps = [
-        "@bazel_tools//tools/build_defs/repo:http.bzl",
-        "@bazel_tools//tools/build_defs/repo:utils.bzl",
-    ],
+    deps = ["//jest/private:maybe"],
 )
 
 bzl_library(
