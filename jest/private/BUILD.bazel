@@ -7,14 +7,34 @@ exports_files([
     "bazel_snapshot_resolver.cjs",
 ])
 
-bzl_library(
-    name = "jest_test",
-    srcs = ["jest_test.bzl"],
-    visibility = ["//jest:__subpackages__"],
-)
-
 sh_binary(
     name = "merger",
     srcs = ["merger.sh"],
     visibility = ["//visibility:public"],
+)
+
+# keep
+bzl_library(
+    name = "jest_test",
+    srcs = ["jest_test.bzl"],
+    visibility = ["//jest:__subpackages__"],
+    deps = [
+        "@aspect_bazel_lib//lib:copy_to_bin",
+        "@aspect_rules_js//js:libs",
+        "@bazel_skylib//lib:dicts",
+        "@bazel_skylib//lib:paths",
+    ],
+)
+
+bzl_library(
+    name = "maybe",
+    srcs = ["maybe.bzl"],
+    visibility = [
+        "//:__pkg__",
+        "//jest:__subpackages__",
+    ],
+    deps = [
+        "@bazel_tools//tools/build_defs/repo:http.bzl",
+        "@bazel_tools//tools/build_defs/repo:utils.bzl",
+    ],
 )

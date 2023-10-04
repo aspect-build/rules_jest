@@ -5,6 +5,7 @@ bazel:
     - .aspect/workflows/.bazelrc
 tasks:
   buildifier:
+  gazelle:
   test:
     coverage: true
     upload_test_logs: executed

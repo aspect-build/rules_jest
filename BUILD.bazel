@@ -16,26 +16,29 @@ gazelle_binary(
 gazelle(
     name = "gazelle",
     gazelle = "gazelle_bin",
+    mode = "fix",
+)
+
+gazelle(
+    name = "gazelle.check",
+    gazelle = "gazelle_bin",
+    mode = "diff",
+)
+
+buildifier(
+    name = "buildifier",
+    exclude_patterns = ["./.git/*"],
+    lint_mode = "fix",
+    mode = "fix",
+    tags = ["manual"],  # tag as manual so windows ci does not build it by default
 )
 
 buildifier(
     name = "buildifier.check",
-    exclude_patterns = [
-        "./.git/*",
-    ],
+    exclude_patterns = ["./.git/*"],
     lint_mode = "warn",
     mode = "diff",
     tags = ["manual"],  # tag as manual so windows ci does not build it by default
-)
-
-bzl_library(
-    name = "internal_deps",
-    srcs = ["internal_deps.bzl"],
-    visibility = ["//visibility:public"],
-    deps = [
-        "@bazel_tools//tools/build_defs/repo:http.bzl",
-        "@bazel_tools//tools/build_defs/repo:utils.bzl",
-    ],
 )
 
 # Test case 3: jest config file in root package
@@ -65,4 +68,11 @@ copy_to_bin(
     name = "case8.config",
     srcs = ["test_case8.jest.config.js"],
     visibility = ["//visibility:public"],
+)
+
+bzl_library(
+    name = "internal_deps",
+    srcs = ["internal_deps.bzl"],
+    visibility = ["//visibility:public"],
+    deps = ["//jest/private:maybe"],
 )
