@@ -1,8 +1,5 @@
 # See https://docs.aspect.build/v/workflows/config
 ---
-bazel:
-  rcfiles:
-    - .aspect/workflows/.bazelrc
 tasks:
   buildifier:
   gazelle:
