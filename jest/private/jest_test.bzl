@@ -84,7 +84,7 @@ def _impl(ctx):
         "--config",
         # quote the path since it might have special chars such as parens.
         # quoting ensures that the shell doesn't do any globbing or splitting.
-        '"' + paths.join(unwind_chdir_prefix, generated_config.short_path) + '"',
+        "'" + paths.join(unwind_chdir_prefix, generated_config.short_path) + "'",
     ])
     if ctx.attr.log_level == "debug":
         fixed_args.append("--debug")
