@@ -4,5 +4,8 @@ tasks:
   buildifier:
   gazelle:
   test:
+    bazel:
+      flags:
+        - --instrumentation_filter=-//jest/tests/fixed_args:fixed_args_test
     coverage: true
     upload_test_logs: executed
