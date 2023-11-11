@@ -6,3 +6,7 @@ tasks:
   test:
     coverage: true
     upload_test_logs: executed
+    bazel:
+      flags:
+        - --nocache_test_results
+        - --instrumentation_filter=^//,-^//jest/tests/fixed_args
