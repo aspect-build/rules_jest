@@ -30,7 +30,7 @@ module "aspect_workflows" {
   }
 
   # Aspect Workflows terraform module
-  source = "https://s3.us-east-2.amazonaws.com/static.aspect.build/aspect/5.8.15/workflows/terraform-aws-aspect-workflows.zip"
+  source = "https://s3.us-east-2.amazonaws.com/static.aspect.build/aspect/5.9.0-beta.1/workflows/terraform-aws-aspect-workflows.zip"
 
   # Non-terraform Aspect Workflows release artifacts are pulled from the region specific
   # aspect-artifacts bucket during apply. Aspect will grant your AWS account access to this bucket
@@ -41,44 +41,20 @@ module "aspect_workflows" {
   # Name of the deployment
   customer_id = "aspect-build/rules_jest"
 
-  # PagerDuty key for this deployment
-  pagerduty_integration_key = "7827fc4c8e954f05c055a8a06c0512e7"
-
   # VPC properties
   vpc_id             = module.vpc.vpc_id
   vpc_subnets        = module.vpc.private_subnets
   vpc_subnets_public = []
 
-  # Whether or not to allow SSM access to runners
-  enable_ssm_access  = true
-
-  # Opt-in to k8s high availabilty (HA) remote cache; this will be default in future releases
-  experiments = {
-    k8s_remote        = true
-    k8s_observability = true
+  support = {
+    # PagerDuty key for this deployment
+    pagerduty_integration_key = "7827fc4c8e954f05c055a8a06c0512e7"
+    # Whether or not to allow SSM access to runners
+    enable_ssm_access = true
   }
 
-  # Kubernetes remote cache properties
-  experimental_remote = {
-    cache_shards           = 3
-    cache_size_gb          = 384
-    load_balancer_replicas = 2
-    replicate_cache        = true
-  }
-
-  # Kubernetes cluster properties
-  k8s_cluster = {
-    cluster_version = "1.27"
-    min_size        = 1
-    max_size        = 10
-    desired_size    = 3
-    instance_types  = ["t3.large"],
-    # The audit log is very chatty, turn 'er down for a bit.
-    cluster_enabled_log_types = ["api", "authenticator"]
-  }
-
-  # Monitoring properties
-  monitoring_enabled = true
+  # Remote cache properties
+  remote_cache = {}
 
   # Delivery properties
   delivery_enabled = false
