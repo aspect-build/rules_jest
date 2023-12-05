@@ -26,6 +26,9 @@ _attrs = dicts.add(js_binary_lib.attrs, {
         allow_single_file = True,
         mandatory = True,
     ),
+    "env_inherit": attr.string_list(
+        doc = """Environment variables to inherit from the external environment.""",
+    ),
     "_jest_config_template": attr.label(
         allow_single_file = True,
         default = Label("//jest/private:jest_config_template.mjs"),
@@ -168,6 +171,11 @@ def _impl(ctx):
             runfiles = runfiles,
         ),
     )
+
+    if ctx.attr.env_inherit != None:
+        providers.append(
+            testing.TestEnvironment(fixed_env, ctx.attr.env_inherit),
+        )
 
     return providers
 
