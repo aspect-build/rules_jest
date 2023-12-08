@@ -41,6 +41,11 @@ buildifier(
     tags = ["manual"],  # tag as manual so windows ci does not build it by default
 )
 
+alias(
+    name = "format",
+    actual = "//tools:format",
+)
+
 # Test case 3: jest config file in root package
 # Copy files from tests package to keep the root package clean.
 copy_file(

@@ -1,6 +1,8 @@
 # See https://docs.aspect.build/v/workflows/config
 ---
 tasks:
+  format:
+    soft_fail: false
   buildifier:
   gazelle:
   test:
