@@ -81,7 +81,7 @@ module "aspect_workflows" {
   bk_runner_groups = {
     # The default runner group is use for the main build & test workflows.
     default = {
-      agent_idle_timeout_min    = 1
+      agent_idle_timeout_min = 1
       max_runners               = 5
       min_runners               = 0
       queue                     = "aspect-default"
