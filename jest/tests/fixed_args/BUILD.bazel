@@ -1,5 +1,5 @@
-load("//jest:defs.bzl", "jest_test")
 load("@aspect_bazel_lib//lib:testing.bzl", "assert_contains")
+load("//jest:defs.bzl", "jest_test")
 
 jest_test(
     name = "test",
