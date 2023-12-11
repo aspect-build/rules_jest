@@ -1,5 +1,6 @@
 # See https://docs.aspect.build/v/workflows/config
 ---
+queue: aspect-small
 tasks:
   format:
     soft_fail: false
@@ -8,3 +9,4 @@ tasks:
   test:
     coverage: true
     upload_test_logs: executed
+    queue: aspect-default
