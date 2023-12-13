@@ -2,11 +2,10 @@
 ---
 queue: aspect-small
 tasks:
-  format:
-    soft_fail: false
-  buildifier:
-  gazelle:
-  test:
-    coverage: true
-    upload_test_logs: executed
-    queue: aspect-default
+  - format:
+  - buildifier:
+  - gazelle:
+  - test:
+      coverage: true
+      upload_test_logs: executed
+      queue: aspect-default
