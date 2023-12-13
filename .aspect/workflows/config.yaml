@@ -1,8 +1,9 @@
 # See https://docs.aspect.build/v/workflows/config
 ---
-queue: aspect-small
+queue: aspect-small-arm64
 tasks:
   - format:
+      queue: aspect-small-amd64
   - buildifier:
   - gazelle:
   - test:
