@@ -10,3 +10,6 @@ tasks:
       coverage: true
       upload_test_logs: executed
       queue: aspect-default
+  - delivery:
+      always_deliver: true
+      queue: aspect-default
