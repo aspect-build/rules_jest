@@ -81,25 +81,28 @@ module "aspect_workflows" {
     default = {}
   }
 
-  # Resource types for use by runner groups
+  # Resource types for use by runner groups. Aspect recommends instance types that have nvme drives
+  # for large Bazel workflows. See https://aws.amazon.com/ec2/instance-types/ for list of instance
+  # types available on AWS.
   resource_types = {
     "default" = {
-      # Aspect Workflows requires instance types that have nvme drives. See
-      # https://aws.amazon.com/ec2/instance-types/ for full list of instance types available on AWS.
       instance_types = ["c5ad.xlarge"]
       image_id       = data.aws_ami.runner_amd64_ami.id
     }
     "small-amd64" = {
-      # Aspect Workflows requires instance types that have nvme drives. See
-      # https://aws.amazon.com/ec2/instance-types/ for full list of instance types available on AWS.
-      instance_types = ["c5ad.large"]
-      image_id       = data.aws_ami.runner_amd64_ami.id
+      instance_types      = ["t3a.small"]
+      image_id            = data.aws_ami.runner_amd64_ami.id
+      root_volume_size_gb = 32
     }
     "small-arm64" = {
-      # Aspect Workflows requires instance types that have nvme drives. See
-      # https://aws.amazon.com/ec2/instance-types/ for full list of instance types available on AWS.
-      instance_types = ["m6gd.medium"]
-      image_id       = data.aws_ami.runner_arm64_ami.id
+      instance_types      = ["t4g.small"]
+      image_id            = data.aws_ami.runner_arm64_ami.id
+      root_volume_size_gb = 32
+    }
+    "nano" = {
+      instance_types      = ["t4g.nano"]
+      image_id            = data.aws_ami.runner_arm64_ami.id
+      root_volume_size_gb = 16
     }
   }
 
@@ -116,7 +119,7 @@ module "aspect_workflows" {
       warming                   = true
     }
     small-amd64 = {
-      agent_idle_timeout_min    = 1
+      agent_idle_timeout_min    = 10
       max_runners               = 5
       min_runners               = 0
       queue                     = "aspect-small-amd64"
@@ -125,11 +128,20 @@ module "aspect_workflows" {
       warming                   = false # don't warm for faster bootstrap; these runners won't be running large builds
     }
     small-arm64 = {
-      agent_idle_timeout_min    = 1
+      agent_idle_timeout_min    = 10
       max_runners               = 5
       min_runners               = 0
       queue                     = "aspect-small-arm64"
       resource_type             = "small-arm64"
+      scaling_polling_frequency = 3     # check for queued jobs every 20s
+      warming                   = false # don't warm for faster bootstrap; these runners won't be running large builds
+    }
+    nano = {
+      agent_idle_timeout_min    = 60 * 12
+      max_runners               = 10
+      min_runners               = 0
+      queue                     = "aspect-nano"
+      resource_type             = "nano"
       scaling_polling_frequency = 3     # check for queued jobs every 20s
       warming                   = false # don't warm for faster bootstrap; these runners won't be running large builds
     }
