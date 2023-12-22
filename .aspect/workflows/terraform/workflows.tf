@@ -44,7 +44,7 @@ module "aspect_workflows" {
   }
 
   # Aspect Workflows terraform module
-  source = "https://s3.us-east-2.amazonaws.com/static.aspect.build/aspect/5.9.0-rc.7/workflows/terraform-aws-aspect-workflows.zip"
+  source = "https://s3.us-east-2.amazonaws.com/static.aspect.build/aspect/5.9.0-rc.9/workflows/terraform-aws-aspect-workflows.zip"
 
   # Non-terraform Aspect Workflows release artifacts are pulled from the region specific
   # aspect-artifacts bucket during apply. Aspect will grant your AWS account access to this bucket
@@ -111,6 +111,7 @@ module "aspect_workflows" {
     # The default runner group is use for the main build & test workflows.
     default = {
       agent_idle_timeout_min    = 1
+      git_clone_depth           = 64
       max_runners               = 5
       min_runners               = 0
       queue                     = "aspect-default"
@@ -120,6 +121,7 @@ module "aspect_workflows" {
     }
     small-amd64 = {
       agent_idle_timeout_min    = 10
+      git_clone_depth           = 64
       max_runners               = 5
       min_runners               = 0
       queue                     = "aspect-small-amd64"
@@ -129,6 +131,7 @@ module "aspect_workflows" {
     }
     small-arm64 = {
       agent_idle_timeout_min    = 10
+      git_clone_depth           = 64
       max_runners               = 5
       min_runners               = 0
       queue                     = "aspect-small-arm64"
@@ -138,6 +141,7 @@ module "aspect_workflows" {
     }
     nano = {
       agent_idle_timeout_min    = 60 * 12
+      git_clone_depth           = 64
       max_runners               = 10
       min_runners               = 0
       queue                     = "aspect-nano"
@@ -149,6 +153,7 @@ module "aspect_workflows" {
     # warming archives for use by other runner groups.
     warming = {
       agent_idle_timeout_min = 1
+      git_clone_depth        = 1
       max_runners            = 1
       min_runners            = 0
       policies               = { warming_manage : module.aspect_workflows.warming_management_policies["default"].arn }
