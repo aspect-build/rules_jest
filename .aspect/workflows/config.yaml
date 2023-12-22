@@ -6,6 +6,7 @@ tasks:
       queue: aspect-small-amd64
   - buildifier:
   - gazelle:
+  - configure:
   - test:
       coverage: true
       upload_test_logs: executed
