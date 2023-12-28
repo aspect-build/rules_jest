@@ -62,7 +62,7 @@ filegroup(
     visibility = ["//visibility:public"],
 )
 """,
-            urls = ["https://dev.mysql.com/get/Downloads/MySQL-8.0/mysql-8.0.34-" + arch + ".tar.gz"],
+            urls = ["https://cdn.mysql.com/Downloads/MySQL-8.0/mysql-8.0.34-" + arch + ".tar.gz"],
             sha256 = sha256,
             strip_prefix = "mysql-8.0.34-" + arch,
         )
