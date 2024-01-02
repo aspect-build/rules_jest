@@ -11,6 +11,12 @@ tasks:
       coverage: true
       upload_test_logs: executed
       queue: aspect-default
+      bazel:
+        flags:
+          - --config=foobar
   - delivery:
       always_deliver: true
       queue: aspect-default
+      branches:
+        - main
+        - test_delivery
