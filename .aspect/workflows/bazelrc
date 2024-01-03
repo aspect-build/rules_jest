@@ -2,10 +2,10 @@
 common --enable_bzlmod
 
 # build without the bytes
-test --remote_download_minimal
-test --nobuild_runfile_links
+common --remote_download_outputs=minimal
+common --nobuild_runfile_links
 
 # coverage
-test --experimental_fetch_all_coverage_outputs
+common --experimental_fetch_all_coverage_outputs
 # https://github.com/bazelbuild/bazel/blob/e3e4d61b2c2b241d0426ea20143b8a07d6fadfcd/tools/test/collect_cc_coverage.sh#L30
-test --test_env=COVERAGE_GCOV_PATH=/usr/bin/gcov
+common --test_env=COVERAGE_GCOV_PATH=/usr/bin/gcov
