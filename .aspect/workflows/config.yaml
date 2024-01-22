@@ -14,3 +14,5 @@ tasks:
   - delivery:
       always_deliver: true
       queue: aspect-default
+notifications:
+  github: {}
