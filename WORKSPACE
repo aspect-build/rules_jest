@@ -1,4 +1,5 @@
 # Declare the local Bazel workspace.
+BROKEN!
 workspace(name = "aspect_rules_jest")
 
 load(":internal_deps.bzl", "rules_jest_internal_deps")
