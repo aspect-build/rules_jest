@@ -86,6 +86,9 @@ if (userConfigShortPath) {
   }
 }
 
+// Default to using an isolated tmpdir
+config.cacheDirectory ||= process.env.TEST_TMPDIR;
+
 // Needed for Jest to walk the filesystem to find inputs.
 // See https://github.com/facebook/jest/pull/9351
 config.haste = { enableSymlinks: true };
