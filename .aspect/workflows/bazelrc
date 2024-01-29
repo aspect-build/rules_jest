@@ -3,7 +3,13 @@ common --enable_bzlmod
 
 # build without the bytes
 common --remote_download_outputs=minimal
-common --nobuild_runfile_links
+
+# //jest/tests/fixed_args:fixed_args_test sh_test (via assert_contains) broken under coverage with
+# --nobuild_runfile_links due to https://github.com/bazelbuild/bazel/issues/20577. Failure on CI is:
+# /mnt/ephemeral/output/__main__/sandbox/linux-sandbox/845/execroot/_main/bazel-out/k8-opt-exec-2B5CBBC6/bin/external/bazel_tools~remote_coverage_tools_extension~remote_coverage_tools/Main: Cannot locate runfiles directory. (Set $JAVA_RUNFILES to inhibit searching.)
+# (https://buildkite.com/aspect-build/rules-jest/builds/263#018d4c5b-da79-4dc2-a1dd-7e3e8af35d56)
+# TODO: reeable this flag when https://github.com/bazelbuild/bazel/issues/20577 is resolved.
+# common --nobuild_runfile_links
 
 # coverage
 common --experimental_fetch_all_coverage_outputs
