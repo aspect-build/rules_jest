@@ -8,6 +8,15 @@ tasks:
   - gazelle:
   - configure:
   - test:
+      hooks:
+        # Example of asserting that `bazel query //...` is green in a before_task hook.
+        # Flags set:
+        # - --nohome_rc prevents using a ~/.bazelrc file incase one gets created on the runner unintentionally by a rogue job
+        # - --bazelrc=.aspect/workflows/bazelrc keeps the bazel flags on the bazel query call consistent with what Workflows uses for bazel test
+        # - --aspect:lock_version use the Aspect CLI version matching the Workflows version
+        # - --config=workflows set all Workflows configuration flags; these are defined in /etc/bazel.bazelrc
+        - type: before_task
+          command: bazel --nohome_rc --bazelrc=.aspect/workflows/bazelrc query --aspect:lock_version --config=workflows //...
       coverage: true
       upload_test_logs: executed
       queue: aspect-default
