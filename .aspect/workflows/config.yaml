@@ -5,7 +5,6 @@ tasks:
   - format:
       queue: aspect-small-amd64
   - buildifier:
-  - gazelle:
   - configure:
   - test:
       hooks:

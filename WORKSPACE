@@ -27,18 +27,6 @@ load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
 
 bazel_skylib_workspace()
 
-load("@bazel_gazelle//:deps.bzl", "gazelle_dependencies")
-
-############################################
-# Gazelle, for generating bzl_library targets
-load("@io_bazel_rules_go//go:deps.bzl", "go_register_toolchains", "go_rules_dependencies")
-
-go_rules_dependencies()
-
-go_register_toolchains(version = "1.19.3")
-
-gazelle_dependencies()
-
 # Test case 4 (see //jest/tests)
 local_repository(
     name = "case4",
