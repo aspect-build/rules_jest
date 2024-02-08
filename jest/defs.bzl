@@ -23,11 +23,11 @@ def _jest_from_node_modules(jest_rule, name, node_modules, auto_configure_report
     jest_rule(
         name = name,
         enable_runfiles = select({
-            "@aspect_rules_js//js/private:enable_runfiles": True,
+            "@aspect_rules_js//js:enable_runfiles": True,
             "//conditions:default": False,
         }),
         unresolved_symlinks_enabled = select({
-            "@aspect_rules_js//js/private:experimental_allow_unresolved_symlinks": True,
+            "@aspect_rules_js//js:allow_unresolved_symlinks": True,
             "//conditions:default": False,
         }),
         data = data,
