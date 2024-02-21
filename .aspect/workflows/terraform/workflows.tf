@@ -152,6 +152,7 @@ module "aspect_workflows" {
       max_runners               = 5
       min_runners               = 0
       queue                     = "aspect-default"
+      reaper_sleep_minutes      = 5
       resource_type             = "default"
       scaling_polling_frequency = 3 # check for queued jobs every 20s
       warming                   = true
@@ -162,6 +163,7 @@ module "aspect_workflows" {
       max_runners               = 5
       min_runners               = 0
       queue                     = "aspect-small-amd64"
+      reaper_sleep_minutes      = 10
       resource_type             = "small-amd64"
       scaling_polling_frequency = 3     # check for queued jobs every 20s
       warming                   = false # don't warm for faster bootstrap; these runners won't be running large builds
@@ -172,6 +174,7 @@ module "aspect_workflows" {
       max_runners               = 5
       min_runners               = 0
       queue                     = "aspect-small-arm64"
+      reaper_sleep_minutes      = 10
       resource_type             = "small-arm64"
       scaling_polling_frequency = 3     # check for queued jobs every 20s
       warming                   = false # don't warm for faster bootstrap; these runners won't be running large builds
@@ -182,6 +185,7 @@ module "aspect_workflows" {
       max_runners               = 10
       min_runners               = 0
       queue                     = "aspect-nano"
+      reaper_sleep_minutes      = 10
       resource_type             = "nano"
       scaling_polling_frequency = 3     # check for queued jobs every 20s
       warming                   = false # don't warm for faster bootstrap; these runners won't be running large builds
@@ -195,6 +199,7 @@ module "aspect_workflows" {
       min_runners            = 0
       policies               = { warming_manage : module.aspect_workflows.warming_management_policies["default"].arn }
       queue                  = "aspect-warming"
+      reaper_sleep_minutes   = 10
       resource_type          = "default"
     }
   }
