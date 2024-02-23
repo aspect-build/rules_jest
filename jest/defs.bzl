@@ -240,24 +240,25 @@ def jest_test(
         **kwargs
     )
 
-    _jest_from_node_modules(
-        jest_rule = jest_test_rule,
-        name = name + UPDATE_SNAPSHOTS_TARGET_SUFFIX,
-        node_modules = node_modules,
-        config = config,
-        # Also pass data to the tool for jest snapshot updates incase there are load bearing
-        # data deps the config requires
-        data = data,
-        run_in_band = run_in_band,
-        colors = colors,
-        auto_configure_reporters = auto_configure_reporters,
-        auto_configure_test_sequencer = auto_configure_test_sequencer,
-        update_snapshots = True,
-        quiet_snapshot_updates = quiet_snapshot_updates,
-        entry_point = entry_point,
-        bazel_sequencer = bazel_sequencer,
-        bazel_snapshot_reporter = bazel_snapshot_reporter,
-        bazel_snapshot_resolver = bazel_snapshot_resolver,
-        tags = tags + ["manual"],  # tagged manual so it is not built unless the {name}_update_snapshot target is run
-        **kwargs
-    )
+    if snapshots != False:
+        _jest_from_node_modules(
+            jest_rule = jest_test_rule,
+            name = name + UPDATE_SNAPSHOTS_TARGET_SUFFIX,
+            node_modules = node_modules,
+            config = config,
+            # Also pass data to the tool for jest snapshot updates incase there are load bearing
+            # data deps the config requires
+            data = data,
+            run_in_band = run_in_band,
+            colors = colors,
+            auto_configure_reporters = auto_configure_reporters,
+            auto_configure_test_sequencer = auto_configure_test_sequencer,
+            update_snapshots = True,
+            quiet_snapshot_updates = quiet_snapshot_updates,
+            entry_point = entry_point,
+            bazel_sequencer = bazel_sequencer,
+            bazel_snapshot_reporter = bazel_snapshot_reporter,
+            bazel_snapshot_resolver = bazel_snapshot_resolver,
+            tags = tags + ["manual"],  # tagged manual so it is not built unless the {name}_update_snapshot target is run
+            **kwargs
+        )
