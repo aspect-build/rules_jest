@@ -17,6 +17,12 @@ tasks:
         # - --config=workflows set all Workflows configuration flags; these are defined in /etc/bazel.bazelrc
         - type: before_task
           command: bazel --nohome_rc --bazelrc=.aspect/workflows/bazelrc query --aspect:lock_version --config=workflows //...
+        - type: before_task
+          command: vmstat -a -S M -t 5 2>&1 > vmstat.out &
+        - type: after_task
+          command: cat vmstat.out
+      artifact_paths:
+        - vmstat.out
       coverage: true
       upload_test_logs: executed
       queue: aspect-default
