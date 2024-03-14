@@ -1,12 +1,14 @@
 # See https://docs.aspect.build/v/workflows/config
 ---
-queue: aspect-small-arm64
 tasks:
   - format:
-      queue: aspect-small-amd64
+      queue: aspect-small
   - buildifier:
+      queue: aspect-small-graviton
   - gazelle:
+      queue: aspect-small-graviton
   - configure:
+      queue: aspect-small-graviton
   - test:
       hooks:
         # Example of asserting that `bazel query //...` is green in a before_task hook.
@@ -25,10 +27,8 @@ tasks:
         - vmstat.out
       coverage: true
       upload_test_logs: executed
-      queue: aspect-default
   - delivery:
       auto_deliver: true
-      queue: aspect-default
       rules:
         - deliverable: 'attr("tags", "\bdeliverable\b", //...)'
           condition:
@@ -40,5 +40,5 @@ tasks:
             only_on_change: false
             branches:
               - main
-notifications:
-  github: {}
+  - finalization:
+      queue: aspect-small-graviton
