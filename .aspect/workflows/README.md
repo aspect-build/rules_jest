@@ -36,7 +36,7 @@ steps:
 ```
 
 > [!IMPORTANT]
-> The Setup Aspect Workflows step above is configured run on the `aspect-nano-graviton` queue which is serviced by the a runner group made up of light weight and inexpensive `t4g.nano` AWS instances.
+> The Setup Aspect Workflows step above is configured to run on the `aspect-nano-graviton` queue that is serviced by a runner group made up of lightweight and inexpensive `t4g.nano` AWS instances.
 
 ### Scheduled warming pipeline configuration
 
