@@ -2,7 +2,10 @@
 
 ## Mocking of esm exports when transforming to commonjs
 
-When transforming esm to commonjs swc defines the exports as readonly. This is a problem when trying to mock the exports using `jest.spyOn()`.
+When transforming esm to commonjs, swc defines the exports as readonly.
+This is a problem when trying to mock the exports using `jest.spyOn()`.
+
+See https://github.com/swc-project/swc/discussions/5151
 
 Examples similar to this workaround (making esm imports `writeable`):
 
