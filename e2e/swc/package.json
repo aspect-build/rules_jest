@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "devDependencies": {
+    "jest-cli": "29.5.0",
+    "jest-junit": "15.0.0"
+  }
+}
