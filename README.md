@@ -22,3 +22,7 @@ Run all Jest tests in the workspace: `bazel test --test_lang_filters=jest //...`
 See [jest_test](docs/jest_test) API documentation and the example usages in the [example](https://github.com/aspect-build/rules_jest/tree/main/example/) folder.
 
 > Note that the example also relies on code in the `/WORKSPACE` file in the root of this repo.
+
+## Troubleshooting and common challenges
+
+For troubleshooting and common challenges, see [troubleshooting.md](troubleshooting.md).
