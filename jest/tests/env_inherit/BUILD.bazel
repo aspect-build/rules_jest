@@ -1,0 +1,8 @@
+load("//jest:defs.bzl", "jest_test")
+
+jest_test(
+    name = "test",
+    data = ["env_inherit.test.js"],
+    env_inherit = ["LANG"],
+    node_modules = "//:node_modules",
+)
