@@ -6,6 +6,10 @@ Frequently outside the Bazel ecosystem sources such as `*.ts` are transpiled on 
 
 Transpiling in bazel is normally done ahead of time to take advantage of bazel caching, ensure that the build is hermetic, ensure the tested code is the same as production code etc. However this transpiling is no longer designed specifically for Jest like `ts-jest` or `babel-jest` which may lead to certain limitations. For example:
 
+### Runtime tsconfig dependency
+
+If a plugin such as `ts-jest` or `ts-node` is replaced with `rules_ts` (to pre-compile ts files instead of runtime compilation), features such as runtime `tsconfig` path mapping must be replaced with other tools such as `tsconfig-paths`.
+
 ### ESM Modules
 
 Normally Jest uses CommonJS modules (such as when `ts-jest` or `babel-jest` does transpiling on the fly), but with bazel the transpiled sources are normally pre-transpiled and remain as native ESM modules for optimal use by bundlers and other tools.
