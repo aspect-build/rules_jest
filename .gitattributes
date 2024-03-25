@@ -1,2 +1,3 @@
 docs/*.md linguist-generated=true
+docs/troubleshooting.md linguist-generated=false
 pnpm-lock.yaml linguist-generated=true
