@@ -25,4 +25,4 @@ See [jest_test](docs/jest_test) API documentation and the example usages in the 
 
 ## Troubleshooting and common challenges
 
-For troubleshooting and common challenges, see [troubleshooting.md](troubleshooting.md).
+For troubleshooting and common challenges, see [docs/troubleshooting.md](docs/troubleshooting.md).
