@@ -42,3 +42,5 @@ tasks:
               - main
   - finalization:
       queue: aspect-small-graviton
+notifications:
+  github: {}
