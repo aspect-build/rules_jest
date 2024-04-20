@@ -7,19 +7,11 @@ load("@aspect_rules_jest//jest:dependencies.bzl", "rules_jest_dependencies")
 
 rules_jest_dependencies()
 
-# Register a nodejs toolchain, if you haven't already done so.
-load("@rules_nodejs//nodejs:repositories.bzl", "DEFAULT_NODE_VERSION", "nodejs_register_toolchains")
+load("@aspect_rules_js//js:toolchains.bzl", "DEFAULT_NODE_VERSION", "rules_js_register_toolchains")
 
-nodejs_register_toolchains(
-    name = "nodejs",
-    node_version = DEFAULT_NODE_VERSION,
-)
+rules_js_register_toolchains(node_version = DEFAULT_NODE_VERSION)
 
-load("@aspect_rules_js//js:repositories.bzl", "rules_js_dependencies")
-
-rules_js_dependencies()
-
-load("@aspect_rules_js//npm:npm_import.bzl", "npm_translate_lock")
+load("@aspect_rules_js//npm:repositories.bzl", "npm_translate_lock")
 
 npm_translate_lock(
     name = "npm",
@@ -36,9 +28,9 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "aspect_rules_swc",
-    sha256 = "cde09df7dea773adaed896612434559f8955d2dfb2cfd6429ee333f30299ed34",
-    strip_prefix = "rules_swc-1.2.2",
-    url = "https://github.com/aspect-build/rules_swc/releases/download/v1.2.2/rules_swc-v1.2.2.tar.gz",
+    integrity = "sha256-+BUkMlB7mYzuSBEuVWLM08zlh8BXnwsKSlgkBqFjF7Q=",
+    strip_prefix = "rules_swc-3843ada2222c537e3c1982dec16b8d3d62a9da49",
+    url = "https://github.com/aspect-build/rules_swc/archive/3843ada2222c537e3c1982dec16b8d3d62a9da49/3843ada2222c537e3c1982dec16b8d3d62a9da49.tar.gz",
 )
 
 load("@aspect_rules_swc//swc:dependencies.bzl", "rules_swc_dependencies")
