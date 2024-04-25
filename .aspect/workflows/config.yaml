@@ -23,6 +23,11 @@ tasks:
           command: vmstat -a -S M -t 1 2>&1 > vmstat.out &
         - type: after_task
           command: cat vmstat.out
+        - type: after_task
+          command: |
+            SERVER_PID=$(bazel --nohome_rc --bazelrc=.aspect/workflows/bazelrc info --aspect:lock_version --config=workflows server_pid)
+            ps -p $SERVER_PID -o pid,vsz=MEMORY -o user,group=GROUP -o comm,args=ARGS
+            cat /proc/$SERVER_PID/status
       artifact_paths:
         - vmstat.out
       coverage: true
