@@ -8,7 +8,11 @@ stardoc_with_diff_test(
     symbol_names = ["jest_test"],
 )
 
-update_docs(name = "update")
+update_docs(
+    name = "update",
+    # slight docs difference in Bazel 6
+    tags = ["skip-on-bazel6"],
+)
 
 # Demonstration delivery target for Aspect Workflows.
 # In the future this could be wired up to push to a demonstration S3 bucket.

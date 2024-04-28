@@ -44,7 +44,7 @@ js_library(
     ],
 )
 
-# TEST: Ensure the {name}_update_snapshots target builds successfully
+# TEST: Ensure the :test_update_snapshots target exists and builds successfully
 build_test(
     name = "update_snapshots_build",
     targets = [":test_update_snapshots"],
