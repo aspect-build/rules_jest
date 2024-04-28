@@ -1,0 +1,33 @@
+load("@aspect_rules_js//js:defs.bzl", "js_library")
+load("@bazel_skylib//rules:build_test.bzl", "build_test")
+load("//jest:defs.bzl", "jest_test")
+
+# Case 10a: case10 with the chdir param to try a different cwd
+jest_test(
+    name = "test",
+    chdir = package_name(),
+    config = ":case10a-config",
+    data = [
+        "case10a.test.js",
+    ],
+    node_modules = "//:node_modules",
+    snapshots = True,
+)
+
+js_library(
+    name = "case10a-config",
+    srcs = [
+        "case10a.jest.config.js",
+    ],
+    data = [
+        "case10a.config-init.js",
+        "case10a.setup.js",
+        "//jest/tests:node_modules/@aspect-test/c",
+    ],
+)
+
+# TEST: Ensure the :test_update_snapshots target exists and builds successfully
+build_test(
+    name = "update_snapshots_build",
+    targets = [":test_update_snapshots"],
+)

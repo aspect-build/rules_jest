@@ -2,5 +2,5 @@ configure:
   languages:
     javascript: true
     go: true
-    kotlin: true
+    kotlin: false
     protobuf: true
