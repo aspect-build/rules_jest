@@ -2,6 +2,7 @@
 
 load("//jest/private:maybe.bzl", http_archive = "maybe_http_archive")
 
+# buildifier: disable=function-docstring
 def rules_jest_dependencies():
     http_archive(
         name = "bazel_skylib",
@@ -18,13 +19,20 @@ def rules_jest_dependencies():
 
     http_archive(
         name = "aspect_rules_js",
-        sha256 = "7cb2d84b7d5220194627c9a0267ae599e357350e75ea4f28f337a25ca6219b83",
-        strip_prefix = "rules_js-1.29.2",
-        url = "https://github.com/aspect-build/rules_js/releases/download/v1.29.2/rules_js-v1.29.2.tar.gz",
+        sha256 = "7b2a4d1d264e105eae49a27e2e78065b23e2e45724df2251eacdd317e95bfdfd",
+        strip_prefix = "rules_js-1.31.0",
+        url = "https://github.com/aspect-build/rules_js/releases/download/v1.31.0/rules_js-v1.31.0.tar.gz",
     )
 
     http_archive(
         name = "rules_nodejs",
         sha256 = "764a3b3757bb8c3c6a02ba3344731a3d71e558220adcb0cf7e43c9bba2c37ba8",
         urls = ["https://github.com/bazelbuild/rules_nodejs/releases/download/5.8.2/rules_nodejs-core-5.8.2.tar.gz"],
+    )
+
+    http_archive(
+        name = "bazel_features",
+        sha256 = "f3082bfcdca73dc77dcd68faace806135a2e08c230b02b1d9fbdbd7db9d9c450",
+        strip_prefix = "bazel_features-0.1.0",
+        url = "https://github.com/bazel-contrib/bazel_features/releases/download/v0.1.0/bazel_features-v0.1.0.tar.gz",
     )

@@ -8,6 +8,14 @@ build --enable_runfiles
 build --incompatible_strict_action_env
 build --nolegacy_external_runfiles
 
+# //example/custom_sequencer:case2_test target sets `auto_configure_test_sequencer = False` which
+# causes the following error on Bazel 7 unless --noincompatible_check_sharding_support is
+# ERROR: Testing //example/custom_sequencer:case2_test (shard 2 of 2) failed: Sharding requested,
+# but the test runner did not advertise support for it by touching TEST_SHARD_STATUS_FILE. Either
+# remove the 'shard_count' attribute, use a test runner that supports sharding or temporarily disable
+# this check via --noincompatible_check_sharding_support.
+test --noincompatible_check_sharding_support
+
 # Output test errors to stderr so users don't have to `cat` or open test failure log files when test
 # fail. This makes the log noiser in exchange for reducing the time-to-feedback on test failures for
 # users.

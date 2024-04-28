@@ -1,18 +1,17 @@
-"Bazel dependencies"
-
 bazel_dep(name = "aspect_rules_jest", version = "0.0.0", dev_dependency = True)
-bazel_dep(name = "aspect_rules_js", version = "1.29.2", dev_dependency = True)
-
-bazel_dep(name = "platforms", version = "0.0.4")
-
 local_path_override(
     module_name = "aspect_rules_jest",
     path = "../..",
 )
 
+bazel_dep(name = "aspect_rules_js", version = "1.31.0", dev_dependency = True)
+bazel_dep(name = "platforms", version = "0.0.4", dev_dependency = True)
+
 npm = use_extension("@aspect_rules_js//npm:extensions.bzl", "npm")
 npm.npm_translate_lock(
     name = "npm",
+    npmrc = "//:.npmrc",
     pnpm_lock = "//:pnpm-lock.yaml",
+    verify_node_modules_ignored = "//:.bazelignore",
 )
 use_repo(npm, "npm")
