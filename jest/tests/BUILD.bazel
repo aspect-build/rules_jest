@@ -175,7 +175,7 @@ jest_test(
     node_modules = "//:node_modules",
 )
 
-# Case 13: jest_test uses TEST_TMPDIR (see e2e test)
+# Case 13: jest_test uses TEST_TMPDIR
 jest_test(
     name = "case13",
     config = "case13.jest.config.js",
