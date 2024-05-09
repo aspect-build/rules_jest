@@ -111,6 +111,7 @@ jobs:
         shell: bash
         run: |
           bazel \
+            --bazelrc=$GITHUB_WORKSPACE/.github/workflows/ci.bazelrc \
             test \
             --test_tag_filters=-skip-on-bazel${{ matrix.bazel-version.major }} \
             --build_tag_filters=-skip-on-bazel${{ matrix.bazel-version.major }} \
