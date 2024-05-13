@@ -4,7 +4,7 @@ local_path_override(
     path = "../..",
 )
 
-bazel_dep(name = "aspect_bazel_lib", version = "1.32.1", dev_dependency = True)
+bazel_dep(name = "aspect_bazel_lib", version = "1.33.0", dev_dependency = True)
 bazel_dep(name = "aspect_rules_js", version = "1.31.0", dev_dependency = True)
 bazel_dep(name = "aspect_rules_swc", version = "1.2.2", dev_dependency = True)
 bazel_dep(name = "platforms", version = "0.0.4", dev_dependency = True)
