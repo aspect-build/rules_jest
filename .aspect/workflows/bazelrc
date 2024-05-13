@@ -1,6 +1,3 @@
-# bazel flags to set for Aspect Workflows CI
-common --enable_bzlmod
-
 # build without the bytes
 common --remote_download_outputs=minimal
 
