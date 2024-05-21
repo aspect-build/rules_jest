@@ -92,7 +92,7 @@ config.cacheDirectory ||= path.join(process.env.TEST_TMPDIR, 'jest_cache');
 
 // Needed for Jest to walk the filesystem to find inputs.
 // See https://github.com/facebook/jest/pull/9351
-config.haste = { enableSymlinks: true };
+config.haste = { enableSymlinks: true, ...config.haste };
 
 // https://jestjs.io/docs/cli#--watchman. Whether to use watchman for file crawling. Defaults
 // to true. Disable using --no-watchman. Watching is ibazel's job

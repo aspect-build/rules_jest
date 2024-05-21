@@ -141,3 +141,14 @@ jest_test(
     ],
     node_modules = "//:node_modules",
 )
+
+# Case 14: jest_test merges haste configs
+jest_test(
+    name = "case14",
+    config = "case14.jest.config.js",
+    data = [
+        "case14.test.js",
+        "case14-lib.foo.js",
+    ],
+    node_modules = "//:node_modules",
+)

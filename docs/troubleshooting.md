@@ -44,6 +44,10 @@ By default Jest runs tests concurrently using workers. This conflicts with Bazel
 
 By default Jest uses `jest-haste-map` to optimize and cache fs operations which must be configured to work with Bazel. `rules_jest` will automatically configure `haste` for compatibility with`rules_jest` and `rules_js`. Care must be taken with custom Jest configurations when configuring `haste`.
 
+The settings defined by `rules_jest` are `{ enableSymlinks: true }`, but if you define your own `haste:` settings (in a custom jest config), they will be _merged_ with the rules_jest defaults.
+
+_Note_: If you are importing a preset, and _it_ declares its own `haste` config, those will not be merged. This is an implementation detail of jest. The only workaround is to copy those settings into your local *jest.config.js* file.
+
 ## Pre-transpiled sources
 
 Frequently outside the Bazel ecosystem sources such as `*.ts` are transpiled on the fly using tools such as `ts-jest` or `babel-jest`. Such tools are designed for Jest and transpile to a javascript format ideal for Jest but normally not for production use.
