@@ -28,9 +28,9 @@ load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
 
 http_archive(
     name = "aspect_rules_swc",
-    sha256 = "65d779e7a0956f2ef754e56769766cd7b5af28f4ac3fd146d6673c0779a250ed",
-    strip_prefix = "rules_swc-2.0.0-alpha.0",
-    url = "https://github.com/aspect-build/rules_swc/releases/download/v2.0.0-alpha.0/rules_swc-v2.0.0-alpha.0.tar.gz",
+    sha256 = "c085647585c3d01bee3966eb9ba433a1efbb0ee79bb1b8c67882a81d82a9b37f",
+    strip_prefix = "rules_swc-2.0.0-rc0",
+    url = "https://github.com/aspect-build/rules_swc/releases/download/v2.0.0-rc0/rules_swc-v2.0.0-rc0.tar.gz",
 )
 
 load("@aspect_rules_swc//swc:dependencies.bzl", "rules_swc_dependencies")
