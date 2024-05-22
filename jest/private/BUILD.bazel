@@ -1,5 +1,5 @@
+load("@aspect_bazel_lib//lib:utils.bzl", bazel_lib_utils = "utils")
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
-load("//jest/private:is_bazel_7_or_greater.bzl", "is_bazel_7_or_greater")
 
 exports_files([
     "jest_config_template.mjs",
@@ -37,11 +37,5 @@ bzl_library(
     deps = [
         "@bazel_tools//tools/build_defs/repo:http.bzl",
         "@bazel_tools//tools/build_defs/repo:utils.bzl",
-    ] + (["@bazel_tools//tools/build_defs/repo:cache.bzl"] if is_bazel_7_or_greater() else []),
-)
-
-bzl_library(
-    name = "is_bazel_7_or_greater",
-    srcs = ["is_bazel_7_or_greater.bzl"],
-    visibility = ["//jest:__subpackages__"],
+    ] + (["@bazel_tools//tools/build_defs/repo:cache.bzl"] if bazel_lib_utils.is_bazel_7_or_greater() else []),
 )
