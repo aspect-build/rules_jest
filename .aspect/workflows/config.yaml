@@ -30,7 +30,7 @@ tasks:
             cat /proc/$SERVER_PID/status
       artifact_paths:
         - vmstat.out
-      coverage: true
+      coverage:
       upload_test_logs: executed
   - delivery:
       auto_deliver: true
