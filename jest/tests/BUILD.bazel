@@ -1,4 +1,5 @@
 load("@npm//:defs.bzl", "npm_link_all_packages")
+load("@aspect_rules_js//js:defs.bzl", "js_library")
 load("//jest:defs.bzl", "jest_test")
 
 npm_link_all_packages(name = "node_modules")
@@ -58,12 +59,17 @@ jest_test(
 )
 
 # Case 6: Coverage reporting (see e2e test)
+js_library(
+    name = "case6-lib",
+    srcs = ["case6.index.js"],
+)
+
 jest_test(
     name = "case6",
     config = "case6.jest.config.js",
     data = [
-        "case6.index.js",
         "case6.test.js",
+        ":case6-lib",
     ],
     node_modules = "//:node_modules",
 )

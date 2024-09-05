@@ -164,18 +164,6 @@ if (coverageEnabled) {
   config.coverageDirectory = coverageDirectory;
   config.coverageReporters = ["text", ["lcovonly", { file: coverageFile }]];
 
-  // Glob pattern paths for which files to cover must be relative to this
-  // jest config file in runfiles.
-  const jestConfigDir = path.dirname(
-    _resolveRunfilesPath(generatedConfigShortPath)
-  );
-
-  // Only generate coverage for files declared in the COVERAGE_MANIFEST
-  config.collectCoverageFrom = readFileSync(process.env.COVERAGE_MANIFEST)
-    .toString("utf8")
-    .split("\n")
-    .filter((f) => f != "")
-    .map((f) => path.relative(jestConfigDir, f));
 }
 
 if (process.env.JS_BINARY__LOG_DEBUG) {
