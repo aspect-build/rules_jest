@@ -1,4 +1,4 @@
-# Bazel rules for jest
+# Bazel rules for jest!
 
 Runs tests with the https://jestjs.io/ test runner under Bazel.
 
