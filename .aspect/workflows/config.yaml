@@ -10,6 +10,7 @@ tasks:
   - configure:
       queue: aspect-small-graviton
   - test:
+      id: test
       hooks:
         # Example of asserting that `bazel query //...` is green in a before_task hook.
         # Flags set:
@@ -32,13 +33,19 @@ tasks:
         - vmstat.out
       coverage: true
       upload_test_logs: executed
+  - test:
+      name: Test 2
+      id: test_2
   - delivery:
       auto_deliver: true
       rules:
         - deliverable: 'attr("tags", "\bdeliverable\b", //...)'
           condition:
+            detect_changes_from:
+              - test
             branches:
               - main
+              - testing
         - deliverable:
             - //docs:docs_delivery
           condition:
