@@ -4,32 +4,12 @@ tasks:
   - format:
       queue: aspect-small
   - buildifier:
-      queue: aspect-small-graviton
+      queue: aspect-small
   - gazelle:
-      queue: aspect-small-graviton
+      queue: aspect-small
   - configure:
-      queue: aspect-small-graviton
+      queue: aspect-small
   - test:
-      hooks:
-        # Example of asserting that `bazel query //...` is green in a before_task hook.
-        # Flags set:
-        # - --nohome_rc prevents using a ~/.bazelrc file incase one gets created on the runner unintentionally by a rogue job
-        # - --bazelrc=.aspect/workflows/bazelrc keeps the bazel flags on the bazel query call consistent with what Workflows uses for bazel test
-        # - --aspect:lock_version use the Aspect CLI version matching the Workflows version
-        # - --config=workflows set all Workflows configuration flags; these are defined in /etc/bazel.bazelrc
-        - type: before_task
-          command: bazel --nohome_rc --bazelrc=.aspect/workflows/bazelrc query --aspect:lock_version --config=workflows //...
-        - type: before_task
-          command: vmstat -a -S M -t 1 2>&1 > vmstat.out &
-        - type: after_task
-          command: cat vmstat.out
-        - type: after_task
-          command: |
-            SERVER_PID=$(bazel --nohome_rc --bazelrc=.aspect/workflows/bazelrc info --aspect:lock_version --config=workflows server_pid)
-            ps -p $SERVER_PID -o pid,vsz=MEMORY -o user,group=GROUP -o comm,args=ARGS
-            cat /proc/$SERVER_PID/status
-      artifact_paths:
-        - vmstat.out
       coverage: true
       upload_test_logs: executed
   - delivery:
@@ -46,6 +26,6 @@ tasks:
             branches:
               - main
   - finalization:
-      queue: aspect-small-graviton
+      queue: aspect-small
 notifications:
   github: {}
