@@ -12,3 +12,11 @@ common --remote_download_outputs=minimal
 common --experimental_fetch_all_coverage_outputs
 # https://github.com/bazelbuild/bazel/blob/e3e4d61b2c2b241d0426ea20143b8a07d6fadfcd/tools/test/collect_cc_coverage.sh#L30
 common --test_env=COVERAGE_GCOV_PATH=/usr/bin/gcov
+
+# remote execution
+common:rbe --extra_execution_platforms=//bazel/platforms:x86_64_linux_remote
+common:rbe --host_platform=//bazel/platforms:x86_64_linux_remote
+common:rbe --remote_executor=unix:///mnt/ephemeral/buildbarn/.cache/bb_clientd/grpc
+common:rbe --genrule_strategy=remote,local
+common:rbe --jobs=32
+common:rbe --remote_timeout=3600
