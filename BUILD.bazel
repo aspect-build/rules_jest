@@ -1,29 +1,10 @@
 load("@aspect_bazel_lib//lib:copy_file.bzl", "copy_file")
 load("@aspect_bazel_lib//lib:copy_to_bin.bzl", "copy_to_bin")
-load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
-load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 load("@buildifier_prebuilt//:rules.bzl", "buildifier")
 load("@npm//:defs.bzl", "npm_link_all_packages")
 load("//jest:defs.bzl", "jest_test")
 
 npm_link_all_packages(name = "node_modules")
-
-gazelle_binary(
-    name = "gazelle_bin",
-    languages = ["@bazel_skylib_gazelle_plugin//bzl"],
-)
-
-gazelle(
-    name = "gazelle",
-    gazelle = "gazelle_bin",
-    mode = "fix",
-)
-
-gazelle(
-    name = "gazelle.check",
-    gazelle = "gazelle_bin",
-    mode = "diff",
-)
 
 buildifier(
     name = "buildifier",
@@ -73,11 +54,4 @@ copy_to_bin(
     name = "case8.config",
     srcs = ["test_case8.jest.config.js"],
     visibility = ["//visibility:public"],
-)
-
-bzl_library(
-    name = "internal_deps",
-    srcs = ["internal_deps.bzl"],
-    visibility = ["//visibility:public"],
-    deps = ["//jest/private:maybe"],
 )
