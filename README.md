@@ -6,7 +6,7 @@ Many companies are successfully testing with rules_jest. If you're getting value
 
 rules_jest is just a part of what Aspect provides:
 
-- _Need help?_ This ruleset has support provided by https://aspect.dev.
+- _Need help?_ This ruleset has support provided by https://aspect.build/services
 - See our other Bazel rules, especially those built for rules_js, such as rules_ts for TypeScript: https://github.com/aspect-build
 
 ## Installation
