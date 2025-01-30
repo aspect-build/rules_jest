@@ -1,5 +1,7 @@
 # Example showing usage and challenges using rules_jest with swc (via rules_swc)
 
+NB: this example predates the https://swc.rs/docs/usage/jest package, which likely solves these problems.
+
 ## Mocking of esm exports when transforming to commonjs
 
 When transforming esm to commonjs, swc defines the exports as readonly.
