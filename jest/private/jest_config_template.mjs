@@ -152,18 +152,30 @@ if (coverageEnabled) {
   let coverageFile = path.basename(process.env.COVERAGE_OUTPUT_FILE);
   let coverageDirectory = path.dirname(process.env.COVERAGE_OUTPUT_FILE);
 
-  if (process.env.SPLIT_COVERAGE_POST_PROCESSING == "1") {
-    // in split coverage post processing mode bazel assumes that the COVERAGE_OUTPUT_FILE
-    // will be created by lcov_merger which runs as a separate action with everything in
-    // COVERAGE_DIR provided as inputs. so we'll just create the final coverage at
-    // `COVERAGE_DIR/coverage.dat` which then later moved by merger.sh to final location.
-    coverageDirectory = process.env.COVERAGE_DIR;
-    coverageFile = "coverage.dat";
+  /**
+   * Allows the user to disable the jest manifest
+   * override so that we can pass our own reporters
+   * and output dir instead.
+   * 
+   * This is useful in the case of injecting your
+   * own coverage reporters and then using globalTeardown
+   * replicate the SPLIT_COVERAGE_POSTPROCESSING logic while
+   * also manipulating/massaging the `.dat` file before it gets
+   * passed to Bazel
+   */
+  if (process.env.SKIP_SETTING_COVERAGE_DIR != "1") {
+    if (process.env.SPLIT_COVERAGE_POST_PROCESSING == "1") {
+      // in split coverage post processing mode bazel assumes that the COVERAGE_OUTPUT_FILE
+      // will be created by lcov_merger which runs as a separate action with everything in
+      // COVERAGE_DIR provided as inputs. so we'll just create the final coverage at
+      // `COVERAGE_DIR/coverage.dat` which then later moved by merger.sh to final location.
+      coverageDirectory = process.env.COVERAGE_DIR;
+      coverageFile = "coverage.dat";
+    }
+  
+    config.coverageDirectory = coverageDirectory;
+    config.coverageReporters = ["text", ["lcovonly", { file: coverageFile }]];
   }
-
-  config.coverageDirectory = coverageDirectory;
-  config.coverageReporters = ["text", ["lcovonly", { file: coverageFile }]];
-
 }
 
 if (process.env.JS_BINARY__LOG_DEBUG) {
