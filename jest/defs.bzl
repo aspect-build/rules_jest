@@ -215,6 +215,14 @@ def jest_test(
         visibility = ["//visibility:public"],
     )
 
+    bazel_haste_map_module = "_{}_bazel_haste_map_module".format(name)
+    copy_file(
+        name = bazel_haste_map_module,
+        src = "@aspect_rules_jest//jest/private:bazel_haste_map.cjs",
+        out = "_{}_bazel_haste_map_module.cjs".format(name),
+        visibility = ["//visibility:public"],
+    )
+
     # This is the primary {name} jest_test test target
     _jest_from_node_modules(
         jest_rule = jest_test_rule,
@@ -233,6 +241,7 @@ def jest_test(
         bazel_sequencer = bazel_sequencer,
         bazel_snapshot_reporter = bazel_snapshot_reporter,
         bazel_snapshot_resolver = bazel_snapshot_resolver,
+        bazel_haste_map_module = bazel_haste_map_module,
         **kwargs
     )
 
@@ -255,6 +264,7 @@ def jest_test(
             bazel_sequencer = bazel_sequencer,
             bazel_snapshot_reporter = bazel_snapshot_reporter,
             bazel_snapshot_resolver = bazel_snapshot_resolver,
+            bazel_haste_map_module = bazel_haste_map_module,
             tags = tags + ["manual"],  # tagged manual so it is not built unless the {name}_update_snapshot target is run
             **kwargs
         )

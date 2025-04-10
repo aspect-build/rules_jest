@@ -26,6 +26,10 @@ _attrs = dicts.add(js_binary_lib.attrs, {
         allow_single_file = True,
         mandatory = True,
     ),
+    "bazel_haste_map_module": attr.label(
+        allow_single_file = True,
+        mandatory = True,
+    ),
     "env_inherit": attr.string_list(
         doc = """Environment variables to inherit from the external environment.""",
     ),
@@ -48,15 +52,24 @@ def _impl(ctx):
     generated_config = ctx.actions.declare_file("%s__jest.config.mjs" % ctx.label.name)
     user_config = copy_file_to_bin_action(ctx, ctx.file.config) if ctx.attr.config else None
 
+    filelist = ctx.actions.declare_file("%s__jest.files.json" % ctx.label.name)
+    ctx.actions.write(
+        output = filelist,
+        content = json.encode([f.short_path for f in ctx.files.data if not f.is_directory]),
+        is_executable = False,
+    )
+
     ctx.actions.expand_template(
         template = ctx.file._jest_config_template,
         output = generated_config,
         substitutions = {
             "{{AUTO_CONF_REPORTERS}}": "1" if ctx.attr.auto_configure_reporters else "",
             "{{AUTO_CONF_TEST_SEQUENCER}}": "1" if ctx.attr.auto_configure_test_sequencer else "",
+            "{{BAZEL_FILELIST_JSON_SHORT_PATH}}": filelist.short_path,
             "{{BAZEL_SEQUENCER_SHORT_PATH}}": ctx.file.bazel_sequencer.short_path,
             "{{BAZEL_SNAPSHOT_REPORTER_SHORT_PATH}}": ctx.file.bazel_snapshot_reporter.short_path,
             "{{BAZEL_SNAPSHOT_RESOLVER_SHORT_PATH}}": ctx.file.bazel_snapshot_resolver.short_path,
+            "{{BAZEL_HASTE_MAP_MODULE_SHORT_PATH}}": ctx.file.bazel_haste_map_module.short_path,
             "{{GENERATED_CONFIG_SHORT_PATH}}": generated_config.short_path,
             "{{USER_CONFIG_SHORT_PATH}}": user_config.short_path if user_config else "",
             "{{USER_CONFIG_PATH}}": user_config.path if user_config else "",
@@ -126,6 +139,8 @@ def _impl(ctx):
     files.append(ctx.file.bazel_sequencer)
     files.append(ctx.file.bazel_snapshot_reporter)
     files.append(ctx.file.bazel_snapshot_resolver)
+    files.append(ctx.file.bazel_haste_map_module)
+    files.append(filelist)
 
     runfiles = ctx.runfiles(
         files = files,
