@@ -48,6 +48,12 @@ The settings defined by `rules_jest` are `{ enableSymlinks: true }`, but if you 
 
 _Note_: If you are importing a preset, and _it_ declares its own `haste` config, those will not be merged. This is an implementation detail of jest. The only workaround is to copy those settings into your local *jest.config.js* file.
 
+### Jest `projects`
+
+The Jest [projects](https://jestjs.io/docs/next/configuration#projects-arraystring--projectconfig) feature to concurrently run multiple projects does not work with how rules_jest modifies the configuration to work with bazel. Using this feature will lead to unexpected behavior and is not supported.
+
+For parallelization use [bazel sharding](https://docs.bazel.build/versions/main/test-encyclopedia.html#test-sharding) or split tests into multiple `jest_test` targets.
+
 ## Pre-transpiled sources
 
 Frequently outside the Bazel ecosystem sources such as `*.ts` are transpiled on the fly using tools such as `ts-jest` or `babel-jest`. Such tools are designed for Jest and transpile to a javascript format ideal for Jest but normally not for production use.

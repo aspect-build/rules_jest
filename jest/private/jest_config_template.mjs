@@ -10,13 +10,13 @@ const userConfigShortPath = "{{USER_CONFIG_SHORT_PATH}}";
 const userConfigPath = "{{USER_CONFIG_PATH}}";
 const generatedConfigShortPath = "{{GENERATED_CONFIG_SHORT_PATH}}";
 const bazelSequencerPath = _resolveRunfilesPath(
-  "{{BAZEL_SEQUENCER_SHORT_PATH}}"
+  "{{BAZEL_SEQUENCER_SHORT_PATH}}",
 );
 const bazelSnapshotReporterPath = _resolveRunfilesPath(
-  "{{BAZEL_SNAPSHOT_REPORTER_SHORT_PATH}}"
+  "{{BAZEL_SNAPSHOT_REPORTER_SHORT_PATH}}",
 );
 const bazelSnapshotResolverPath = _resolveRunfilesPath(
-  "{{BAZEL_SNAPSHOT_RESOLVER_SHORT_PATH}}"
+  "{{BAZEL_SNAPSHOT_RESOLVER_SHORT_PATH}}",
 );
 
 if (
@@ -24,7 +24,7 @@ if (
   process.env.JEST_JUNIT_OUTPUT_FILE != process.env.XML_OUTPUT_FILE
 ) {
   console.error(
-    `WARNING: aspect_rules_jest[jest_test]: expected JEST_JUNIT_OUTPUT_FILE environment variable to be set to ${process.env.XML_OUTPUT_FILE} in jest_test target ${process.env.TEST_TARGET}`
+    `WARNING: aspect_rules_jest[jest_test]: expected JEST_JUNIT_OUTPUT_FILE environment variable to be set to ${process.env.XML_OUTPUT_FILE} in jest_test target ${process.env.TEST_TARGET}`,
   );
 }
 
@@ -32,7 +32,7 @@ function _resolveRunfilesPath(rootpath) {
   return path.join(
     process.env.RUNFILES,
     process.env.JS_BINARY__WORKSPACE,
-    rootpath
+    rootpath,
   );
 }
 
@@ -62,6 +62,16 @@ function _addReporter(config, name, reporter = undefined) {
   }
 }
 
+function _verifyJestConfig(config) {
+  // Projects will be loaded by jest and bypass rules_jest configuration.
+  // See https://jestjs.io/docs/configuration#projects-arraystring--projectconfig
+  if (config.projects && config.projects.length > 0) {
+    console.error(`WARNING: aspect_rules_jest[jest_test]: Jest config in target ${process.env.TEST_TARGET} uses 'projects'.
+      The use of 'projects' in aspect_rules_jest is unsupported and will cause unexpected behavior including breaking use of
+      reporting, coverage, snapshots and sharding.`);
+  }
+}
+
 let config = {};
 if (userConfigShortPath) {
   if (path.extname(userConfigShortPath).toLowerCase() == ".json") {
@@ -86,9 +96,10 @@ if (userConfigShortPath) {
   }
 }
 
-// Default to using an isolated tmpdir
-config.cacheDirectory ||= path.join(process.env.TEST_TMPDIR, 'jest_cache');
+_verifyJestConfig(config);
 
+// Default to using an isolated tmpdir
+config.cacheDirectory ||= path.join(process.env.TEST_TMPDIR, "jest_cache");
 
 // Needed for Jest to walk the filesystem to find inputs.
 // See https://github.com/facebook/jest/pull/9351
@@ -134,11 +145,11 @@ if (updateSnapshots) {
       : path.resolve(
           _resolveExecrootPath(userConfigPath),
           "..",
-          config.snapshotResolver
+          config.snapshotResolver,
         );
     if (!existsSync(snapshotResolverPath)) {
       throw new Error(
-        `configured snapshotResolver '${config.snapshotResolver}' not found at ${snapshotResolverPath}`
+        `configured snapshotResolver '${config.snapshotResolver}' not found at ${snapshotResolverPath}`,
       );
     }
     process.env.JEST_TEST__USER_SNAPSHOT_RESOLVER = snapshotResolverPath;
@@ -163,13 +174,12 @@ if (coverageEnabled) {
 
   config.coverageDirectory = coverageDirectory;
   config.coverageReporters = ["text", ["lcovonly", { file: coverageFile }]];
-
 }
 
 if (process.env.JS_BINARY__LOG_DEBUG) {
   console.error(
     "DEBUG: aspect_rules_jest[jest_test]: config:",
-    JSON.stringify(config, null, 2)
+    JSON.stringify(config, null, 2),
   );
 }
 
