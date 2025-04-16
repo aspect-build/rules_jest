@@ -18,6 +18,9 @@ const bazelSnapshotReporterPath = _resolveRunfilesPath(
 const bazelSnapshotResolverPath = _resolveRunfilesPath(
   "{{BAZEL_SNAPSHOT_RESOLVER_SHORT_PATH}}",
 );
+const bazelHasteMapModulePath = _resolveRunfilesPath(
+  "{{BAZEL_HASTE_MAP_MODULE_SHORT_PATH}}",
+);
 
 if (
   !updateSnapshots &&
@@ -98,16 +101,41 @@ if (userConfigShortPath) {
 
 _verifyJestConfig(config);
 
+// Templated config that must be persisted globally for use by other rules_jest bazel_*.cjs files.
+global.BAZEL_FILELIST_JSON_SHORT_PATH = "{{BAZEL_FILELIST_JSON_SHORT_PATH}}";
+
 // Default to using an isolated tmpdir
 config.cacheDirectory ||= path.join(process.env.TEST_TMPDIR, "jest_cache");
 
-// Needed for Jest to walk the filesystem to find inputs.
-// See https://github.com/facebook/jest/pull/9351
-config.haste = { enableSymlinks: true, ...config.haste };
+config.haste = {
+  // Needed for Jest to walk the filesystem to find inputs.
+  // See https://github.com/facebook/jest/pull/9351
+  enableSymlinks: true,
+
+  // Do not use external watchman or find, use a custom
+  // HasteMap module designed for rules_jest
+  forceNodeFilesystemAPI: true,
+  hasteMapModulePath: bazelHasteMapModulePath,
+
+  // Use of SHA1, computing dependencies etc are all related to caching.
+  // Disable them unless explicitly enabled by the user `config.haste`.
+  computeSha1: false,
+
+  ...config.haste,
+};
 
 // https://jestjs.io/docs/cli#--watchman. Whether to use watchman for file crawling. Defaults
 // to true. Disable using --no-watchman. Watching is ibazel's job
 config.watchman = false;
+
+// Watching and reinvoking tests is rule_jest + ibazel's job.
+config.watch = config.watchAll = false;
+
+// Caching is bazel's job.
+config.cache = false;
+
+// Change detection is bazel's job.
+config.onlyChanged = false;
 
 // Auto configure reporters
 if (autoConfReporters) {

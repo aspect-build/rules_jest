@@ -3,6 +3,7 @@ load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 
 exports_files([
     "jest_config_template.mjs",
+    "bazel_haste_map.cjs",
     "bazel_sequencer.cjs",
     "bazel_snapshot_reporter.cjs",
     "bazel_snapshot_resolver.cjs",
