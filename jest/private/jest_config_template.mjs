@@ -21,6 +21,13 @@ const bazelSnapshotResolverPath = _resolveRunfilesPath(
 const bazelHasteMapModulePath = _resolveRunfilesPath(
   "{{BAZEL_HASTE_MAP_MODULE_SHORT_PATH}}",
 );
+const bazelFilelistJsonPath = _resolveRunfilesPath(
+  "{{BAZEL_FILELIST_JSON_SHORT_PATH}}",
+);
+
+// Store the filelist as an envvar that will be accessible to bazel_haste_map.cjs, including
+// from potential jest launched child processes.
+process.env.BAZEL_FILELIST_JSON_FULL_PATH = bazelFilelistJsonPath;
 
 if (
   !updateSnapshots &&
@@ -100,9 +107,6 @@ if (userConfigShortPath) {
 }
 
 _verifyJestConfig(config);
-
-// Templated config that must be persisted globally for use by other rules_jest bazel_*.cjs files.
-global.BAZEL_FILELIST_JSON_SHORT_PATH = "{{BAZEL_FILELIST_JSON_SHORT_PATH}}";
 
 // Default to using an isolated tmpdir
 config.cacheDirectory ||= path.join(process.env.TEST_TMPDIR, "jest_cache");
