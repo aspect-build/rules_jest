@@ -18,10 +18,7 @@ const WORKSPACE_RUNFILES = join(
   process.env.TEST_SRCDIR,
   process.env.TEST_WORKSPACE,
 );
-const BAZEL_FILELIST_JSON_FULL_PATH = join(
-  WORKSPACE_RUNFILES,
-  global.BAZEL_FILELIST_JSON_SHORT_PATH,
-);
+const BAZEL_FILELIST_JSON_FULL_PATH = process.env.BAZEL_FILELIST_JSON_FULL_PATH;
 
 /**
  * Extend the standard jest HasteMap to use rules_jest
