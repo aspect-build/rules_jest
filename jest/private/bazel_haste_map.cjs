@@ -1,4 +1,4 @@
-const { join, dirname, extname } = require("path");
+const { join, dirname, extname, relative: rawRelative, sep: pathSep } = require("path");
 const { readFileSync } = require("fs");
 
 // to require jest-haste-map we need to hop from jest-cli => @jest/core => jest-haste-map in the virtual store
@@ -9,9 +9,15 @@ const jestConfigPackage = dirname(
 const HasteMap = require(
   join(jestConfigPackage, "../../jest-haste-map"),
 ).default;
-const fastPath = require(
-  join(jestConfigPackage, "../../jest-haste-map/build/lib/fast_path.js"),
-);
+
+// Copied / ported from
+// https://github.com/jestjs/jest/blob/113b947faf83f46db6421229c2ee3ba0422dc0a3/packages/jest-haste-map/src/lib/fast_path.ts
+// which is not exposed anymore since Jest 30
+function relative(rootDir, filename) {
+  return filename.indexOf(rootDir + pathSep) === 0
+    ? filename.slice(rootDir.length + 1)
+    : rawRelative(rootDir, filename);
+}
 
 // The path to the rules_jest files list file
 const WORKSPACE_RUNFILES = join(
@@ -63,7 +69,7 @@ module.exports = class BazelHasteMap extends HasteMap {
       function findComplete(files) {
         const filesMap = new Map();
         for (const file of files) {
-          const relativeFilePath = fastPath.relative(rootDir, file);
+          const relativeFilePath = relative(rootDir, file);
           filesMap.set(relativeFilePath, [
             "", // ID
             0, // MTIME
