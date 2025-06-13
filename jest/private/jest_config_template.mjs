@@ -4,6 +4,7 @@ import * as path from "path";
 
 const updateSnapshots = !!process.env.JEST_TEST__UPDATE_SNAPSHOTS;
 const coverageEnabled = !!process.env.COVERAGE_DIR;
+const autoConfReporting = !!"{{AUTO_CONF_REPORTING}}";
 const autoConfReporters = !!"{{AUTO_CONF_REPORTERS}}";
 const autoConfTestSequencer = !!"{{AUTO_CONF_TEST_SEQUENCER}}";
 const userConfigShortPath = "{{USER_CONFIG_SHORT_PATH}}";
@@ -195,17 +196,24 @@ if (coverageEnabled) {
   let coverageFile = path.basename(process.env.COVERAGE_OUTPUT_FILE);
   let coverageDirectory = path.dirname(process.env.COVERAGE_OUTPUT_FILE);
 
-  if (process.env.SPLIT_COVERAGE_POST_PROCESSING == "1") {
-    // in split coverage post processing mode bazel assumes that the COVERAGE_OUTPUT_FILE
-    // will be created by lcov_merger which runs as a separate action with everything in
-    // COVERAGE_DIR provided as inputs. so we'll just create the final coverage at
-    // `COVERAGE_DIR/coverage.dat` which then later moved by merger.sh to final location.
-    coverageDirectory = process.env.COVERAGE_DIR;
-    coverageFile = "coverage.dat";
+  /**
+   * This can be used to eject from the default behavior so end users
+   * can integrate their own coverage reporters.
+   * Note, if a user does this, they are also responsible for the split coverage processing logic
+   */
+  if (autoConfReporting === "1") {
+    if (process.env.SPLIT_COVERAGE_POST_PROCESSING == "1") {
+      // in split coverage post processing mode bazel assumes that the COVERAGE_OUTPUT_FILE
+      // will be created by lcov_merger which runs as a separate action with everything in
+      // COVERAGE_DIR provided as inputs. so we'll just create the final coverage at
+      // `COVERAGE_DIR/coverage.dat` which then later moved by merger.sh to final location.
+      coverageDirectory = process.env.COVERAGE_DIR;
+      coverageFile = "coverage.dat";
+    }
+  
+    config.coverageDirectory = coverageDirectory;
+    config.coverageReporters = ["text", ["lcovonly", { file: coverageFile }]];
   }
-
-  config.coverageDirectory = coverageDirectory;
-  config.coverageReporters = ["text-summary", ["lcovonly", { file: coverageFile }]];
 }
 
 if (process.env.JS_BINARY__LOG_DEBUG) {
