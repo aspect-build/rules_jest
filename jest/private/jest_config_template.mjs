@@ -201,7 +201,7 @@ if (coverageEnabled) {
    * can integrate their own coverage reporters.
    * Note, if a user does this, they are also responsible for the split coverage processing logic
    */
-  if (autoConfReporting === "1") {
+  if (autoConfReporting) {
     if (process.env.SPLIT_COVERAGE_POST_PROCESSING == "1") {
       // in split coverage post processing mode bazel assumes that the COVERAGE_OUTPUT_FILE
       // will be created by lcov_merger which runs as a separate action with everything in
