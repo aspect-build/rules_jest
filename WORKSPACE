@@ -74,10 +74,24 @@ load("@buildifier_prebuilt//:defs.bzl", "buildifier_prebuilt_register_toolchains
 
 buildifier_prebuilt_register_toolchains()
 
+load("@bazel_features//:deps.bzl", "bazel_features_deps")
+
+bazel_features_deps()
+
 # rules_lint
 load(
     "@aspect_rules_lint//format:repositories.bzl",
-    "fetch_shfmt",
+    "rules_lint_dependencies",
 )
 
-fetch_shfmt()
+rules_lint_dependencies()
+
+load("@rules_multitool//multitool:multitool.bzl", "multitool")
+
+multitool(
+    name = "multitool",
+    lockfiles = [
+        "@aspect_rules_lint//format:multitool.lock.json",
+        "@aspect_rules_lint//lint:multitool.lock.json",
+    ],
+)
