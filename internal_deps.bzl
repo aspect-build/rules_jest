@@ -24,7 +24,14 @@ def rules_jest_internal_deps():
 
     http_archive(
         name = "aspect_rules_lint",
-        sha256 = "604666ec7ffd4f5f2636001ae892a0fbc29c77401bb33dd10601504e3ba6e9a7",
-        strip_prefix = "rules_lint-0.6.1",
-        url = "https://github.com/aspect-build/rules_lint/releases/download/v0.6.1/rules_lint-v0.6.1.tar.gz",
+        sha256 = "8579389f5820f76dae0a7678838d7d35693ff226c17038ede170ae5c675d5ed6",
+        strip_prefix = "rules_lint-1.4.5",
+        url = "https://github.com/aspect-build/rules_lint/releases/download/v1.4.5/rules_lint-v1.4.5.tar.gz",
+    )
+
+    http_archive(
+        name = "bazel_features",
+        sha256 = "06f02b97b6badb3227df2141a4b4622272cdcd2951526f40a888ab5f43897f14",
+        strip_prefix = "bazel_features-1.9.0",
+        url = "https://github.com/bazel-contrib/bazel_features/releases/download/v1.9.0/bazel_features-v1.9.0.tar.gz",
     )
