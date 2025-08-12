@@ -5,8 +5,5 @@ common --repository_cache=~/.cache/bazel-repository-cache
 # Debug where options came from
 common --announce_rc
 
-# Allows tests to run bazelisk-in-bazel, since this is the cache folder used
-common --test_env=XDG_CACHE_HOME
-
 # Still required for Windows until we upgrade to a minimum rules_js that no longer requires it
 common --enable_runfiles
