@@ -4,6 +4,7 @@
 load("@aspect_bazel_lib//lib:copy_file.bzl", "copy_file")
 load("@aspect_bazel_lib//lib:directory_path.bzl", "directory_path")
 load("@aspect_bazel_lib//lib:utils.bzl", "default_timeout", "to_label")
+load("@aspect_tools_telemetry_report//:defs.bzl", "TELEMETRY")  # buildifier: disable=load
 load("//jest/private:jest_test.bzl", jest_test_rule = "jest_test")
 
 UPDATE_SNAPSHOTS_TARGET_SUFFIX = "_update_snapshots"
