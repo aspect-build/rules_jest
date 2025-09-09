@@ -205,7 +205,7 @@ if (coverageEnabled) {
   }
 
   config.coverageDirectory = coverageDirectory;
-  config.coverageReporters = ["text", ["lcovonly", { file: coverageFile }]];
+  config.coverageReporters = ["text-summary", ["lcovonly", { file: coverageFile }]];
 }
 
 if (process.env.JS_BINARY__LOG_DEBUG) {
