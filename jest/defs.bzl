@@ -66,9 +66,10 @@ def jest_test(
 
         config: "Optional Jest config file. See https://jestjs.io/docs/configuration.
 
-            Supported config file types are ".js", ".cjs", ".mjs", ".json" which come from https://jestjs.io/docs/configuration
-            minus TypeScript since we this rule extends from the configuration. TypeScript jest configs should be transpiled
-            before being passed to jest_test with [rules_ts](https://github.com/aspect-build/rules_ts).
+            Supported config file types are ".js", ".cjs", ".mjs", ".ts", ".cts", ".json" which come from https://jestjs.io/docs/configuration.
+            TypeScript jest configs can either be transpiled before being passed to jest_test with
+            [rules_ts](https://github.com/aspect-build/rules_ts), or loaded natively with Node's
+            [type stripping](https://nodejs.org/en/learn/typescript/run-natively) functionality.
 
         data: Runtime dependencies of the Jest test.
 
