@@ -6,7 +6,7 @@ load("@bazel_skylib//lib:dicts.bzl", "dicts")
 load("@bazel_skylib//lib:paths.bzl", "paths")
 
 _attrs = dicts.add(js_binary_lib.attrs, {
-    "config": attr.label(allow_single_file = [".js", ".cjs", ".mjs", ".json"]),
+    "config": attr.label(allow_single_file = [".js", ".cjs", ".mjs", ".ts", ".cts", ".json"]),
     "auto_configure_reporters": attr.bool(default = True),
     "auto_configure_test_sequencer": attr.bool(default = True),
     "run_in_band": attr.bool(default = True),
