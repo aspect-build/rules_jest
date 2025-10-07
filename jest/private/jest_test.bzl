@@ -7,6 +7,7 @@ load("@bazel_skylib//lib:paths.bzl", "paths")
 
 _attrs = dicts.add(js_binary_lib.attrs, {
     "config": attr.label(allow_single_file = [".js", ".cjs", ".mjs", ".json"]),
+    "auto_configure_reporting": attr.bool(default = True),
     "auto_configure_reporters": attr.bool(default = True),
     "auto_configure_test_sequencer": attr.bool(default = True),
     "run_in_band": attr.bool(default = True),
@@ -63,6 +64,7 @@ def _impl(ctx):
         template = ctx.file._jest_config_template,
         output = generated_config,
         substitutions = {
+            "{{AUTO_CONF_REPORTING}}": "1" if ctx.attr.auto_configure_reporting else "",
             "{{AUTO_CONF_REPORTERS}}": "1" if ctx.attr.auto_configure_reporters else "",
             "{{AUTO_CONF_TEST_SEQUENCER}}": "1" if ctx.attr.auto_configure_test_sequencer else "",
             "{{BAZEL_FILELIST_JSON_SHORT_PATH}}": filelist.short_path,
