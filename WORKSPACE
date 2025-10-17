@@ -98,6 +98,7 @@ multitool(
 
 # rules_shell
 load("@bazel_tools//tools/build_defs/repo:http.bzl", "http_archive")
+
 http_archive(
     name = "rules_shell",
     sha256 = "e6b87c89bd0b27039e3af2c5da01147452f240f75d505f5b6880874f31036307",
@@ -106,5 +107,7 @@ http_archive(
 )
 
 load("@rules_shell//shell:repositories.bzl", "rules_shell_dependencies", "rules_shell_toolchains")
+
 rules_shell_dependencies()
+
 rules_shell_toolchains()
