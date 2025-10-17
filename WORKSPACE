@@ -95,3 +95,10 @@ multitool(
         "@aspect_rules_lint//lint:multitool.lock.json",
     ],
 )
+
+# rules_shell
+load("@rules_shell//shell:repositories.bzl", "rules_shell_dependencies", "rules_shell_toolchains")
+
+rules_shell_dependencies()
+
+rules_shell_toolchains()
