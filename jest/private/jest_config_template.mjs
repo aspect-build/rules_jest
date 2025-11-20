@@ -55,18 +55,13 @@ function _hasReporter(config, name) {
   if (!config.reporters) {
     config.reporters = [];
   }
-  for (const r of config.reporters) {
+  return config.reporters.some((r) => {
     if (Array.isArray(r)) {
-      if (r.length > 0 && r[0] == name) {
-        return true;
-      }
+      return r.length > 0 && r[0] == name;
     } else {
-      if (r == name) {
-        return true;
-      }
+      return r == name;
     }
-  }
-  return false;
+  });
 }
 
 function _addReporter(config, name, reporter = undefined) {
