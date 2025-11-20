@@ -57,11 +57,16 @@ function _hasReporter(config, name) {
   }
   for (const r of config.reporters) {
     if (Array.isArray(r)) {
-      return r.length > 0 && r[0] == name;
+      if (r.length > 0 && r[0] == name) {
+        return true;
+      }
     } else {
-      return r == name;
+      if (r == name) {
+        return true;
+      }
     }
   }
+  return false;
 }
 
 function _addReporter(config, name, reporter = undefined) {
