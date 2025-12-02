@@ -81,6 +81,6 @@ When ESM modules are transpiled to CommonJS different transpilers may produce di
 
 For example [SWC](https://swc.rs/) (normally used in bazel with [rules_swc](https://github.com/aspect-build/rules_swc)) transpiles ESM imports to align with ESM standards as closely as possible at runtime, even when transpiled to CommonJS. This leads to the same [Module mocking with ESM](https://jestjs.io/docs/ecmascript-modules#module-mocking-in-esm) issue as native ESM modules.
 
-See the [SWC test](e2e/swc/README.md) for examples and more information.
+See the [SWC test](../e2e/swc/README.md) for examples and more information.
 
 Other transpilers such as `babel` or `tsc` may have similar issues or configuration to workaround such issues.
