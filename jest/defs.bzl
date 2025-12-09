@@ -24,7 +24,7 @@ def _jest_from_node_modules(jest_rule, name, node_modules, auto_configure_report
     jest_rule(
         name = name,
         enable_runfiles = select({
-            "@aspect_bazel_lib//lib:enable_runfiles": True,
+            Label("@aspect_bazel_lib//lib:enable_runfiles"): True,
             "//conditions:default": False,
         }),
         data = data,
@@ -195,7 +195,7 @@ def jest_test(
     bazel_sequencer = "_{}_bazel_sequencer".format(name)
     copy_file(
         name = bazel_sequencer,
-        src = "@aspect_rules_jest//jest/private:bazel_sequencer.cjs",
+        src = Label("@aspect_rules_jest//jest/private:bazel_sequencer.cjs"),
         out = "_{}_bazel_sequencer.cjs".format(name),
         visibility = ["//visibility:public"],
     )
@@ -203,7 +203,7 @@ def jest_test(
     bazel_snapshot_reporter = "_{}_bazel_snapshot_reporter".format(name)
     copy_file(
         name = bazel_snapshot_reporter,
-        src = "@aspect_rules_jest//jest/private:bazel_snapshot_reporter.cjs",
+        src = Label("@aspect_rules_jest//jest/private:bazel_snapshot_reporter.cjs"),
         out = "_{}_bazel_snapshot_reporter.cjs".format(name),
         visibility = ["//visibility:public"],
     )
@@ -211,7 +211,7 @@ def jest_test(
     bazel_snapshot_resolver = "_{}_bazel_snapshot_resolver".format(name)
     copy_file(
         name = bazel_snapshot_resolver,
-        src = "@aspect_rules_jest//jest/private:bazel_snapshot_resolver.cjs",
+        src = Label("@aspect_rules_jest//jest/private:bazel_snapshot_resolver.cjs"),
         out = "_{}_bazel_snapshot_resolver.cjs".format(name),
         visibility = ["//visibility:public"],
     )
@@ -219,7 +219,7 @@ def jest_test(
     bazel_haste_map_module = "_{}_bazel_haste_map_module".format(name)
     copy_file(
         name = bazel_haste_map_module,
-        src = "@aspect_rules_jest//jest/private:bazel_haste_map.cjs",
+        src = Label("@aspect_rules_jest//jest/private:bazel_haste_map.cjs"),
         out = "_{}_bazel_haste_map_module.cjs".format(name),
         visibility = ["//visibility:public"],
     )
