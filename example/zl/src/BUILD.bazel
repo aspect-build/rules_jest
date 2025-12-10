@@ -1,0 +1,53 @@
+load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
+load("@aspect_rules_ts//ts:defs.bzl", "ts_project")
+
+filegroup(
+    name = "yarn_srcs",
+    srcs = glob(["*.ts"]),
+    visibility = ["//example/zl:__subpackages__"],
+)
+
+ts_project(
+    name = "ts_src",
+    srcs = ["get-interface-ip.ts"],
+    allow_js = True,
+    declaration = True,
+    incremental = True,
+    no_emit = False,
+    preserve_jsx = False,
+    resolve_json_module = True,
+    tsconfig = "//example/zl:tsconfig",
+    deps = ["//:node_modules/@types/node"],
+)
+
+ts_project(
+    name = "src_tests",
+    testonly = True,
+    srcs = ["get-interface-ip.test.ts"],
+    allow_js = True,
+    declaration = True,
+    incremental = True,
+    no_emit = False,
+    preserve_jsx = False,
+    resolve_json_module = True,
+    tsconfig = "//example/zl:tsconfig",
+    deps = [
+        ":ts_src",
+        "//:node_modules/@types/jest",
+        "//:node_modules/@types/node",
+        "//:node_modules/jest",
+    ],
+)
+
+jest_test(
+    name = "src_jest_test",
+    config = "//example/zl:jest_config",
+    data = [
+        "//example/zl:pkg",
+        ":src_tests",
+        "//:node_modules/@types/jest",
+        "//:node_modules/@types/node",
+        "//:node_modules/jest",
+    ],
+    node_modules = "//:node_modules",
+)

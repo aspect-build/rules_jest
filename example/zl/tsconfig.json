@@ -1,0 +1,22 @@
+{
+	"compilerOptions": {
+		"target": "es2021",
+		"lib": ["dom", "dom.iterable", "esnext"],
+		"allowJs": true,
+		"skipLibCheck": true,
+		"strict": true,
+		"forceConsistentCasingInFileNames": true,
+		"noEmit": false,
+		"esModuleInterop": true,
+		"module": "CommonJS",
+		"moduleResolution": "node",
+		"resolveJsonModule": true,
+		"isolatedModules": true,
+		"jsx": "react-jsx",
+		"baseUrl": ".",
+		"declaration": true,
+		"incremental": true
+	},
+	"include": ["**/*.ts", "**/*.tsx"],
+	"exclude": ["**/node_modules", "**/bazel-bin", "**/bazel-cloud"]
+}

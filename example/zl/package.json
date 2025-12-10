@@ -1,0 +1,18 @@
+{
+	"private": true,
+	"type": "module",
+	"name": "@cloud/ts-ip-util",
+	"version": "1.0.0",
+	"description": "IP address utilities in TypeScript",
+	"scripts": {
+		"test": "jest"
+	},
+	"devDependencies": {
+		"@swc/core": "*",
+		"@swc/jest": "*",
+		"jest-cli": "*",
+		"jest-junit": "*",
+		"typescript": "*"
+	},
+	"license": "UNLICENSED"
+}

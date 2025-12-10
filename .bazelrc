@@ -8,6 +8,8 @@ import %workspace%/.aspect/bazelrc/performance.bazelrc
 
 ### YOUR PROJECT SPECIFIC OPTIONS GO HERE ###
 
+common --@aspect_rules_ts//ts:default_to_tsc_transpiler
+
 # //example/custom_sequencer:case2_test target sets `auto_configure_test_sequencer = False` which
 # causes the following error on Bazel 7 unless --noincompatible_check_sharding_support is
 # ERROR: Testing //example/custom_sequencer:case2_test (shard 2 of 2) failed: Sharding requested,
