@@ -16,7 +16,7 @@ jest_test rule
 
 Supports Bazel sharding. See https://docs.bazel.build/versions/main/test-encyclopedia.html#test-sharding.
 
-Supports filtering tests with `--test_filter` flag. The filter is matched against test names (the strings in `test()`, `it()`, `describe()` blocks) using Jest's `--testNamePattern` option. For example: `bazel test --test_filter="user service" //my:test`.
+Supports filtering tests with `--test_filter` flag. The filter is matched against test file paths using Jest's `--testPathPattern` option. For example: `bazel test --test_filter="user" //my:test`.
 
 Supports updating snapshots with `bazel run {name}_update_snapshots` if `snapshots` are specified.
 
