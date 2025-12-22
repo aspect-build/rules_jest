@@ -2,6 +2,14 @@
 import { existsSync, readFileSync } from "fs";
 import * as path from "path";
 
+// Apply Bazel's --test_filter if specified via TESTBRIDGE_TEST_ONLY
+// Use testPathPattern (file-level filtering) to match the semantics of other
+// Bazel test rules like java_test which filter by class name (file)
+// Note: testPathPattern is CLI-only, not a config option
+if (process.env.TESTBRIDGE_TEST_ONLY && !process.argv.includes("--testPathPattern")) {
+  process.argv.push("--testPathPattern", process.env.TESTBRIDGE_TEST_ONLY);
+}
+
 const updateSnapshots = !!process.env.JEST_TEST__UPDATE_SNAPSHOTS;
 const coverageEnabled = !!process.env.COVERAGE_DIR;
 const autoConfReporting = !!"{{AUTO_CONF_REPORTING}}";
@@ -214,11 +222,6 @@ if (coverageEnabled) {
     config.coverageDirectory = coverageDirectory;
     config.coverageReporters = ["text", ["lcovonly", { file: coverageFile }]];
   }
-}
-
-// Apply Bazel's --test_filter if specified via TESTBRIDGE_TEST_ONLY
-if (process.env.TESTBRIDGE_TEST_ONLY) {
-  config.testNamePattern = process.env.TESTBRIDGE_TEST_ONLY;
 }
 
 if (process.env.JS_BINARY__LOG_DEBUG) {
