@@ -158,3 +158,13 @@ jest_test(
     ],
     node_modules = "//:node_modules",
 )
+
+# Case 15: test --test_filter with multiple files
+jest_test(
+    name = "case15",
+    data = [
+        "multi_a.test.js",
+        "multi_b.test.js",
+    ],
+    node_modules = "//:node_modules",
+)
