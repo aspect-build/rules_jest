@@ -210,10 +210,17 @@ if (coverageEnabled) {
       coverageDirectory = process.env.COVERAGE_DIR;
       coverageFile = "coverage.dat";
     }
-  
+
     config.coverageDirectory = coverageDirectory;
     config.coverageReporters = ["text", ["lcovonly", { file: coverageFile }]];
   }
+}
+
+// Apply Bazel's --test_filter if specified via TESTBRIDGE_TEST_ONLY
+// Use testRegex (file-level filtering) to match the semantics of other
+// Bazel test rules like java_test which filter by class name (file)
+if (process.env.TESTBRIDGE_TEST_ONLY) {
+  config.testRegex = process.env.TESTBRIDGE_TEST_ONLY;
 }
 
 if (process.env.JS_BINARY__LOG_DEBUG) {
