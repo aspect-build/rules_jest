@@ -191,10 +191,14 @@ def _impl(ctx):
         ),
     )
 
-    if ctx.attr.env_inherit != None:
-        providers.append(
-            testing.TestEnvironment(fixed_env, ctx.attr.env_inherit),
-        )
+    env_inherit = list(ctx.attr.env_inherit) if ctx.attr.env_inherit else []
+
+    if "TESTBRIDGE_TEST_ONLY" not in env_inherit:
+        env_inherit.append("TESTBRIDGE_TEST_ONLY")
+
+    providers.append(
+        testing.TestEnvironment(fixed_env, env_inherit),
+    )
 
     return providers
 
