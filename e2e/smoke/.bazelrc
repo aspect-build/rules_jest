@@ -8,7 +8,7 @@ import %workspace%/../../.aspect/bazelrc/performance.bazelrc
 
 ### YOUR PROJECT SPECIFIC OPTIONS GO HERE ###
 
-# Test the use of --test_fitler by excluding failing tests
+# Test the use of --test_filter by excluding failing tests
 test --test_filter=^(?!.*failing\\.test\\.js).*
 
 # Load any settings & overrides specific to the current user from `.aspect/bazelrc/user.bazelrc`.
