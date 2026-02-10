@@ -1,9 +1,6 @@
 load("@aspect_bazel_lib//lib:utils.bzl", bazel_lib_utils = "utils")
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 
-# For stardoc to reference the files
-exports_files(["defs.bzl"])
-
 # This is the target rule authors should put in their "toolchains"
 # attribute in order to get a runtime for the correct platform.
 # See https://docs.bazel.build/versions/main/toolchains.html#writing-rules-that-use-toolchains
@@ -30,4 +27,10 @@ bzl_library(
     srcs = ["dependencies.bzl"],
     visibility = ["//visibility:public"],
     deps = ["//jest/private:maybe"],
+)
+
+starlark_doc_extract(
+    name = "defs.doc_extract",
+    src = "defs.bzl",
+    deps = [":defs"],
 )
