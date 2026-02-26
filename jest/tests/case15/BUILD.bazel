@@ -1,0 +1,10 @@
+load("//jest:defs.bzl", "jest_test")
+
+# Case 15: snapshots = True with an empty __snapshots__ directory should not
+# fail with --incompatible_disallow_empty_glob (Bazel >= 8.0.0 default).
+jest_test(
+    name = "case15",
+    data = ["case15.test.js"],
+    node_modules = "//:node_modules",
+    snapshots = True,
+)
