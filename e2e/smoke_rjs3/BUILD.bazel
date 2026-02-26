@@ -1,0 +1,31 @@
+load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+
+npm_link_all_packages(name = "node_modules")
+
+jest_test(
+    name = "test",
+    config = "jest.config.js",
+    data = [
+        "failing.test.js",
+        "index.test.js",
+    ],
+    node_modules = "//:node_modules",
+    target_compatible_with = select({
+        # jest does not find tests on Windows; it appears the fix in https://github.com/jestjs/jest/pull/9351
+        # for discovering tests when they are symlinks does not work on Windows.
+        "@platforms//os:windows": ["@platforms//:incompatible"],
+        "//conditions:default": [],
+    }),
+)
+
+jest_test(
+    name = "by_path_test",
+    args = [
+        "--runTestsByPath",
+        "index.test.js",
+    ],
+    config = "jest.config.js",
+    data = ["index.test.js"],
+    node_modules = "//:node_modules",
+)

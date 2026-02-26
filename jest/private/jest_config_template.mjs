@@ -41,7 +41,7 @@ if (
 
 function _resolveRunfilesPath(rootpath) {
   return path.join(
-    process.env.RUNFILES,
+    process.env.JS_BINARY__RUNFILES,
     process.env.JS_BINARY__WORKSPACE,
     rootpath,
   );

@@ -65,6 +65,7 @@ jobs:
           - "."
           - "e2e/npm_packages"
           - "e2e/smoke"
+          - "e2e/smoke_rjs3"
           - "e2e/swc"
         exclude:
           # TODO: green up the following tests on Windows
@@ -72,6 +73,9 @@ jobs:
             folder: e2e/npm_packages
           - os: windows
             folder: .
+          # smoke_rjs3 requires bzlmod (rules_js 3.x is bzlmod-only)
+          - bzlmod: 0
+            folder: e2e/smoke_rjs3
 
     steps:
       - uses: actions/checkout@v4
