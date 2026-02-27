@@ -1,11 +1,43 @@
 # See https://docs.aspect.build/workflows/configuration
+workspaces:
+  - "."
+  - e2e/case4:
+      tasks: &e2e_tasks
+        - test:
+            queue: aspect-medium
+        - format:
+            without: true
+        - buildifier:
+            without: true
+  - e2e/npm_packages:
+      tasks: *e2e_tasks
+  - e2e/smoke:
+      tasks: *e2e_tasks
+  - e2e/swc:
+      tasks: *e2e_tasks
+  - e2e/smoke_rjs3:
+      tasks: *e2e_tasks
 tasks:
   - format:
       queue: aspect-medium
   - buildifier:
       queue: aspect-medium
   - test:
+      name: "Bazel 7.x"
+      id: bazel-7
+      env:
+        USE_BAZEL_VERSION: 7.x
+  - test:
+      name: "Bazel 8.x"
+      id: bazel-8
+      env:
+        USE_BAZEL_VERSION: 8.x
+  - test:
+      name: Bazel 9.x
+      id: bazel-9
       coverage: true
+      env:
+        USE_BAZEL_VERSION: 9.x
   - finalization:
       queue: aspect-small
 notifications:
