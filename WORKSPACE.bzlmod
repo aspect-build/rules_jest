@@ -1,0 +1,5 @@
+# Test case 4 (see //jest/tests)
+local_repository(
+    name = "case4",
+    path = "./e2e/case4",
+)

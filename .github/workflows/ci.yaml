@@ -73,6 +73,9 @@ jobs:
             folder: e2e/npm_packages
           - os: windows
             folder: .
+          # main module is bzlmod only
+          - bzlmod: 0
+            folder: .
           # smoke_rjs3 requires bzlmod (rules_js 3.x is bzlmod-only)
           - bzlmod: 0
             folder: e2e/smoke_rjs3
