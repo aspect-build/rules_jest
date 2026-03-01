@@ -48,6 +48,11 @@ _attrs = dicts.add(js_binary_lib.attrs, {
     ),
 })
 
+def _quote(ctx, str):
+    # Use double quotes on Windows hosts, single quotes elsewhere
+    quote_char = '"' if ctx.configuration.host_path_separator == ";" else "'"
+    return quote_char + str + quote_char
+
 def _impl(ctx):
     providers = []
     generated_config = ctx.actions.declare_file("%s__jest.config.mjs" % ctx.label.name)
@@ -102,7 +107,7 @@ def _impl(ctx):
         "--config",
         # quote the path since it might have special chars such as parens.
         # quoting ensures that the shell doesn't do any globbing or splitting.
-        "'" + paths.join(unwind_chdir_prefix, generated_config.short_path) + "'",
+        _quote(ctx, paths.join(unwind_chdir_prefix, generated_config.short_path)),
     ])
     if ctx.attr.log_level == "debug":
         fixed_args.append("--debug")
