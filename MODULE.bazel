@@ -2,8 +2,6 @@
 
 module(
     name = "aspect_rules_jest",
-    version = "0.0.0",
-    compatibility_level = 1,
 )
 
 # Lower-bounds (minimum) versions for direct runtime dependencies
