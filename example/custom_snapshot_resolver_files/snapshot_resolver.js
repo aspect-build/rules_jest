@@ -9,12 +9,12 @@ module.exports = {
   resolveTestPath: (snapshotPath) =>
     path.join(
       path.dirname(snapshotPath),
-      path.basename(snapshotPath, DOT_EXTENSION)
+      path.basename(snapshotPath, DOT_EXTENSION),
     ),
 
   testPathForConsistencyCheck: path.posix.join(
     "consistency_check",
     "__tests__",
-    "example.test.js"
+    "example.test.jsx",
   ),
 };

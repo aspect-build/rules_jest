@@ -11,7 +11,7 @@ jest_test(
     timeout = "moderate",
     config = "jest.config.js",
     data = [
-        ".babelrc.js",
+        "babel.config.cjs",
         ":lib",
         ":tests",
         "//example:node_modules/@babel/core",
@@ -32,8 +32,8 @@ js_library(
     name = "tests",
     testonly = True,
     srcs = [
-        "greetings.test.js",
-        "link.test.js",
+        "greetings.test.jsx",
+        "link.test.jsx",
     ],
     deps = [
         "//example:node_modules/react-test-renderer",
@@ -43,8 +43,8 @@ js_library(
 js_library(
     name = "lib",
     srcs = [
-        "greetings.js",
-        "link.js",
+        "greetings.jsx",
+        "link.jsx",
     ],
     deps = [
         "//example:node_modules/react",

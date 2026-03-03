@@ -24,8 +24,8 @@ js_library(
     name = "tests",
     testonly = True,
     srcs = [
-        "greetings.test.js",
-        "link.test.js",
+        "greetings.test.jsx",
+        "link.test.jsx",
         "simple.test.js",
     ],
     deps = [
@@ -36,8 +36,8 @@ js_library(
 js_library(
     name = "lib",
     srcs = [
-        "greetings.js",
-        "link.js",
+        "greetings.jsx",
+        "link.jsx",
     ],
     deps = [
         "//jest/tests:node_modules/react",

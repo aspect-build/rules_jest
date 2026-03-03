@@ -1,5 +1,5 @@
 // jest.config.js template for jest_test rule
-import { existsSync, readFileSync } from "fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import * as path from "path";
 
 const updateSnapshots = !!process.env.JEST_TEST__UPDATE_SNAPSHOTS;
@@ -192,6 +192,34 @@ if (updateSnapshots) {
 
 if (coverageEnabled) {
   config.collectCoverage = true;
+
+  // Jest 30's unrs-resolver follows symlinks natively (bypassing Node fs patches),
+  // causing path mismatches between rootDir (runfiles symlink tree) and resolved
+  // filenames (real paths). This breaks shouldInstrument's coverage path matching
+  // since path.relative(rootDir, filename) produces paths with ".." components
+  // that glob patterns cannot match. Use a custom resolver with symlinks disabled
+  // to keep all paths in the runfiles tree.
+  if (!config.resolver) {
+    mkdirSync(config.cacheDirectory, { recursive: true });
+    const resolverPath = path.join(
+      config.cacheDirectory,
+      "_bazel_resolver.cjs",
+    );
+    writeFileSync(
+      resolverPath,
+      "module.exports = (r, o) => r.startsWith('.') ? o.defaultResolver(r, {...o, symlinks: false}) : o.defaultResolver(r, o);\n",
+    );
+    config.resolver = resolverPath;
+  }
+
+  // Jest 30 changed normalizeCollectCoverageFrom to return [] when collectCoverageFrom
+  // is not set, which causes no files to appear in coverage reports.
+  if (!config.collectCoverageFrom) {
+    config.collectCoverageFrom = [
+      "**/*.{js,jsx,ts,tsx,mjs,cjs,mts,cts}",
+      "!**/node_modules/**",
+    ];
+  }
 
   let coverageFile = path.basename(process.env.COVERAGE_OUTPUT_FILE);
   let coverageDirectory = path.dirname(process.env.COVERAGE_OUTPUT_FILE);
