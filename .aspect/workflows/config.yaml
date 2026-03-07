@@ -36,6 +36,13 @@ tasks:
       id: bazel-8
       env:
         USE_BAZEL_VERSION: 8.x
+  - test:
+      name: "Bazel 9.x"
+      bazel:
+        flags: ["--test_tag_filters=-skip-on-bazel9"]
+      id: bazel-9
+      env:
+        USE_BAZEL_VERSION: 9.x
   - finalization:
       queue: aspect-small
 notifications:

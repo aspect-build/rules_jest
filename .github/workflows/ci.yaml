@@ -19,6 +19,11 @@ concurrency:
 
 jobs:
   test:
+    # Only run mac/windows tests on main or when the branch name signals it
+    if: >-
+      github.ref_name == 'main'
+      || contains(github.head_ref || '', 'windows')
+      || contains(github.head_ref || '', 'macos')
     strategy:
       matrix:
         # Note: linux is tested on Buildkite via Aspect Workflows
