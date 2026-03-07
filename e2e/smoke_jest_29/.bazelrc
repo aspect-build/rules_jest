@@ -1,0 +1,4 @@
+import %workspace%/../../tools/preset.bazelrc
+
+# Test the use of --test_filter by excluding failing tests
+test --test_filter=^(?!.*failing\\.test\\.js).*

@@ -1,5 +1,5 @@
 module.exports = {
   testEnvironment: "node",
-  testMatch: ["**/*.test.js"],
+  testMatch: ["**/*.test.jsx"],
   snapshotResolver: "./snapshot_resolver.js",
 };
