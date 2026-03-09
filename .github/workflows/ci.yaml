@@ -19,6 +19,9 @@ concurrency:
 
 jobs:
   test:
+    # Only run mac/windows tests on main or when the branch name signals it to minimize minutes (billed at 10X and 2X respectively)
+    # https://docs.github.com/en/billing/managing-billing-for-github-actions/about-billing-for-github-actions#included-storage-and-minutes
+    if: github.ref_name == 'main' || contains(github.head_ref, 'macos') || contains(github.head_ref, 'windows')
     strategy:
       matrix:
         # Note: linux is tested on Buildkite via Aspect Workflows
