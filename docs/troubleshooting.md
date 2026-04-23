@@ -6,7 +6,7 @@
 
 ## `rules_js` virtual store
 
-Similar to pnpm, [`rules_js`](https://github.com/aspect-build/rules_js) uses a virtual store for npm packages. This can cause issues with Jest and may require package hoisting similar to pnpm. See the pnpm [public hoist pattern](https://pnpm.io/npmrc#public-hoist-pattern) documentation for details and [rules_js public_hoist_packages](https://docs.aspect.build/rules/aspect_rules_js/docs/npm_translate_lock#public_hoist_packages) for configuring `rules_js` package hoisting.
+Similar to pnpm, [`rules_js`](https://github.com/aspect-build/rules_js) uses a virtual store for npm packages. This can cause issues with Jest and may require package hoisting similar to pnpm. See the pnpm [public hoist pattern](https://pnpm.io/npmrc#public-hoist-pattern) documentation for details and [rules_js public_hoist_packages](https://docs.aspect.build/bazel/javascript/aspect_rules_js/npm_extensions#param-public-hoist-packages) for configuring `rules_js` package hoisting.
 
 ## Performance
 
