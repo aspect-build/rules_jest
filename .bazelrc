@@ -7,3 +7,16 @@ import %workspace%/tools/preset.bazelrc
 # remove the 'shard_count' attribute, use a test runner that supports sharding or temporarily disable
 # this check via --noincompatible_check_sharding_support.
 test --noincompatible_check_sharding_support
+
+# Coverage
+# https://github.com/bazelbuild/bazel/blob/e3e4d61b2c2b241d0426ea20143b8a07d6fadfcd/tools/test/collect_cc_coverage.sh#L30
+common:ci --experimental_fetch_all_coverage_outputs
+common:ci --test_env=COVERAGE_GCOV_PATH=/usr/bin/gcov
+
+# Build without the bytes
+common:ci --remote_download_outputs=minimal
+common:ci --nobuild_runfile_links
+
+# Override the preset's `--lockfile_mode=error` on CI since we don't
+# yet commit MODULE.bazel.lock — see .gitignore.
+common:ci --lockfile_mode=off

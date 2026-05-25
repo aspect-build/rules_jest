@@ -1,5 +1,9 @@
 # Bazel rules for jest
 
+> [!NOTE]
+> This repository uses the [Aspect CLI](https://github.com/aspect-build/aspect-cli) for CI and local development.
+> See the [docs](https://docs.aspect.build/cli/overview) and [install instructions](https://docs.aspect.build/cli/install) to get started.
+
 Runs tests with the https://jestjs.io/ test runner under Bazel.
 
 Many companies are successfully testing with rules_jest. If you're getting value from the project, please let us know! Just comment on our [Adoption Discussion](https://github.com/aspect-build/rules_js/discussions/1000).
