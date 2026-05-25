@@ -90,6 +90,10 @@ if (
 // require()-based config paths, including Node >=22.12 where require(esm) is on by default
 // and trips on TLA with ERR_REQUIRE_ASYNC_MODULE.
 export default async function jestConfig() {
+  // Shallow-clone the user config object — `import()` caches the module so its
+  // default export is shared across invocations of this factory. Mutating it in
+  // place leaks state between calls (e.g. config.snapshotResolver from a prior
+  // run flips the user-resolver branch below on the next call).
   let config = {};
   if (userConfigShortPath) {
     if (path.extname(userConfigShortPath).toLowerCase() == ".json") {
@@ -97,11 +101,13 @@ export default async function jestConfig() {
       // `c:\...` so we prepend the with `file://` so node is happy.
       // Use the `with` import attribute (Node 20.10+, 22+). The legacy `assert` form was
       // removed in Node 22 and now fails with ERR_IMPORT_ATTRIBUTE_MISSING.
-      config = (
-        await import("file://" + _resolveRunfilesPath(userConfigShortPath), {
-          with: { type: "json" },
-        })
-      ).default;
+      config = {
+        ...(
+          await import("file://" + _resolveRunfilesPath(userConfigShortPath), {
+            with: { type: "json" },
+          })
+        ).default,
+      };
     } else {
       // On Windows, import does not like paths that start with the drive letter such as
       // `c:\...` so we prepend the with `file://` so node is happy.
@@ -111,7 +117,7 @@ export default async function jestConfig() {
       if (typeof userConfigModule === "function") {
         config = await userConfigModule();
       } else {
-        config = userConfigModule;
+        config = { ...userConfigModule };
       }
     }
   }
