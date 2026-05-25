@@ -1,4 +1,15 @@
-// jest.config.js template for jest_test rule
+/**
+ * Template for the wrapper Jest config written by the `jest_test` rule.
+ *
+ * `{{...}}` placeholders are substituted by Bazel via `ctx.actions.expand_template`
+ * (see `jest_test.bzl`). The wrapper exports an async factory rather than a
+ * top-level-awaited config object: that keeps the `.mjs` loadable under both Jest's
+ * `import()` path and Node 22.12+'s `require(esm)` path, which would otherwise fail
+ * with `ERR_REQUIRE_ASYNC_MODULE` on any top-level `await`.
+ *
+ * Side effects that must run before Jest forks workers (env vars, warnings) sit at
+ * module scope; everything that mutates the config object lives inside the factory.
+ */
 import { existsSync, readFileSync } from "fs";
 import * as path from "path";
 
@@ -9,7 +20,6 @@ const autoConfReporters = !!"{{AUTO_CONF_REPORTERS}}";
 const autoConfTestSequencer = !!"{{AUTO_CONF_TEST_SEQUENCER}}";
 const userConfigShortPath = "{{USER_CONFIG_SHORT_PATH}}";
 const userConfigPath = "{{USER_CONFIG_PATH}}";
-const generatedConfigShortPath = "{{GENERATED_CONFIG_SHORT_PATH}}";
 
 function _resolveRunfilesPath(rootpath) {
   return path.join(
@@ -21,38 +31,6 @@ function _resolveRunfilesPath(rootpath) {
 
 function _resolveExecrootPath(execpath) {
   return path.join(process.env.JS_BINARY__EXECROOT, execpath);
-}
-
-function _hasReporter(config, name) {
-  if (!config.reporters) {
-    config.reporters = [];
-  }
-  return config.reporters.some((r) => {
-    if (Array.isArray(r)) {
-      return r.length > 0 && r[0] == name;
-    } else {
-      return r == name;
-    }
-  });
-}
-
-function _addReporter(config, name, reporter = undefined) {
-  if (!config.reporters) {
-    config.reporters = [];
-  }
-  if (!_hasReporter(config, name)) {
-    config.reporters.push(reporter ? reporter : name);
-  }
-}
-
-function _verifyJestConfig(config) {
-  // Projects will be loaded by jest and bypass rules_jest configuration.
-  // See https://jestjs.io/docs/configuration#projects-arraystring--projectconfig
-  if (config.projects && config.projects.length > 0) {
-    console.error(`WARNING: aspect_rules_jest[jest_test]: Jest config in target ${process.env.TEST_TARGET} uses 'projects'.
-      The use of 'projects' in aspect_rules_jest is unsupported and will cause unexpected behavior including breaking use of
-      reporting, coverage, snapshots and sharding.`);
-  }
 }
 
 const bazelSequencerPath = _resolveRunfilesPath(
@@ -71,9 +49,7 @@ const bazelFilelistJsonPath = _resolveRunfilesPath(
   "{{BAZEL_FILELIST_JSON_SHORT_PATH}}",
 );
 
-// Store the filelist as an envvar that will be accessible to bazel_haste_map.cjs, including
-// from potential jest launched child processes. Set at module load time (before the async
-// config factory below is invoked) so child processes Jest spawns see it.
+// Set at module scope so child processes Jest spawns inherit it before bazel_haste_map.cjs runs.
 process.env.BAZEL_FILELIST_JSON_FULL_PATH = bazelFilelistJsonPath;
 
 if (
@@ -85,83 +61,73 @@ if (
   );
 }
 
-// Exported as an async factory rather than a top-level-awaited config object so the wrapper
-// has no top-level await. That keeps the .mjs loadable under both Jest's import()-based and
-// require()-based config paths, including Node >=22.12 where require(esm) is on by default
-// and trips on TLA with ERR_REQUIRE_ASYNC_MODULE.
-export default async function jestConfig() {
-  // Shallow-clone the user config object — `import()` caches the module so its
-  // default export is shared across invocations of this factory. Mutating it in
-  // place leaks state between calls (e.g. config.snapshotResolver from a prior
-  // run flips the user-resolver branch below on the next call).
-  let config = {};
-  if (userConfigShortPath) {
-    if (path.extname(userConfigShortPath).toLowerCase() == ".json") {
-      // On Windows, import does not like paths that start with the drive letter such as
-      // `c:\...` so we prepend the with `file://` so node is happy.
-      // Use the `with` import attribute (Node 20.10+, 22+). The legacy `assert` form was
-      // removed in Node 22 and now fails with ERR_IMPORT_ATTRIBUTE_MISSING.
-      config = {
-        ...(
-          await import("file://" + _resolveRunfilesPath(userConfigShortPath), {
-            with: { type: "json" },
-          })
-        ).default,
-      };
-    } else {
-      // On Windows, import does not like paths that start with the drive letter such as
-      // `c:\...` so we prepend the with `file://` so node is happy.
-      const userConfigModule = (
-        await import("file://" + _resolveRunfilesPath(userConfigShortPath))
-      ).default;
-      if (typeof userConfigModule === "function") {
-        config = await userConfigModule();
-      } else {
-        config = { ...userConfigModule };
-      }
-    }
+/**
+ * Load the user-supplied Jest config from runfiles and return it as a fresh object.
+ *
+ * `import()` caches modules by URL, so the same default export is handed back on every
+ * call. Returning a shallow clone keeps later config mutations from leaking across
+ * factory invocations. The `file://` prefix is required on Windows where bare drive-
+ * letter paths (`c:\...`) aren't valid module specifiers.
+ */
+async function _loadUserConfig() {
+  if (!userConfigShortPath) return {};
+  const url = "file://" + _resolveRunfilesPath(userConfigShortPath);
+  if (path.extname(userConfigShortPath).toLowerCase() === ".json") {
+    // `with` is the spec import attribute (Node 20.10+, 22+); the legacy `assert` form
+    // was removed in Node 22 and now throws ERR_IMPORT_ATTRIBUTE_MISSING.
+    return { ...(await import(url, { with: { type: "json" } })).default };
   }
+  const exported = (await import(url)).default;
+  return { ...(typeof exported === "function" ? await exported() : exported) };
+}
 
+/**
+ * Warn if the user's Jest config uses `projects`, which bypasses rules_jest's
+ * configuration (reporters, coverage, snapshots, sharding).
+ * @see https://jestjs.io/docs/configuration#projects-arraystring--projectconfig
+ */
+function _verifyJestConfig(config) {
+  if (config.projects && config.projects.length > 0) {
+    console.error(`WARNING: aspect_rules_jest[jest_test]: Jest config in target ${process.env.TEST_TARGET} uses 'projects'.
+      The use of 'projects' in aspect_rules_jest is unsupported and will cause unexpected behavior including breaking use of
+      reporting, coverage, snapshots and sharding.`);
+  }
+}
+
+/** Add a reporter to `config.reporters` if one named `name` isn't already present. */
+function _addReporter(config, name, reporter = name) {
+  config.reporters ??= [];
+  const exists = config.reporters.some((r) =>
+    Array.isArray(r) ? r[0] === name : r === name,
+  );
+  if (!exists) config.reporters.push(reporter);
+}
+
+export default async function jestConfig() {
+  const config = await _loadUserConfig();
   _verifyJestConfig(config);
 
-  // Default to using an isolated tmpdir
   config.cacheDirectory ||= path.join(process.env.TEST_TMPDIR, "jest_cache");
 
   config.haste = {
-    // Needed for Jest to walk the filesystem to find inputs.
-    // See https://github.com/facebook/jest/pull/9351
+    // Walk the filesystem to find inputs. See https://github.com/facebook/jest/pull/9351
     enableSymlinks: true,
-
-    // Do not use external watchman or find, use a custom
-    // HasteMap module designed for rules_jest
+    // Don't shell out to watchman or find; use the rules_jest haste map module instead.
     forceNodeFilesystemAPI: true,
     hasteMapModulePath: bazelHasteMapModulePath,
-
-    // Use of SHA1, computing dependencies etc are all related to caching.
-    // Disable them unless explicitly enabled by the user `config.haste`.
+    // Caching is Bazel's job; SHA1/dependency computation is only useful with persistent caching.
     computeSha1: false,
-
     ...config.haste,
   };
 
-  // https://jestjs.io/docs/cli#--watchman. Whether to use watchman for file crawling. Defaults
-  // to true. Disable using --no-watchman. Watching is ibazel's job
+  // Watching, caching, and change detection are all Bazel/ibazel's job.
   config.watchman = false;
-
-  // Watching and reinvoking tests is rule_jest + ibazel's job.
   config.watch = config.watchAll = false;
-
-  // Caching is bazel's job.
   config.cache = false;
-
-  // Change detection is bazel's job.
   config.onlyChanged = false;
 
-  // Auto configure reporters
   if (autoConfReporters) {
-    // Default reporter should always be configured
     _addReporter(config, "default");
-    // jest-junit reporter is only auto-configured if this is a test target
     if (!updateSnapshots) {
       _addReporter(config, "jest-junit", [
         "jest-junit",
@@ -171,11 +137,9 @@ export default async function jestConfig() {
   }
 
   if (!updateSnapshots) {
-    // The Bazel snapshot reporter is always configured if this is a test target
     _addReporter(config, bazelSnapshotReporterPath);
   }
 
-  // Auto configure the Bazel test sequencer (if this is a test target)
   if (autoConfTestSequencer) {
     if (config.testSequencer) {
       console.error(`WARNING: aspect_rules_jest[jest_test]: user supplied Jest config testSequencer value '${config.testSequencer}' will be overridden by jest_test in target ${process.env.TEST_TARGET}.
@@ -185,7 +149,6 @@ export default async function jestConfig() {
     config.testSequencer = bazelSequencerPath;
   }
 
-  // If this is an update snapshot target the configure the Bazel snapshot resolver
   if (updateSnapshots) {
     if (config.snapshotResolver) {
       const snapshotResolverPath = path.isAbsolute(config.snapshotResolver)
@@ -211,17 +174,13 @@ export default async function jestConfig() {
     let coverageFile = path.basename(process.env.COVERAGE_OUTPUT_FILE);
     let coverageDirectory = path.dirname(process.env.COVERAGE_OUTPUT_FILE);
 
-    /**
-     * This can be used to eject from the default behavior so end users
-     * can integrate their own coverage reporters.
-     * Note, if a user does this, they are also responsible for the split coverage processing logic
-     */
+    // Users can opt out of auto-configured reporting to integrate their own coverage
+    // reporters; in that case they're also responsible for split coverage processing.
     if (autoConfReporting) {
       if (process.env.SPLIT_COVERAGE_POST_PROCESSING == "1") {
-        // in split coverage post processing mode bazel assumes that the COVERAGE_OUTPUT_FILE
-        // will be created by lcov_merger which runs as a separate action with everything in
-        // COVERAGE_DIR provided as inputs. so we'll just create the final coverage at
-        // `COVERAGE_DIR/coverage.dat` which then later moved by merger.sh to final location.
+        // In split coverage post-processing mode Bazel expects COVERAGE_OUTPUT_FILE to
+        // be produced by lcov_merger, which runs as a separate action over everything
+        // in COVERAGE_DIR. Emit at `COVERAGE_DIR/coverage.dat` for merger.sh to pick up.
         coverageDirectory = process.env.COVERAGE_DIR;
         coverageFile = "coverage.dat";
       }
@@ -231,9 +190,8 @@ export default async function jestConfig() {
     }
   }
 
-  // Apply Bazel's --test_filter if specified via TESTBRIDGE_TEST_ONLY
-  // Use testRegex (file-level filtering) to match the semantics of other
-  // Bazel test rules like java_test which filter by class name (file)
+  // Map Bazel's --test_filter (TESTBRIDGE_TEST_ONLY) to file-level filtering, matching
+  // the semantics of other Bazel test rules like java_test which filter by class name.
   if (process.env.TESTBRIDGE_TEST_ONLY) {
     config.testRegex = process.env.TESTBRIDGE_TEST_ONLY;
   }
