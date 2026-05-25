@@ -1,8 +1,5 @@
 import %workspace%/../../tools/preset.bazelrc
 
-# Test the use of --test_filter by excluding failing tests
-test --test_filter=^(?!.*failing\\.test\\.js).*
-
 # Build without the bytes
 common:ci --remote_download_outputs=minimal
 common:ci --nobuild_runfile_links

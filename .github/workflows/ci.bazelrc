@@ -1,9 +1,0 @@
-# Directories caches by GitHub actions
-common --disk_cache=~/.cache/bazel-disk-cache
-common --repository_cache=~/.cache/bazel-repository-cache
-
-# Debug where options came from
-common --announce_rc
-
-# Still required for Windows until we upgrade to a minimum rules_js that no longer requires it
-common --enable_runfiles
