@@ -12,7 +12,7 @@ alias(
 
 alias(
     name = "buildifier",
-    actual = "//tools/format:buildifier",
+    actual = "@buildifier_prebuilt//buildifier",
 )
 
 # Test case 3: jest config file in root package
