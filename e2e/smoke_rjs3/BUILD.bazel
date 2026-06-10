@@ -29,3 +29,13 @@ jest_test(
     data = ["index.test.js"],
     node_modules = "//:node_modules",
 )
+
+# Regression test for https://github.com/aspect-build/rules_jest/issues/322.
+# The target name contains parentheses so the generated --config path also
+# contains them. Without quoting in jest_test.bzl bash treats the parens as
+# subshell syntax and jest fails to locate its config file.
+jest_test(
+    name = "test(parens)",
+    data = ["index.test.js"],
+    node_modules = "//:node_modules",
+)
