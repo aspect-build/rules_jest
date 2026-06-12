@@ -20,3 +20,7 @@ common:ci --nobuild_runfile_links
 # Override the preset's `--lockfile_mode=error` on CI since we don't
 # yet commit MODULE.bazel.lock — see .gitignore.
 common:ci --lockfile_mode=off
+
+# rules_js requires runfiles, off by default on Windows
+common --enable_platform_specific_config
+common:windows --enable_runfiles
