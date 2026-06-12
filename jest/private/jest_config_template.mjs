@@ -10,7 +10,8 @@
  * Side effects that must run before Jest forks workers (env vars, warnings) sit at
  * module scope; everything that mutates the config object lives inside the factory.
  */
-import { existsSync, readFileSync } from "fs";
+import { existsSync, readFileSync, realpathSync, writeFileSync } from "fs";
+import { fileURLToPath } from "url";
 import * as path from "path";
 
 const updateSnapshots = !!process.env.JEST_TEST__UPDATE_SNAPSHOTS;
@@ -170,6 +171,23 @@ export default async function jestConfig() {
 
   if (coverageEnabled) {
     config.collectCoverage = true;
+    config.coverageProvider = "v8";
+
+    // On Windows, V8 resolves symlinks before recording coverage so paths end
+    // up in bazel-out/<config>/bin/... while the default rootDir is in the
+    // runfiles tree. Point rootDir at the resolved bin directory so V8 coverage
+    // can match source files.
+    let binRoot;
+    if (process.platform === "win32") {
+      try {
+        binRoot = path.dirname(
+          realpathSync(fileURLToPath(import.meta.url)),
+        );
+        config.rootDir = binRoot;
+      } catch (_) {
+        // Fall back to default rootDir if symlink resolution fails
+      }
+    }
 
     let coverageFile = path.basename(process.env.COVERAGE_OUTPUT_FILE);
     let coverageDirectory = path.dirname(process.env.COVERAGE_OUTPUT_FILE);
@@ -187,6 +205,39 @@ export default async function jestConfig() {
 
       config.coverageDirectory = coverageDirectory;
       config.coverageReporters = ["text", ["lcovonly", { file: coverageFile }]];
+
+      // Bazel's coverage merger expects SF paths to be workspace-relative
+      // (e.g. src/cfgsvc/lib/app.js). On Windows with coverageProvider v8,
+      // paths are relative to cwd (the runfiles dir) and resolve into the
+      // bazel-out bin tree. Rewrite them to workspace-relative short paths
+      // after Jest finishes.
+      if (binRoot && !process._jestCoverageRewriteRegistered) {
+        process._jestCoverageRewriteRegistered = true;
+        const covFilePath = path.join(coverageDirectory, coverageFile);
+        const bindir = process.env.JS_BINARY__BINDIR;
+        const binSuffix = "/" + bindir.replace(/\\/g, "/") + "/";
+        process.on("exit", () => {
+          try {
+            if (!existsSync(covFilePath)) return;
+            const cwd = process.cwd();
+            const lcov = readFileSync(covFilePath, "utf8");
+            const fixed = lcov.replace(/^SF:(.*)$/gm, (_, sfPath) => {
+              let abs = path.isAbsolute(sfPath)
+                ? sfPath
+                : path.resolve(cwd, sfPath);
+              abs = abs.replace(/\\/g, "/");
+              const idx = abs.indexOf(binSuffix);
+              if (idx >= 0) {
+                return "SF:" + abs.slice(idx + binSuffix.length);
+              }
+              return "SF:" + sfPath;
+            });
+            writeFileSync(covFilePath, fixed);
+          } catch (_) {
+            // Best-effort rewrite; coverage still works without it
+          }
+        });
+      }
     }
   }
 
