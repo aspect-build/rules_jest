@@ -21,6 +21,8 @@ const autoConfReporters = !!"{{AUTO_CONF_REPORTERS}}";
 const autoConfTestSequencer = !!"{{AUTO_CONF_TEST_SEQUENCER}}";
 const userConfigShortPath = "{{USER_CONFIG_SHORT_PATH}}";
 const userConfigPath = "{{USER_CONFIG_PATH}}";
+const rootDirShortPath = "{{ROOT_DIR_SHORT_PATH}}";
+const packageShortPath = "{{PACKAGE_SHORT_PATH}}";
 
 function _resolveRunfilesPath(rootpath) {
   return path.join(
@@ -107,6 +109,23 @@ function _addReporter(config, name, reporter = name) {
 export default async function jestConfig() {
   const config = await _loadUserConfig();
   _verifyJestConfig(config);
+
+  // Pin rootDir to an absolute path so jest leaves it untouched, mirroring jest's
+  // own readConfigFileAndSetRootDir: an absolute user rootDir stays as-is, a
+  // relative one resolves against the anchor, and an absent one defaults to it.
+  // See https://github.com/aspect-build/rules_jest/issues/347.
+  const rootDir = _resolveRunfilesPath(rootDirShortPath);
+  if (config.rootDir) {
+    if (!path.isAbsolute(config.rootDir)) {
+      config.rootDir = path.resolve(rootDir, config.rootDir);
+    }
+  } else {
+    config.rootDir = rootDir;
+  }
+
+  // Default test-discovery roots to the target's package, not rootDir, so the
+  // target's tests are found wherever the config lives. A user `roots` wins.
+  config.roots ||= [_resolveRunfilesPath(packageShortPath)];
 
   config.cacheDirectory ||= path.join(process.env.TEST_TMPDIR, "jest_cache");
 
@@ -233,10 +252,22 @@ export default async function jestConfig() {
     // map already scopes Jest's file universe to this target's `data`, so this
     // glob only ever matches the target's own sources.
     if (!config.collectCoverageFrom) {
-      config.collectCoverageFrom = [
-        "**/*.{cjs,cjx,cts,ctx,js,jsx,mjs,mjx,mts,mtx,ts,tsx}",
-        "!**/node_modules/**",
-      ];
+      // shouldInstrument() matches sources relative to rootDir, so a rootDir in a
+      // subdirectory (see #347) drops the target's sources above it. Emit a glob
+      // per level from rootDir up to the package. Depth 0 yields plain `**/*`.
+      const pkgRel = path.relative(
+        config.rootDir,
+        _resolveRunfilesPath(packageShortPath),
+      );
+      const depth = pkgRel ? pkgRel.split(path.sep).length : 0;
+      config.collectCoverageFrom = [];
+      for (let i = 0; i <= depth; i++) {
+        const prefix = "../".repeat(i);
+        config.collectCoverageFrom.push(
+          prefix + "**/*.{cjs,cjx,cts,ctx,js,jsx,mjs,mjx,mts,mtx,ts,tsx}",
+        );
+        config.collectCoverageFrom.push("!" + prefix + "**/node_modules/**");
+      }
     }
 
     let coverageFile = path.basename(process.env.COVERAGE_OUTPUT_FILE);

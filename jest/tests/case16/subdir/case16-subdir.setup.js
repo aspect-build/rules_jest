@@ -1,0 +1,1 @@
+global.CASE16_SUBDIR_SETUP_VALUE = 17;

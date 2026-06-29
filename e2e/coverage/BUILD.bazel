@@ -59,3 +59,16 @@ jest_test(
     ],
     node_modules = "//:node_modules",
 )
+
+# rules_jest #347: config in a subdirectory anchors jest's rootDir there, while
+# the instrumented source (foo.js) sits at the package root above it. Coverage
+# must still be attributed to it (regression guard for #2901).
+jest_test(
+    name = "cov_jest_subdir_config",
+    config = "subdir/subdir.jest.config.js",
+    data = [
+        "foo.test.js",
+        ":foo",
+    ],
+    node_modules = "//:node_modules",
+)
