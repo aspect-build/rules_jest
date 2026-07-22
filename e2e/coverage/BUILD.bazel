@@ -1,0 +1,61 @@
+load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
+load("@aspect_rules_js//js:defs.bzl", "js_library")
+load("@npm//:defs.bzl", "npm_link_all_packages")
+
+npm_link_all_packages(name = "node_modules")
+
+js_library(
+    name = "foo",
+    srcs = ["foo.js"],
+)
+
+# rules_js #2901: on jest 30 the coverage report came back empty because jest's
+# resolver moved instrumented sources outside rootDir. Assert jest_test coverage
+# is attributed correctly, including under split post-processing (see test.sh).
+jest_test(
+    name = "cov_jest",
+    config = "jest.config.js",
+    data = [
+        "foo.test.js",
+        ":foo",
+    ],
+    node_modules = "//:node_modules",
+)
+
+# Same, but the user supplies their own jest `resolver`. rules_jest must still
+# apply the #2901 coverage fix by composing on top of the user's resolver.
+jest_test(
+    name = "cov_jest_custom_resolver",
+    config = "resolver.jest.config.js",
+    data = [
+        "foo.test.js",
+        "user_resolver.cjs",
+        ":foo",
+    ],
+    node_modules = "//:node_modules",
+)
+
+# User `resolver` given by package name (not a filesystem path): rules_jest must
+# resolve it via node_modules rather than treating it as a path on disk.
+jest_test(
+    name = "cov_jest_pkg_resolver",
+    config = "pkg_resolver.jest.config.js",
+    data = [
+        "foo.test.js",
+        ":foo",
+        "//:node_modules/jest-pnp-resolver",
+    ],
+    node_modules = "//:node_modules",
+)
+
+# User `cacheDirectory` using a `<rootDir>` token: the generated resolver must
+# not be written there (it would land in a literal `<rootDir>` dir).
+jest_test(
+    name = "cov_jest_cachedir",
+    config = "cachedir.jest.config.js",
+    data = [
+        "foo.test.js",
+        ":foo",
+    ],
+    node_modules = "//:node_modules",
+)
