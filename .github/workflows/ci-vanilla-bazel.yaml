@@ -46,3 +46,19 @@ jobs:
       - name: Additional integration tests
         # Find all shell scripts within e2e, echo the filename, execute, fail on error
         run: find e2e/*.sh -maxdepth 1 -type f -exec sh -c 'echo "\n\n------------------------------- $0 -------------------------------" && "$0" || kill $PPID' \{\} \;
+
+  coverage:
+    # Self-contained e2e workspaces that run `bazel coverage` and assert on the
+    # lcov output — regression tests for rules_js #2901, on jest >=30 and jest 29.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: bazel-contrib/setup-bazel@c5acdfb288317d0b5c0bbd7a396a3dc868bb0f86 # 0.19.0
+        with:
+          bazelisk-cache: true
+          disk-cache: ${{ github.workflow }}
+          repository-cache: true
+      - name: Coverage regression test — jest >=30
+        run: ./e2e/coverage/test.sh
+      - name: Coverage regression test — jest 29
+        run: ./e2e/smoke_jest_29/test.sh

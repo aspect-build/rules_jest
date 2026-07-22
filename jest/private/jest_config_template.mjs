@@ -10,7 +10,8 @@
  * Side effects that must run before Jest forks workers (env vars, warnings) sit at
  * module scope; everything that mutates the config object lives inside the factory.
  */
-import { existsSync, readFileSync } from "fs";
+import { existsSync, writeFileSync } from "fs";
+import { createRequire } from "module";
 import * as path from "path";
 
 const updateSnapshots = !!process.env.JEST_TEST__UPDATE_SNAPSHOTS;
@@ -170,6 +171,73 @@ export default async function jestConfig() {
 
   if (coverageEnabled) {
     config.collectCoverage = true;
+
+    // Jest 30's default resolver (unrs-resolver) resolves symlinks to their
+    // realpath, which moves rules_js first-party sources out of the runfiles
+    // tree (Jest's rootDir). Coverage recorded against those realpaths is then
+    // dropped from the report, producing an empty coverage.dat (rules_js #2901).
+    // Resolve first-party (relative) requests with symlinks disabled so paths
+    // stay inside runfiles and coverage is attributed correctly. A user-supplied
+    // `resolver` is composed underneath (wrapped, not replaced).
+    //
+    // KNOWN LIMITATION: only relative (`./`) requests get symlink-free
+    // resolution. A first-party library imported by its workspace *package* name
+    // (a bare specifier such as `@myorg/lib`) still resolves via the default
+    // realpath path, so on jest 30 its coverage may be dropped in package-based
+    // monorepos. Bare specifiers can't be classified first-party vs third-party
+    // from the request alone, and forcing symlink-free resolution on third-party
+    // packages would break the `.aspect_rules_js` module store.
+    if (config.resolver) {
+      const configDir = path.dirname(_resolveRunfilesPath(userConfigShortPath));
+      const rootDir = config.rootDir
+        ? path.resolve(configDir, config.rootDir)
+        : configDir;
+
+      let spec = config.resolver;
+      if (spec.startsWith("<rootDir>")) {
+        spec = path.join(rootDir, spec.slice("<rootDir>".length));
+      } else if (spec.startsWith(".")) {
+        spec = path.resolve(rootDir, spec);
+      }
+
+      // Resolve like Jest would — either a file path or a package name (e.g.
+      // `jest-pnp-resolver`) — from the runfiles tree, instead of assuming a
+      // path on disk (which threw for package-name resolvers).
+      process.env.JEST_TEST__USER_RESOLVER = createRequire(
+        path.join(rootDir, "package.json"),
+      ).resolve(spec);
+    }
+
+    // Write the wrapper to TEST_TMPDIR (always present and writable) rather than
+    // config.cacheDirectory, which at this point may be read-only or still an
+    // unexpanded `<rootDir>` token.
+    const resolverPath = path.join(
+      process.env.TEST_TMPDIR,
+      "_bazel_resolver.cjs",
+    );
+    writeFileSync(
+      resolverPath,
+      "const u = process.env.JEST_TEST__USER_RESOLVER;\n" +
+        "const base = u ? require(u) : null;\n" +
+        "module.exports = (request, options) =>\n" +
+        "  request.startsWith('.')\n" +
+        "    ? (base || options.defaultResolver)(request, { ...options, symlinks: false })\n" +
+        "    : (base || options.defaultResolver)(request, options);\n",
+    );
+    config.resolver = resolverPath;
+
+    // Jest 30's `normalizeCollectCoverageFrom` returns [] when
+    // `collectCoverageFrom` is unset, so files that no test imports are omitted
+    // from the report entirely — inflating coverage. Collect from all sources so
+    // instrumented-but-unexecuted files still report as 0%. The rules_jest haste
+    // map already scopes Jest's file universe to this target's `data`, so this
+    // glob only ever matches the target's own sources.
+    if (!config.collectCoverageFrom) {
+      config.collectCoverageFrom = [
+        "**/*.{cjs,cjx,cts,ctx,js,jsx,mjs,mjx,mts,mtx,ts,tsx}",
+        "!**/node_modules/**",
+      ];
+    }
 
     let coverageFile = path.basename(process.env.COVERAGE_OUTPUT_FILE);
     let coverageDirectory = path.dirname(process.env.COVERAGE_OUTPUT_FILE);

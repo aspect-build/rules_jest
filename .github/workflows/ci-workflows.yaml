@@ -44,6 +44,7 @@ jobs:
           - { path: "e2e/case4", slug: "e2e-case4" }
           - { path: "e2e/npm_packages", slug: "e2e-npm_packages" }
           - { path: "e2e/smoke", slug: "e2e-smoke" }
+          - { path: "e2e/smoke_jest_29", slug: "e2e-smoke_jest_29" }
           - { path: "e2e/swc", slug: "e2e-swc" }
         bazel:
           - {
