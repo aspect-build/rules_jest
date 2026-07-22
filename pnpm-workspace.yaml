@@ -1,3 +1,4 @@
 packages:
   - "example"
   - "jest/tests"
+onlyBuiltDependencies: []
