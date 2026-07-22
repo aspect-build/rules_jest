@@ -9,11 +9,11 @@ jest_test(
     name = "test",
     config = "jest.config.js",
     data = [
-        ".babelrc.js",
+        "babel.config.json",
         ":lib",
         ":tests",
         "//example:node_modules/@babel/core",
-        "//example:node_modules/@babel/preset-env",
+        "//example:node_modules/@babel/plugin-transform-modules-commonjs",
         "//example:node_modules/@babel/preset-react",
         "//example:node_modules/babel-jest",
     ],

@@ -8,7 +8,7 @@ jest_test(
         "index.js",
         "index.test.js",
         "package.json",
-        "//example:node_modules/@babel/preset-env",
+        "//example:node_modules/@babel/plugin-transform-modules-commonjs",
         "//example:node_modules/babel-jest",
     ],
     node_modules = "//:node_modules",

@@ -5,4 +5,10 @@ jest_test(
     data = ["env_inherit.test.js"],
     env_inherit = ["LANG"],
     node_modules = "//:node_modules",
+    # LANG is a Unix locale convention and is not set on Windows, so the
+    # inherited value the test asserts on doesn't exist there.
+    target_compatible_with = select({
+        "@platforms//os:windows": ["@platforms//:incompatible"],
+        "//conditions:default": [],
+    }),
 )

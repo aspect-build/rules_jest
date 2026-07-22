@@ -5,7 +5,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.22.0",
-    "@babel/preset-env": "^7.22.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.22.0",
     "@babel/preset-react": "^7.22.0",
     "@jest/test-sequencer": "29.3.1",
     "babel-jest": "29.3.1",

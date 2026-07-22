@@ -24,7 +24,7 @@ js_library(
     ],
     visibility = ["//visibility:public"],
     deps = [
-        "//:node_modules/@babel/preset-env",
+        "//:node_modules/@babel/plugin-transform-modules-commonjs",
         "//:node_modules/babel-jest",
         "//tools:jest",
     ],

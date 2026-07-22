@@ -8,6 +8,15 @@ import %workspace%/tools/preset.bazelrc
 # this check via --noincompatible_check_sharding_support.
 test --noincompatible_check_sharding_support
 
+# rules_js/rules_jest need the runfiles tree physically materialized (real node_modules
+# layout + jest resolving its relative --config path). On Windows Bazel defaults to a
+# manifest-only runfiles and won't lay out the tree, so tests can't find their config.
+# Enable symlinks and force the runfiles tree on Windows (no-ops elsewhere).
+# Relies on --enable_platform_specific_config (set in tools/preset.bazelrc).
+startup --windows_enable_symlinks
+common:windows --enable_runfiles
+common:windows --build_runfile_links
+
 # Coverage
 # https://github.com/bazelbuild/bazel/blob/e3e4d61b2c2b241d0426ea20143b8a07d6fadfcd/tools/test/collect_cc_coverage.sh#L30
 common:ci --experimental_fetch_all_coverage_outputs
