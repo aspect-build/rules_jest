@@ -1,4 +1,3 @@
-load("@aspect_bazel_lib//lib:utils.bzl", bazel_lib_utils = "utils")
 load("@bazel_skylib//:bzl_library.bzl", "bzl_library")
 
 # This is the target rule authors should put in their "toolchains"
@@ -15,18 +14,12 @@ bzl_library(
     visibility = ["//visibility:public"],
     deps = [
         "//jest/private:jest_test",
-        "@aspect_bazel_lib//lib:copy_file",
-        "@aspect_bazel_lib//lib:directory_path",
-        "@aspect_bazel_lib//lib:utils",
         "@aspect_tools_telemetry_report//:defs.bzl",
-    ] + (["@bazel_tools//tools/build_defs/repo:cache.bzl"] if bazel_lib_utils.is_bazel_7_or_greater() else []),
-)
-
-bzl_library(
-    name = "dependencies",
-    srcs = ["dependencies.bzl"],
-    visibility = ["//visibility:public"],
-    deps = ["//jest/private:maybe"],
+        "@bazel_lib//lib:copy_file",
+        "@bazel_lib//lib:directory_path",
+        "@bazel_lib//lib:utils",
+        "@bazel_tools//tools/build_defs/repo:cache.bzl",
+    ],
 )
 
 starlark_doc_extract(

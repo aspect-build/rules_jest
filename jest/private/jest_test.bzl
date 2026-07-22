@@ -1,7 +1,7 @@
 "Implementation details for jest_test rule"
 
-load("@aspect_bazel_lib//lib:copy_to_bin.bzl", "copy_file_to_bin_action")
 load("@aspect_rules_js//js:libs.bzl", "js_binary_lib", "js_lib_helpers")
+load("@bazel_lib//lib:copy_to_bin.bzl", "copy_file_to_bin_action")
 load("@bazel_skylib//lib:dicts.bzl", "dicts")
 load("@bazel_skylib//lib:paths.bzl", "paths")
 
@@ -83,11 +83,7 @@ def _impl(ctx):
     if ctx.attr.chdir:
         unwind_chdir_prefix = "/".join([".."] * len(ctx.attr.chdir.split("/"))) + "/"
 
-    fixed_args = []
-
-    # TODO(1.0): we can assume fixed_args exists on attr for the 1.0 release (it comes from rules_js 1.27.0)
-    if hasattr(ctx.attr, "fixed_args"):
-        fixed_args.extend(ctx.attr.fixed_args)
+    fixed_args = list(ctx.attr.fixed_args)
     fixed_args.extend([
         # https://jestjs.io/docs/cli#--cache. Whether to use the cache. Defaults to true. Disable
         # the cache using --no-cache. Caching is Bazel's job, we don't want non-hermeticity

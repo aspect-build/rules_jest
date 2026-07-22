@@ -1,10 +1,10 @@
 """# Public API for Jest rules
 """
 
-load("@aspect_bazel_lib//lib:copy_file.bzl", "copy_file")
-load("@aspect_bazel_lib//lib:directory_path.bzl", "directory_path")
-load("@aspect_bazel_lib//lib:utils.bzl", "default_timeout", "to_label")
 load("@aspect_tools_telemetry_report//:defs.bzl", "TELEMETRY")  # buildifier: disable=load
+load("@bazel_lib//lib:copy_file.bzl", "copy_file")
+load("@bazel_lib//lib:directory_path.bzl", "directory_path")
+load("@bazel_lib//lib:utils.bzl", "default_timeout", "to_label")
 load("//jest/private:jest_test.bzl", jest_test_rule = "jest_test")
 
 UPDATE_SNAPSHOTS_TARGET_SUFFIX = "_update_snapshots"
@@ -24,7 +24,7 @@ def _jest_from_node_modules(jest_rule, name, node_modules, auto_configure_report
     jest_rule(
         name = name,
         enable_runfiles = select({
-            Label("@aspect_bazel_lib//lib:enable_runfiles"): True,
+            Label("@bazel_lib//lib:enable_runfiles"): True,
             "//conditions:default": False,
         }),
         data = data,
