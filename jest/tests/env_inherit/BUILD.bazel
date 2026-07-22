@@ -3,12 +3,11 @@ load("//jest:defs.bzl", "jest_test")
 jest_test(
     name = "test",
     data = ["env_inherit.test.js"],
-    env_inherit = ["LANG"],
+    # Only vars actually set in the host env are inherited; the rest are ignored.
+    # LANG is present on Unix, OS on Windows, so the test sees one of them.
+    env_inherit = [
+        "LANG",
+        "OS",
+    ],
     node_modules = "//:node_modules",
-    # LANG is a Unix locale convention and is not set on Windows, so the
-    # inherited value the test asserts on doesn't exist there.
-    target_compatible_with = select({
-        "@platforms//os:windows": ["@platforms//:incompatible"],
-        "//conditions:default": [],
-    }),
 )
