@@ -8,9 +8,16 @@ jest_test(
     node_modules = "//:node_modules",
 )
 
-# assert that the launcher script contains the fixed arg --silent
+# assert that the launcher script contains the fixed arg --silent.
+# On Windows the :test executable is a .bat shim that bootstraps the bash
+# launcher, so the fixed args aren't in the file this reads (the :test target
+# itself still runs with --silent). Skip the text assertion on Windows.
 assert_contains(
     name = "fixed_args_test",
     actual = ":test",
     expected = "--silent",
+    target_compatible_with = select({
+        "@platforms//os:windows": ["@platforms//:incompatible"],
+        "//conditions:default": [],
+    }),
 )

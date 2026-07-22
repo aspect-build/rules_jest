@@ -11,7 +11,7 @@ jest_test(
         ":lib",
         ":tests",
         "//jest/tests:node_modules/@babel/core",
-        "//jest/tests:node_modules/@babel/preset-env",
+        "//jest/tests:node_modules/@babel/plugin-transform-modules-commonjs",
         "//jest/tests:node_modules/@babel/preset-react",
         "//jest/tests:node_modules/babel-jest",
     ],
