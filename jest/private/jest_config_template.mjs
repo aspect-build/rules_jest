@@ -20,7 +20,6 @@ const autoConfReporting = !!"{{AUTO_CONF_REPORTING}}";
 const autoConfReporters = !!"{{AUTO_CONF_REPORTERS}}";
 const autoConfTestSequencer = !!"{{AUTO_CONF_TEST_SEQUENCER}}";
 const userConfigShortPath = "{{USER_CONFIG_SHORT_PATH}}";
-const userConfigPath = "{{USER_CONFIG_PATH}}";
 const rootDirShortPath = "{{ROOT_DIR_SHORT_PATH}}";
 const packageShortPath = "{{PACKAGE_SHORT_PATH}}";
 
@@ -30,10 +29,6 @@ function _resolveRunfilesPath(rootpath) {
     process.env.JS_BINARY__WORKSPACE,
     rootpath,
   );
-}
-
-function _resolveExecrootPath(execpath) {
-  return path.join(process.env.JS_BINARY__EXECROOT, execpath);
 }
 
 const bazelSequencerPath = _resolveRunfilesPath(
@@ -97,12 +92,49 @@ function _verifyJestConfig(config) {
   }
 }
 
-/** Add a reporter to `config.reporters` if one named `name` isn't already present. */
+/**
+ * Resolve a Jest module specifier (reporter, resolver, snapshotResolver, …) to its
+ * canonical file path, the way Jest's own config normalization does: expand a leading
+ * `<rootDir>` token, resolve a relative `./` path against `rootDir`, and let Node
+ * canonicalize a bare package name (e.g. `jest-junit`, `jest-pnp-resolver`) from the
+ * module tree anchored at `rootDir`. `rootDir` is assumed already absolute.
+ *
+ * Returns `null` for a specifier that names no real module — e.g. the built-in
+ * `"default"` reporter, or a path that doesn't exist — so callers can decide whether
+ * to fall back to name identity or treat it as an error.
+ */
+function _resolveModuleSpecifier(spec, rootDir) {
+  if (typeof spec !== "string") return null;
+  if (spec.startsWith("<rootDir>")) {
+    spec = path.join(rootDir, spec.slice("<rootDir>".length));
+  } else if (spec.startsWith(".")) {
+    spec = path.resolve(rootDir, spec);
+  }
+  try {
+    return createRequire(path.join(rootDir, "package.json")).resolve(spec);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Add a reporter to `config.reporters` unless one referring to the same module is
+ * already present. A user may name the same reporter differently than jest_test does
+ * — a bare name vs an absolute path from `require.resolve()`, a `<rootDir>` token, etc.
+ * (https://github.com/aspect-build/rules_jest/issues/201) — so compare by canonical
+ * resolved path, falling back to name identity for specifiers that don't resolve.
+ */
 function _addReporter(config, name, reporter = name) {
   config.reporters ??= [];
-  const exists = config.reporters.some((r) =>
-    Array.isArray(r) ? r[0] === name : r === name,
-  );
+  const wanted = _resolveModuleSpecifier(name, config.rootDir);
+  const exists = config.reporters.some((r) => {
+    const entry = Array.isArray(r) ? r[0] : r;
+    if (entry === name) return true;
+    return (
+      wanted != null &&
+      _resolveModuleSpecifier(entry, config.rootDir) === wanted
+    );
+  });
   if (!exists) config.reporters.push(reporter);
 }
 
@@ -171,16 +203,15 @@ export default async function jestConfig() {
 
   if (updateSnapshots) {
     if (config.snapshotResolver) {
-      const snapshotResolverPath = path.isAbsolute(config.snapshotResolver)
-        ? config.snapshotResolver
-        : path.resolve(
-            _resolveExecrootPath(userConfigPath),
-            "..",
-            config.snapshotResolver,
-          );
-      if (!existsSync(snapshotResolverPath)) {
+      // Resolve like Jest would — `<rootDir>`, relative, or a bare package name —
+      // anchored at rootDir, rather than only handling absolute/relative paths.
+      const snapshotResolverPath = _resolveModuleSpecifier(
+        config.snapshotResolver,
+        config.rootDir,
+      );
+      if (!snapshotResolverPath || !existsSync(snapshotResolverPath)) {
         throw new Error(
-          `configured snapshotResolver '${config.snapshotResolver}' not found at ${snapshotResolverPath}`,
+          `configured snapshotResolver '${config.snapshotResolver}' could not be resolved from ${config.rootDir}`,
         );
       }
       process.env.JEST_TEST__USER_SNAPSHOT_RESOLVER = snapshotResolverPath;
@@ -207,24 +238,16 @@ export default async function jestConfig() {
     // from the request alone, and forcing symlink-free resolution on third-party
     // packages would break the `.aspect_rules_js` module store.
     if (config.resolver) {
-      const configDir = path.dirname(_resolveRunfilesPath(userConfigShortPath));
-      const rootDir = config.rootDir
-        ? path.resolve(configDir, config.rootDir)
-        : configDir;
-
-      let spec = config.resolver;
-      if (spec.startsWith("<rootDir>")) {
-        spec = path.join(rootDir, spec.slice("<rootDir>".length));
-      } else if (spec.startsWith(".")) {
-        spec = path.resolve(rootDir, spec);
+      // Resolve like Jest would — a `<rootDir>` token, a relative path, or a
+      // package name (e.g. `jest-pnp-resolver`) — from the runfiles tree, instead
+      // of assuming a path on disk (which threw for package-name resolvers).
+      const resolved = _resolveModuleSpecifier(config.resolver, config.rootDir);
+      if (!resolved) {
+        throw new Error(
+          `configured resolver '${config.resolver}' could not be resolved from ${config.rootDir}`,
+        );
       }
-
-      // Resolve like Jest would — either a file path or a package name (e.g.
-      // `jest-pnp-resolver`) — from the runfiles tree, instead of assuming a
-      // path on disk (which threw for package-name resolvers).
-      process.env.JEST_TEST__USER_RESOLVER = createRequire(
-        path.join(rootDir, "package.json"),
-      ).resolve(spec);
+      process.env.JEST_TEST__USER_RESOLVER = resolved;
     }
 
     // Write the wrapper to TEST_TMPDIR (always present and writable) rather than
