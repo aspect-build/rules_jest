@@ -76,10 +76,13 @@ def jest_test(
 
             This should include all test files, configuration files & files under test.
 
-        snapshots: If True, a `{name}_update_snapshots` binary target is generated that will update all existing `__snapshots__`
+        snapshots: If snapshots are configured (by setting this to `True`, a snapshot directory string, or a list of
+            snapshot files/directories) a `{name}_update_snapshots` binary target is generated that will update all existing `__snapshots__`
             directories when `bazel run`. This is the equivalent to running `jest -u` or `jest --updateSnapshot` outside of Bazel,
             except that new `__snapshots__` will not automatically be created on update. To bootstrap a new `__snapshots__` directory,
             you can create an empty one and then run the `{name}_update_snapshots` target to populate it.
+
+            When left `False` (the default) no `{name}_update_snapshots` target is generated.
 
             If the name of the snapshot directory is not the default `__snapshots__` because of a custom snapshot resolver,
             you can specify customize the snapshot directories with a `glob` or a static list. For example,
@@ -248,7 +251,7 @@ def jest_test(
         **kwargs
     )
 
-    if snapshots != False:
+    if snapshots != False and snapshots != None:
         _jest_from_node_modules(
             jest_rule = jest_test_rule,
             name = name + UPDATE_SNAPSHOTS_TARGET_SUFFIX,
