@@ -41,3 +41,11 @@ use_repo(npm, "npm")
 # rules_go that loads CcInfo from a load statement. repo_name = None because we
 # only declare this to influence version selection; we never load from it.
 bazel_dep(name = "rules_go", version = "0.60.0", dev_dependency = True, repo_name = None)
+
+# Test case 4 (see //jest/tests): run a jest_test in an external repository.
+local_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:local.bzl", "local_repository")
+
+local_repository(
+    name = "case4",
+    path = "e2e/case4",
+)
