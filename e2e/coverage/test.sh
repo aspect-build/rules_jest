@@ -39,7 +39,7 @@ for mode in "inline" "split"; do
 		split_flag="--experimental_split_coverage_postprocessing"
 	fi
 
-	for target in cov_jest cov_jest_custom_resolver cov_jest_pkg_resolver cov_jest_cachedir; do
+	for target in cov_jest cov_jest_custom_resolver cov_jest_pkg_resolver cov_jest_cachedir cov_jest_subdir_config; do
 		echo "----- coverage: $target ($mode post-processing) -----"
 		bazel coverage "//:$target" \
 			--instrument_test_targets \

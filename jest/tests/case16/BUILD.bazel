@@ -1,0 +1,108 @@
+load("//jest:defs.bzl", "jest_test")
+
+# Case 16: path resolution in the user config must be anchored at the user's
+# config file, independent of the target name or where the config file lives.
+# Regression test for https://github.com/aspect-build/rules_jest/issues/347.
+
+# 16a: slashed target name with the config at the package root. The generated
+# config lands in case16/nested/deep/, but <rootDir> must still resolve to
+# case16/ where the user wrote their config.
+jest_test(
+    name = "nested/deep/test",
+    config = "case16.jest.config.js",
+    data = [
+        "case16.setup.js",
+        "case16.test.js",
+    ],
+    node_modules = "//:node_modules",
+)
+
+# 16b: config in a subdirectory. <rootDir> must resolve to that subdirectory,
+# not to the package directory where the generated config lands.
+jest_test(
+    name = "subdir_config",
+    config = "subdir/case16-subdir.jest.config.js",
+    data = [
+        "subdir/case16-subdir.setup.js",
+        "subdir/case16-subdir.test.js",
+    ],
+    node_modules = "//:node_modules",
+)
+
+# 16e: config in a subdirectory but a test file at the package root. Discovery
+# must still find the package-root test, i.e. rootDir narrowing to the config's
+# subdir must not drop test files that live above it.
+jest_test(
+    name = "subdir_config_root_test",
+    config = "subdir/case16-subdir.jest.config.js",
+    data = [
+        "root_level.test.js",
+        "subdir/case16-subdir.setup.js",
+    ],
+    node_modules = "//:node_modules",
+)
+
+# 16c: slashed target name with no config. rootDir must still be the package so
+# the target's own test files are discovered.
+jest_test(
+    name = "nested/deep/noconfig",
+    data = ["noconfig.test.js"],
+    node_modules = "//:node_modules",
+)
+
+# 16d: slashed target name with a config shared from another package. rootDir
+# must be this package (not the foreign config's package) so the target's own
+# test files are discovered.
+jest_test(
+    name = "nested/deep/shared_config",
+    config = "//jest/tests/configs:basic",
+    data = ["noconfig.test.js"],
+    node_modules = "//:node_modules",
+)
+
+# 16f: snapshots with a slashed target name. Snapshot resolution must still find
+# the __snapshots__ dir next to the test file, independent of the target name.
+jest_test(
+    name = "nested/deep/snapshot",
+    config = "case16.jest.config.js",
+    data = [
+        "case16.setup.js",
+        "snapshot.test.js",
+    ],
+    node_modules = "//:node_modules",
+    snapshots = True,
+)
+
+# 16g: a relative user `rootDir` must resolve against the config anchor.
+jest_test(
+    name = "rootdir_relative",
+    config = "case16-rootdir-rel.jest.config.js",
+    data = [
+        "rootdir_rel/rootdir_rel.setup.js",
+        "rootdir_rel/rootdir_rel.test.js",
+    ],
+    node_modules = "//:node_modules",
+)
+
+# 16h: an absolute user `rootDir` (here `__dirname`) must be left untouched.
+jest_test(
+    name = "rootdir_absolute",
+    config = "rootdir_abs/case16-rootdir-abs.jest.config.js",
+    data = [
+        "rootdir_abs/rootdir_abs.setup.js",
+        "rootdir_abs/rootdir_abs.test.js",
+    ],
+    node_modules = "//:node_modules",
+)
+
+# 16i: a user-supplied `roots` must be preserved. Only `included/` is in scope;
+# the poison test under `excluded/` throws if it is ever discovered.
+jest_test(
+    name = "user_roots",
+    config = "case16-roots.jest.config.js",
+    data = [
+        "excluded/poison.test.js",
+        "included/good.test.js",
+    ],
+    node_modules = "//:node_modules",
+)

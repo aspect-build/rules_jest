@@ -1,0 +1,1 @@
+global.CASE16_SETUP_VALUE = 16;

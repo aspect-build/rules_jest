@@ -60,6 +60,26 @@ def _impl(ctx):
         is_executable = False,
     )
 
+    # The target's package directory, as a runfiles-relative path. Use the
+    # generated config rather than ctx.label.package to preserve any external-repo
+    # prefix; it is at <package>/<name>__jest.config.mjs, so strip the filename
+    # plus one directory per slash in the name to recover the package directory.
+    package_short_path = paths.dirname(generated_config.short_path)
+    for _ in range(ctx.label.name.count("/")):
+        package_short_path = paths.dirname(package_short_path)
+
+    # Anchor rootDir at the user's config file when it is co-located in this
+    # package, matching native jest; otherwise (config shared from another package,
+    # or no config) anchor at this target's package.
+    # See https://github.com/aspect-build/rules_jest/issues/347.
+    if user_config and (
+        ctx.attr.config.label.workspace_name == ctx.label.workspace_name and
+        ctx.attr.config.label.package == ctx.label.package
+    ):
+        root_dir_short_path = paths.dirname(user_config.short_path)
+    else:
+        root_dir_short_path = package_short_path
+
     ctx.actions.expand_template(
         template = ctx.file._jest_config_template,
         output = generated_config,
@@ -73,6 +93,8 @@ def _impl(ctx):
             "{{BAZEL_SNAPSHOT_RESOLVER_SHORT_PATH}}": ctx.file.bazel_snapshot_resolver.short_path,
             "{{BAZEL_HASTE_MAP_MODULE_SHORT_PATH}}": ctx.file.bazel_haste_map_module.short_path,
             "{{GENERATED_CONFIG_SHORT_PATH}}": generated_config.short_path,
+            "{{PACKAGE_SHORT_PATH}}": package_short_path,
+            "{{ROOT_DIR_SHORT_PATH}}": root_dir_short_path,
             "{{USER_CONFIG_SHORT_PATH}}": user_config.short_path if user_config else "",
             "{{USER_CONFIG_PATH}}": user_config.path if user_config else "",
         },
