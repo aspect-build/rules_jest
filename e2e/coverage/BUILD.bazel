@@ -60,6 +60,19 @@ jest_test(
     node_modules = "//:node_modules",
 )
 
+# #288: the user supplies their own `coverageReporters`. jest_test must honor it
+# rather than override it, and the coverage output must still land where Bazel
+# expects (coverage.dat) in both inline and split post-processing modes.
+jest_test(
+    name = "cov_jest_custom_reporters",
+    config = "custom_reporters.jest.config.js",
+    data = [
+        "foo.test.js",
+        ":foo",
+    ],
+    node_modules = "//:node_modules",
+)
+
 # rules_jest #347: config in a subdirectory anchors jest's rootDir there, while
 # the instrumented source (foo.js) sits at the package root above it. Coverage
 # must still be attributed to it (regression guard for #2901).

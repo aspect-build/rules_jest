@@ -284,8 +284,12 @@ export default async function jestConfig() {
         coverageFile = "coverage.dat";
       }
 
-      config.coverageDirectory = coverageDirectory;
-      config.coverageReporters = ["text", ["lcovonly", { file: coverageFile }]];
+      // Default coverage config
+      config.coverageDirectory ??= coverageDirectory;
+      config.coverageReporters ??= [
+        "text",
+        ["lcovonly", { file: coverageFile }],
+      ];
     }
   }
 
