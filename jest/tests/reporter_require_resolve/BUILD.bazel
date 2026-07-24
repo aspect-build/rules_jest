@@ -1,0 +1,17 @@
+load("//jest:defs.bzl", "jest_test")
+
+# https://github.com/aspect-build/rules_jest/issues/201
+# A user config that provides jest-junit via `require.resolve("jest-junit")`
+# (an absolute path) must not cause jest_test to inject a second jest-junit
+# reporter. A duplicated jest-junit reporter writes the JUnit XML twice and
+# corrupts the Bazel test.xml. The assert-single-junit reporter fails the run
+# if jest-junit ends up configured more than once.
+jest_test(
+    name = "reporter_require_resolve",
+    config = "reporter.jest.config.js",
+    data = [
+        "assert-single-junit.cjs",
+        "reporter.test.js",
+    ],
+    node_modules = "//:node_modules",
+)

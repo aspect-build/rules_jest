@@ -96,7 +96,6 @@ def _impl(ctx):
             "{{PACKAGE_SHORT_PATH}}": package_short_path,
             "{{ROOT_DIR_SHORT_PATH}}": root_dir_short_path,
             "{{USER_CONFIG_SHORT_PATH}}": user_config.short_path if user_config else "",
-            "{{USER_CONFIG_PATH}}": user_config.path if user_config else "",
         },
     )
 
