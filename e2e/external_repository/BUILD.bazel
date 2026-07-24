@@ -1,0 +1,6 @@
+# Run the jest_test that lives in the external repository @external, so a plain
+# `bazel test //...` in this workspace exercises the external-repository path.
+test_suite(
+    name = "external_repository",
+    tests = ["@external//:test"],
+)
