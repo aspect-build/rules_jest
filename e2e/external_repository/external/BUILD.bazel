@@ -3,8 +3,11 @@ load("@npm//:defs.bzl", "npm_link_all_packages")
 
 npm_link_all_packages(name = "node_modules")
 
+# A jest_test defined in an external (non-bzlmod, local_repository) repository.
+# It consumes rules_jest and @npm from the module that declares it
+# (//:external in the parent MODULE.bazel).
 jest_test(
-    name = "case4",
+    name = "test",
     config = "jest.config.js",
     data = ["index.test.js"],
     node_modules = "//:node_modules",

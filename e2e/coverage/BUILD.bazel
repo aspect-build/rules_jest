@@ -9,6 +9,11 @@ js_library(
     srcs = ["foo.js"],
 )
 
+js_library(
+    name = "bar",
+    srcs = ["bar.js"],
+)
+
 # rules_js #2901: on jest 30 the coverage report came back empty because jest's
 # resolver moved instrumented sources outside rootDir. Assert jest_test coverage
 # is attributed correctly, including under split post-processing (see test.sh).
@@ -69,6 +74,29 @@ jest_test(
     data = [
         "foo.test.js",
         ":foo",
+    ],
+    node_modules = "//:node_modules",
+)
+
+# Coverage of a js_library dependency, asserted at the function level
+# (FNDA:1,foobar). foobar is a named function so istanbul records it by name.
+jest_test(
+    name = "cov_jest_lib",
+    config = "jest.config.js",
+    data = [
+        "bar.test.js",
+        ":bar",
+    ],
+    node_modules = "//:node_modules",
+)
+
+# jest_test with no `config` attribute: rules_jest synthesizes a default config,
+# and coverage must still be attributed correctly.
+jest_test(
+    name = "cov_jest_no_config",
+    data = [
+        "bar.test.js",
+        ":bar",
     ],
     node_modules = "//:node_modules",
 )
