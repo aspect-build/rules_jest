@@ -2,6 +2,7 @@
 """
 
 load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
+load("@bazel_skylib//rules:build_test.bzl", "build_test")
 
 jest_test(
     name = "test",
@@ -23,4 +24,10 @@ jest_test(
     # To update snapshots run,
     #    bazel run //example/snapshots_files:test_update_snapshots
     snapshots = glob(["__snapshots__/*.snap"]),
+)
+
+# TEST: Ensure the :test_update_snapshots target exists and builds successfully
+build_test(
+    name = "update_snapshots_build",
+    targets = [":test_update_snapshots"],
 )

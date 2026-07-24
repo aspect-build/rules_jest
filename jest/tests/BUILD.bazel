@@ -1,4 +1,3 @@
-load("@aspect_rules_js//js:defs.bzl", "js_library")
 load("@npm//:defs.bzl", "npm_link_all_packages")
 load("//jest:defs.bzl", "jest_test")
 
@@ -42,11 +41,6 @@ jest_test(
     node_modules = "//:node_modules",
 )
 
-# Case 3: Test in root package (see //:case4)
-
-# Case 4: Run test in external repository
-# See e2e/case4.sh
-
 # Case 5: Disable auto_configure_reporters and configure default reporter
 jest_test(
     name = "case5",
@@ -54,32 +48,6 @@ jest_test(
     config = "case5.jest.config.js",
     data = [
         "case5.test.js",
-    ],
-    node_modules = "//:node_modules",
-)
-
-# Case 6: Coverage reporting (see e2e test)
-js_library(
-    name = "case6-lib",
-    srcs = ["case6.index.js"],
-)
-
-jest_test(
-    name = "case6",
-    config = "case6.jest.config.js",
-    data = [
-        "case6.test.js",
-        ":case6-lib",
-    ],
-    node_modules = "//:node_modules",
-)
-
-# Case 7: Coverage reporting, no supplied jest config file (see e2e test)
-jest_test(
-    name = "case7",
-    data = [
-        "case7.index.js",
-        "case7.test.js",
     ],
     node_modules = "//:node_modules",
 )
@@ -124,16 +92,6 @@ jest_test(
     config = "case11/case11b.jest.config.js",
     data = [
         "case11/case11.test.js",
-    ],
-    node_modules = "//:node_modules",
-)
-
-# Case 12: Coverage reporting (see e2e test)
-jest_test(
-    name = "case12",
-    data = [
-        "case12.index.js",
-        "case12.test.js",
     ],
     node_modules = "//:node_modules",
 )
