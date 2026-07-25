@@ -3,6 +3,12 @@ import %workspace%/../../tools/preset.bazelrc
 # Test the use of --test_filter by excluding failing tests
 test --test_filter=^(?!.*failing\\.test\\.js).*
 
+# rules_js/rules_jest need the runfiles tree materialized, which Windows does not do by
+# default, so jest can't find its relative --config path.
+startup --windows_enable_symlinks
+common:windows --enable_runfiles
+common:windows --build_runfile_links
+
 # Build without the bytes
 common:ci --remote_download_outputs=minimal
 common:ci --nobuild_runfile_links
