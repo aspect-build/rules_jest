@@ -14,3 +14,12 @@ npm.npm_translate_lock(
     verify_node_modules_ignored = "//:.bazelignore",
 )
 use_repo(npm, "npm")
+
+# The jest_test under test lives in an external repository (a non-bzlmod
+# local_repository), consuming rules_jest and @npm from this module.
+local_repository = use_repo_rule("@bazel_tools//tools/build_defs/repo:local.bzl", "local_repository")
+
+local_repository(
+    name = "external",
+    path = "external",
+)

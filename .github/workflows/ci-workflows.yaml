@@ -41,7 +41,8 @@ jobs:
       matrix:
         workspace:
           - { path: ".", slug: "root" }
-          - { path: "e2e/case4", slug: "e2e-case4" }
+          - { path: "e2e/external_repository", slug: "e2e-external_repository" }
+          - { path: "e2e/coverage", slug: "e2e-coverage" }
           - { path: "e2e/npm_packages", slug: "e2e-npm_packages" }
           - { path: "e2e/smoke", slug: "e2e-smoke" }
           - { path: "e2e/smoke_jest_29", slug: "e2e-smoke_jest_29" }
@@ -72,3 +73,31 @@ jobs:
       - name: Test
         working-directory: ${{ matrix.workspace.path }}
         run: aspect test --task-key=test-${{ matrix.workspace.slug }}-${{ matrix.bazel.id }} ${{ matrix.bazel.flags }} -- //...
+
+      # Workspaces with a test.sh run additional integration checks that plain
+      # `bazel test //...` can't express (coverage assertions, snapshot updating,
+      # external-repo tests). The root test.sh drives the e2e/*.sh scripts.
+      - name: Optional ./test.sh
+        working-directory: ${{ matrix.workspace.path }}
+        run: |
+          if [[ -f ./test.sh ]]; then
+            ./test.sh
+          else
+            echo "No test.sh in ${PWD}; skipping"
+          fi
+
+  # For branch protection settings, this job provides a "stable" name that can be used to gate PR merges
+  # on "all matrix jobs were successful".
+  conclusion:
+    needs: [format, buildifier, test]
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - run: |
+          if [[ "${{ needs.format.result }}" == "success" \
+             && "${{ needs.buildifier.result }}" == "success" \
+             && "${{ needs.test.result }}" == "success" ]]; then
+            exit 0
+          else
+            exit 1
+          fi
