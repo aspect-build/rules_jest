@@ -7,7 +7,7 @@ load("//jest:defs.bzl", "jest_test")
 # corrupts the Bazel test.xml. The assert-single-junit reporter fails the run
 # if jest-junit ends up configured more than once.
 jest_test(
-    name = "reporter_require_resolve",
+    name = "test",
     config = "reporter.jest.config.js",
     data = [
         "assert-single-junit.cjs",
