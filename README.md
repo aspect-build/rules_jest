@@ -22,7 +22,7 @@ Follow instructions from the release you wish to use:
 
 Run all Jest tests in the workspace: `bazel test --test_lang_filters=jest //...`
 
-Filter tests by file path: `bazel test --test_filter="user" //my:test` (uses Jest's `testRegex`)
+Filter tests by file path: `bazel test --test_filter="user" //my:test` (a regular expression matched against the paths of the test files selected by the Jest config)
 
 See [jest_test](docs/jest_test.md) API documentation and the example usages in the [example](https://github.com/aspect-build/rules_jest/tree/main/example/) folder.
 

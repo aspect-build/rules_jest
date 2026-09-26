@@ -31,6 +31,7 @@ function _resolveRunfilesPath(rootpath) {
   );
 }
 
+const bazelFilterPath = _resolveRunfilesPath("{{BAZEL_FILTER_SHORT_PATH}}");
 const bazelSequencerPath = _resolveRunfilesPath(
   "{{BAZEL_SEQUENCER_SHORT_PATH}}",
 );
@@ -314,8 +315,20 @@ export default async function jestConfig() {
 
   // Map Bazel's --test_filter (TESTBRIDGE_TEST_ONLY) to file-level filtering, matching
   // the semantics of other Bazel test rules like java_test which filter by class name.
+  // Use a Jest `filter` module rather than `testRegex` so that the filter narrows the files
+  // selected by the user's `testMatch`/`testRegex` instead of replacing them.
   if (process.env.TESTBRIDGE_TEST_ONLY) {
-    config.testRegex = process.env.TESTBRIDGE_TEST_ONLY;
+    if (config.filter) {
+      const userFilter = _resolveModuleSpecifier(config.filter, config.rootDir);
+      if (!userFilter) {
+        throw new Error(
+          `aspect_rules_jest[jest_test]: could not resolve Jest config filter '${config.filter}' in target ${process.env.TEST_TARGET}`,
+        );
+      }
+      // bazel_filter.cjs runs in this process, so it can read this to wrap the user filter.
+      process.env.JEST_TEST__USER_FILTER = userFilter;
+    }
+    config.filter = bazelFilterPath;
   }
 
   if (process.env.JS_BINARY__LOG_DEBUG) {

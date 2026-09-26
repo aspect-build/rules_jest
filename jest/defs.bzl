@@ -52,7 +52,7 @@ def jest_test(
 
     Supports Bazel sharding. See https://docs.bazel.build/versions/main/test-encyclopedia.html#test-sharding.
 
-    Supports filtering tests with `--test_filter` flag. The filter is matched against test file paths using Jest's `testRegex` config option. For example: `bazel test --test_filter="user" //my:test`.
+    Supports filtering tests with `--test_filter` flag. The filter is a regular expression matched against the paths of the test files selected by the Jest config's `testMatch` or `testRegex`. For example: `bazel test --test_filter="user" //my:test`.
 
     Supports updating snapshots with `bazel run {name}_update_snapshots` if `snapshots` are specified.
 
@@ -197,6 +197,14 @@ def jest_test(
         path = "bin/jest.js",
     )
 
+    bazel_filter = "_{}_bazel_filter".format(name)
+    copy_file(
+        name = bazel_filter,
+        src = Label("@aspect_rules_jest//jest/private:bazel_filter.cjs"),
+        out = "_{}_bazel_filter.cjs".format(name),
+        visibility = ["//visibility:public"],
+    )
+
     bazel_sequencer = "_{}_bazel_sequencer".format(name)
     copy_file(
         name = bazel_sequencer,
@@ -244,6 +252,7 @@ def jest_test(
         size = size,
         timeout = default_timeout(size, timeout),
         entry_point = entry_point,
+        bazel_filter = bazel_filter,
         bazel_sequencer = bazel_sequencer,
         bazel_snapshot_reporter = bazel_snapshot_reporter,
         bazel_snapshot_resolver = bazel_snapshot_resolver,
@@ -267,6 +276,7 @@ def jest_test(
             update_snapshots = True,
             quiet_snapshot_updates = quiet_snapshot_updates,
             entry_point = entry_point,
+            bazel_filter = bazel_filter,
             bazel_sequencer = bazel_sequencer,
             bazel_snapshot_reporter = bazel_snapshot_reporter,
             bazel_snapshot_resolver = bazel_snapshot_resolver,
