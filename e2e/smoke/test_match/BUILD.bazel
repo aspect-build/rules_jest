@@ -1,0 +1,19 @@
+load("@aspect_rules_jest//jest:defs.bzl", "jest_test")
+
+# The config uses testMatch, which Jest does not allow together with testRegex. The --test_filter in
+# .bazelrc must narrow the files selected by testMatch, and must not select helper.js.
+jest_test(
+    name = "test",
+    config = "jest.config.js",
+    data = [
+        "failing.test.js",
+        "helper.js",
+        "index.test.js",
+    ],
+    node_modules = "//:node_modules",
+    target_compatible_with = select({
+        # See //:test.
+        "@platforms//os:windows": ["@platforms//:incompatible"],
+        "//conditions:default": [],
+    }),
+)
