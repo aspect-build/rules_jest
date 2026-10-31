@@ -1,7 +1,6 @@
 """# Public API for Jest rules
 """
 
-load("@aspect_tools_telemetry_report//:defs.bzl", "TELEMETRY")  # buildifier: disable=load
 load("@bazel_lib//lib:copy_file.bzl", "copy_file")
 load("@bazel_lib//lib:directory_path.bzl", "directory_path")
 load("@bazel_lib//lib:utils.bzl", "default_timeout", "to_label")
