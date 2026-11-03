@@ -501,7 +501,7 @@
     },
     "@@rules_multitool~//multitool:extension.bzl%multitool": {
       "general": {
-        "bzlTransitiveDigest": "wharuFmo5aJZ81WiO50i0U9uoCZyoZ9ZjpqYYKSlM1E=",
+        "bzlTransitiveDigest": "0SsBSN/+GCbw30rUx2jdLomobk9GTBuDmEF4GupWO3s=",
         "usagesDigest": "SPELf72isE37o8Nuw4YI3smO+MDefK9DwCWPvgJIHkM=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
