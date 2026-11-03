@@ -221,6 +221,9 @@ export default async function jestConfig() {
 
   if (coverageEnabled) {
     config.collectCoverage = true;
+    if (process.platform === "win32" && !config.coverageProvider) {
+      config.coverageProvider = "v8";
+    }
 
     // Jest 30's default resolver (unrs-resolver) resolves symlinks to their
     // realpath, which moves rules_js first-party sources out of the runfiles

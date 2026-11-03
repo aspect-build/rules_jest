@@ -100,3 +100,14 @@ jest_test(
     ],
     node_modules = "//:node_modules",
 )
+
+# On Windows coverageProvider defaults to v8 when the config does not set one.
+jest_test(
+    name = "cov_jest_windows_v8",
+    config = "jest.config.js",
+    data = [
+        "windows_provider.test.js",
+        ":foo",
+    ],
+    node_modules = "//:node_modules",
+)
