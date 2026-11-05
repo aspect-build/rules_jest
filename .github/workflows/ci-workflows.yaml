@@ -14,31 +14,25 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
-env:
-  # Indicates where the aspect CLI should look for .aspect/config.json
-  ASPECT_WORKSPACE: ${{ github.workspace }}
-  # Skip the --remote flag on fork PRs, which do not have access to secrets
-  REMOTE_FLAG: ${{ secrets.ASPECT_OSS_API_TOKEN != '' && '--remote' || '' }}
-
 jobs:
   format:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: aspect-build/setup-aspect@2306377a61c45954ab2df7c7311698b109364352 # v2026.26.9
+      - uses: aspect-build/setup-aspect@ebca96eb49ef58c00d4226de8bd3a0813507dd87 # v2026.38.3
         with:
-          aspect-api-token: ${{ secrets.ASPECT_OSS_API_TOKEN }}
+          aspect-api-token: ${{ secrets.ASPECT_CLOUD_API_TOKEN }}
       - name: Format
-        run: aspect format $REMOTE_FLAG --task:name=format
+        run: aspect format --task:name=format
   buildifier:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: aspect-build/setup-aspect@2306377a61c45954ab2df7c7311698b109364352 # v2026.26.9
+      - uses: aspect-build/setup-aspect@ebca96eb49ef58c00d4226de8bd3a0813507dd87 # v2026.38.3
         with:
-          aspect-api-token: ${{ secrets.ASPECT_OSS_API_TOKEN }}
+          aspect-api-token: ${{ secrets.ASPECT_CLOUD_API_TOKEN }}
       - name: Buildifier
-        run: aspect buildifier $REMOTE_FLAG --task:name=buildifier
+        run: aspect buildifier --task:name=buildifier
   test:
     name: test (${{ matrix.workspace.path }}, ${{ matrix.bazel.id }})
     runs-on: ubuntu-latest
@@ -73,12 +67,16 @@ jobs:
       USE_BAZEL_VERSION: ${{ matrix.bazel.version }}
     steps:
       - uses: actions/checkout@v6
-      - uses: aspect-build/setup-aspect@2306377a61c45954ab2df7c7311698b109364352 # v2026.26.9
+      # No ~/.aspect/bazelrc here: the vanilla `bazel coverage` calls in test.sh
+      # stall for 30+ minutes downloading node_modules inputs from the remote
+      # cache, so they stay local. `aspect test` still defaults to --remote=auto.
+      - uses: aspect-build/setup-aspect@ebca96eb49ef58c00d4226de8bd3a0813507dd87 # v2026.38.3
         with:
-          aspect-api-token: ${{ secrets.ASPECT_OSS_API_TOKEN }}
+          aspect-api-token: ${{ secrets.ASPECT_CLOUD_API_TOKEN }}
+          bazelrc-generate: false
       - name: Test
         working-directory: ${{ matrix.workspace.path }}
-        run: aspect test $REMOTE_FLAG --task:name=test-${{ matrix.workspace.slug }}-${{ matrix.bazel.id }} ${{ matrix.bazel.flags }} -- //...
+        run: aspect test --task:name=test-${{ matrix.workspace.slug }}-${{ matrix.bazel.id }} ${{ matrix.bazel.flags }} -- //...
 
       # Workspaces with a test.sh run additional integration checks that plain
       # `bazel test //...` can't express (coverage assertions, snapshot updating,

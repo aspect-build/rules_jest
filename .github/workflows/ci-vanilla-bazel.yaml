@@ -15,9 +15,6 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
-env:
-  ASPECT_WORKSPACE: ${{ github.workspace }}
-
 jobs:
   smoke:
     # Only run mac/windows tests on main or when the branch name signals it to minimize minutes (billed at 10X and 2X respectively)
@@ -31,10 +28,6 @@ jobs:
           - macos-latest
           - windows-latest
     runs-on: ${{ matrix.os }}
-    env:
-      # Skip Aspect Cloud on Windows and on fork PRs. Windows is not supported by
-      # setup-aspect, and fork PRs do not have access to the necessary secrets.
-      BAZEL_ASPECT_FLAGS: ${{ matrix.os != 'windows-latest' && secrets.ASPECT_OSS_API_TOKEN != '' && '--config=aspect-cloud' || '' }}
     steps:
       - uses: actions/checkout@v6
       - uses: bazel-contrib/setup-bazel@c5acdfb288317d0b5c0bbd7a396a3dc868bb0f86 # 0.19.0
@@ -45,20 +38,18 @@ jobs:
           disk-cache: ${{ github.workflow }}
           # Share repository cache between workflows.
           repository-cache: true
-      - uses: aspect-build/setup-aspect@2306377a61c45954ab2df7c7311698b109364352 # v2026.26.9
+      # Writes ~/.aspect/bazelrc, enabling Aspect Cloud for `bazel` when there is
+      # a credential (not on fork PRs). Windows is not supported by setup-aspect,
+      # so Windows builds stay local.
+      - uses: aspect-build/setup-aspect@ebca96eb49ef58c00d4226de8bd3a0813507dd87 # v2026.38.3
         if: matrix.os != 'windows-latest'
         with:
-          aspect-api-token: ${{ secrets.ASPECT_OSS_API_TOKEN }}
+          aspect-api-token: ${{ secrets.ASPECT_CLOUD_API_TOKEN }}
           disk-cache: false
           repository-cache: false
-      # Bazel fails the build rather than create the directory the
-      # aspect-exec-log group writes into.
-      - run: mkdir -p .aspect/generated
-        if: matrix.os != 'windows-latest'
-        shell: bash
       - name: bazel test //...
         shell: bash
-        run: bazel test ${{ env.BAZEL_ASPECT_FLAGS }} //...
+        run: bazel test //...
 
   # Stable branch-protection check, matching the Aspect Workflows CI and the
   # conventions in rules_js/rules_ts. The smoke job is deliberately skipped on
