@@ -8,8 +8,13 @@
     },
     {
       "name": "Jason Bedard",
-      "email": "jason@aspect.build",
+      "email": "jason@jbedard.ca",
       "github": "jbedard"
+    },
+    {
+      "name": "Adam Cozzette",
+      "email": "adamc@aspect.build",
+      "github": "acozzette"
     }
   ],
   "repository": ["github:aspect-build/rules_jest"],
