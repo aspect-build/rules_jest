@@ -44,7 +44,7 @@ jobs:
       # Writes ~/.aspect/bazelrc, enabling Aspect Cloud for `bazel` when there is
       # a credential (not on fork PRs). Windows is not supported by setup-aspect,
       # so Windows builds stay local.
-      - uses: aspect-build/setup-aspect@ebca96eb49ef58c00d4226de8bd3a0813507dd87 # v2026.38.3
+      - uses: aspect-build/setup-aspect@ccc445383a7d4cea499744d823a7698ae077a407 # v2026.45.0
         if: matrix.os != 'windows-latest'
         with:
           aspect-api-token: ${{ secrets.ASPECT_CLOUD_API_TOKEN }}
