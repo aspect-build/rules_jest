@@ -15,6 +15,10 @@ _attrs = dicts.add(js_binary_lib.attrs, {
     "update_snapshots": attr.bool(default = False),
     "quiet_snapshot_updates": attr.bool(default = False),
     "entry_point": attr.label(mandatory = True),
+    "bazel_filter": attr.label(
+        allow_single_file = True,
+        mandatory = True,
+    ),
     "bazel_sequencer": attr.label(
         allow_single_file = True,
         mandatory = True,
@@ -88,6 +92,7 @@ def _impl(ctx):
             "{{AUTO_CONF_REPORTERS}}": "1" if ctx.attr.auto_configure_reporters else "",
             "{{AUTO_CONF_TEST_SEQUENCER}}": "1" if ctx.attr.auto_configure_test_sequencer else "",
             "{{BAZEL_FILELIST_JSON_SHORT_PATH}}": filelist.short_path,
+            "{{BAZEL_FILTER_SHORT_PATH}}": ctx.file.bazel_filter.short_path,
             "{{BAZEL_SEQUENCER_SHORT_PATH}}": ctx.file.bazel_sequencer.short_path,
             "{{BAZEL_SNAPSHOT_REPORTER_SHORT_PATH}}": ctx.file.bazel_snapshot_reporter.short_path,
             "{{BAZEL_SNAPSHOT_RESOLVER_SHORT_PATH}}": ctx.file.bazel_snapshot_resolver.short_path,
@@ -155,6 +160,7 @@ def _impl(ctx):
     if user_config:
         files.append(user_config)
     files.append(generated_config)
+    files.append(ctx.file.bazel_filter)
     files.append(ctx.file.bazel_sequencer)
     files.append(ctx.file.bazel_snapshot_reporter)
     files.append(ctx.file.bazel_snapshot_resolver)
